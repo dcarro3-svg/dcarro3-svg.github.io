@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relation Naming Lessons — Groundwork</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1c1a16;
+      --parchment: #f5f0e8;
+      --moss:      #3d5c3a;
+      --amber:     #c17f3b;
+      --gold:      #e8b84b;
+      --sage:      #7a9e76;
+      --cream:     #faf7f0;
+      --muted:     #7a7163;
+      --border:    #d8cfbe;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(250, 247, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      text-decoration: none;
+    }
+
+    .nav-brand .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      line-height: 1.1;
+    }
+
+    .nav-brand .sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--moss); }
+
+    /* HERO */
+    .hero {
+      min-height: 80vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 5rem;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 6rem 6rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 4.5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--moss);
+    }
+
+    .hero-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 40ch;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: transparent;
+      color: var(--moss);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--moss);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--moss);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    .hero-right {
+      background: var(--parchment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.6s;
+    }
+
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(122,158,118,0.15) 0%, transparent 60%);
+    }
+
+    .hero-right svg {
+      width: 70%;
+      max-width: 380px;
+      opacity: 0.88;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SECTION DIVIDER */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* OVERVIEW */
+    .overview {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      padding: 7rem 6rem;
+      background: var(--parchment);
+    }
+
+    .overview-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 0.4rem;
+    }
+
+    .overview-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+
+    .overview-content h2 em {
+      font-style: italic;
+      color: var(--moss);
+    }
+
+    .overview-content p {
+      font-size: 1rem;
+      color: #3a3630;
+      margin-bottom: 1.2rem;
+      max-width: 58ch;
+    }
+
+    /* UNITS */
+    .units {
+      padding: 7rem 6rem;
+      background: var(--cream);
+    }
+
+    .units-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .units-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .unit-card {
+      border: 1px solid var(--border);
+      padding: 2rem;
+      background: white;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .unit-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(61,92,58,0.09);
+    }
+
+    .unit-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+    }
+
+    .unit-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+
+    .unit-desc {
+      font-size: 0.92rem;
+      color: #3a3630;
+      line-height: 1.7;
+    }
+
+    .unit-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1.25rem;
+      opacity: 0.75;
+    }
+
+    /* PHILOSOPHY */
+    .philosophy {
+      background: var(--moss);
+      padding: 7rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .philosophy::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 60%;
+      height: 200%;
+      background: radial-gradient(ellipse, rgba(232,184,75,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .philosophy-inner {
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .philosophy-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .philosophy h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .philosophy h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .philosophy p {
+      font-size: 1rem;
+      color: rgba(245,240,232,0.82);
+      margin-bottom: 1.4rem;
+      max-width: 56ch;
+      line-height: 1.75;
+    }
+
+    .philosophy-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      margin-top: 1rem;
+      transition: gap 0.2s;
+    }
+
+    .philosophy-link:hover { gap: 0.9rem; }
+    .philosophy-link::after { content: '→'; }
+
+    /* FOOTER */
+    footer {
+      padding: 2.5rem 6rem;
+      background: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--parchment);
+      text-transform: uppercase;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 7rem 2rem 4rem; }
+      .hero-right { display: none; }
+      .overview { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 1.5rem; }
+      .units { padding: 4rem 2rem; }
+      .philosophy { padding: 4rem 2rem; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">
+      <span class="wordmark">PLAD</span>
+      <span class="sub">Phototropic Learning & Design</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#pitch">Work With Me</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Groundwork · Unit One</p>
+      <h1 class="hero-title">
+        Relation Naming<br>
+        <em>Lessons</em>
+      </h1>
+      <p class="hero-sub">Teaching students to see — and name — the structure inside a problem.</p>
+      <div class="hero-cta">
+        <a href="https://dcarro3-svg.github.io/relation-naming/" target="_blank" class="btn-primary">Open the Tool</a>
+        <a href="index.html#projects" class="btn-secondary">Back to Projects</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <svg viewBox="0 0 420 460" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Whole bar at top -->
+        <rect x="60" y="60" width="300" height="52" rx="4" fill="#3d5c3a" opacity="0.75"/>
+        <text x="210" y="91" text-anchor="middle" font-family="serif" font-size="18" fill="#faf7f0" opacity="0.95">whole</text>
+        <!-- Part bars -->
+        <rect x="60" y="128" width="172" height="52" rx="4" fill="#7a9e76" opacity="0.65"/>
+        <text x="146" y="159" text-anchor="middle" font-family="serif" font-size="16" fill="#faf7f0" opacity="0.95">part</text>
+        <rect x="240" y="128" width="120" height="52" rx="4" fill="#c17f3b" opacity="0.6"/>
+        <text x="300" y="159" text-anchor="middle" font-family="serif" font-size="16" fill="#faf7f0" opacity="0.9">part</text>
+        <!-- Brace / connector lines -->
+        <line x1="210" y1="112" x2="210" y2="128" stroke="#d8cfbe" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <!-- Relation label row -->
+        <text x="60" y="218" font-family="serif" font-size="13" fill="#c17f3b" opacity="0.8" font-style="italic">Simple relation:  A is part of B</text>
+        <!-- Second example — comparison -->
+        <rect x="60" y="248" width="200" height="44" rx="4" fill="#3d5c3a" opacity="0.6"/>
+        <text x="160" y="275" text-anchor="middle" font-family="serif" font-size="15" fill="#faf7f0" opacity="0.9">larger</text>
+        <rect x="60" y="302" width="120" height="44" rx="4" fill="#7a9e76" opacity="0.55"/>
+        <text x="120" y="329" text-anchor="middle" font-family="serif" font-size="15" fill="#faf7f0" opacity="0.9">smaller</text>
+        <!-- Difference bracket -->
+        <line x1="182" y1="314" x2="260" y2="314" stroke="#e8b84b" stroke-width="1.5"/>
+        <line x1="182" y1="309" x2="182" y2="319" stroke="#e8b84b" stroke-width="1.5"/>
+        <line x1="260" y1="309" x2="260" y2="319" stroke="#e8b84b" stroke-width="1.5"/>
+        <text x="221" y="308" text-anchor="middle" font-family="serif" font-size="11" fill="#e8b84b" opacity="0.9" font-style="italic">difference</text>
+        <!-- Relation label -->
+        <text x="60" y="378" font-family="serif" font-size="13" fill="#c17f3b" opacity="0.8" font-style="italic">Comparison relation:  A is more than B</text>
+        <!-- Decorative dots -->
+        <circle cx="380" cy="90" r="3" fill="#e8b84b" opacity="0.3"/>
+        <circle cx="40" cy="200" r="2.5" fill="#c17f3b" opacity="0.25"/>
+        <circle cx="370" cy="300" r="2" fill="#7a9e76" opacity="0.3"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- OVERVIEW -->
+  <section class="overview">
+    <div class="overview-label reveal">Overview</div>
+    <div class="overview-content reveal">
+      <h2>Comprehension is a <em>teachable skill.</em></h2>
+      <p>
+        Most word problem instruction skips straight to computation. Students learn to hunt
+        for keywords and apply procedures — but they never learn to read a problem structurally.
+        Relation Naming Lessons fix that.
+      </p>
+      <p>
+        Students learn to identify the type of mathematical relation a problem describes —
+        part-part-whole, comparison, equal groups, ratio — and to name it precisely before
+        ever writing an equation. This is the comprehension step that computation depends on.
+      </p>
+      <p>
+        The lessons are structured, cumulative, and built for whole-class instruction
+        or independent study. Each lesson introduces a new relation type, builds vocabulary,
+        and provides guided practice with immediate feedback.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- UNITS -->
+  <section class="units">
+    <div class="units-header reveal">
+      <h2>Lesson Sequence</h2>
+    </div>
+    <div class="unit-grid">
+
+      <div class="unit-card reveal">
+        <svg class="unit-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="6" y="14" width="36" height="10" rx="2" fill="#3d5c3a" opacity="0.7"/>
+          <rect x="6" y="28" width="20" height="10" rx="2" fill="#7a9e76" opacity="0.6"/>
+          <rect x="28" y="28" width="14" height="10" rx="2" fill="#c17f3b" opacity="0.55"/>
+        </svg>
+        <p class="unit-number">Unit 01</p>
+        <h3 class="unit-title">Simple Relations</h3>
+        <p class="unit-desc">
+          Part-part-whole and additive comparison. Students learn to distinguish
+          "joining" from "comparing" and name each relation type using precise language.
+        </p>
+      </div>
+
+      <div class="unit-card reveal">
+        <svg class="unit-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <circle cx="12" cy="24" r="7" fill="#3d5c3a" opacity="0.65"/>
+          <circle cx="36" cy="24" r="7" fill="#7a9e76" opacity="0.6"/>
+          <line x1="20" y1="24" x2="28" y2="24" stroke="#c17f3b" stroke-width="2" opacity="0.7"/>
+          <polygon points="28,20 36,24 28,28" fill="#c17f3b" opacity="0.7"/>
+        </svg>
+        <p class="unit-number">Unit 02</p>
+        <h3 class="unit-title">Compound Relations</h3>
+        <p class="unit-desc">
+          Multiplicative and ratio relations. Students extend their relational
+          vocabulary to problems involving equal groups, rates, and proportional comparison.
+        </p>
+      </div>
+
+      <div class="unit-card reveal">
+        <svg class="unit-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="6" y="10" width="16" height="10" rx="2" fill="#3d5c3a" opacity="0.6"/>
+          <rect x="26" y="10" width="16" height="10" rx="2" fill="#7a9e76" opacity="0.55"/>
+          <rect x="16" y="28" width="16" height="10" rx="2" fill="#c17f3b" opacity="0.55"/>
+          <line x1="14" y1="20" x2="22" y2="28" stroke="#d8cfbe" stroke-width="1.2" opacity="0.7"/>
+          <line x1="34" y1="20" x2="26" y2="28" stroke="#d8cfbe" stroke-width="1.2" opacity="0.7"/>
+        </svg>
+        <p class="unit-number">Unit 03</p>
+        <h3 class="unit-title">Complex Relations</h3>
+        <p class="unit-desc">
+          Multi-step problems with embedded relations. Students practice identifying
+          nested relation structures and mapping them before selecting a solution strategy.
+        </p>
+      </div>
+
+      <div class="unit-card reveal">
+        <svg class="unit-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="6" y="20" width="36" height="10" rx="2" fill="#3d5c3a" opacity="0.5"/>
+          <circle cx="24" cy="25" r="5" fill="#e8b84b" opacity="0.75"/>
+          <line x1="6" y1="14" x2="42" y2="14" stroke="#d8cfbe" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+          <line x1="6" y1="36" x2="42" y2="36" stroke="#d8cfbe" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+        </svg>
+        <p class="unit-number">Unit 04</p>
+        <h3 class="unit-title">Word Problem Application</h3>
+        <p class="unit-desc">
+          Applied practice with authentic word problems. Students use relation naming
+          as a reading comprehension strategy — identifying structure before computing.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="philosophy-inner">
+      <p class="philosophy-eyebrow reveal">The Premise</p>
+      <h2 class="reveal">
+        Students don't fail math<br>
+        because it's <em>too hard.</em>
+      </h2>
+      <p class="reveal">
+        They fail because no one taught them to read it. A word problem is a text —
+        it describes a situation with a relational structure. Before a student can solve it,
+        they need to comprehend it. Relation naming is that comprehension step.
+      </p>
+      <p class="reveal">
+        These lessons were designed around that premise: teach the structure first,
+        and computation becomes a choice, not a guess.
+      </p>
+      <a href="https://dcarro3-svg.github.io/relation-naming/" target="_blank" class="philosophy-link reveal">Open the Lessons</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Phototropic Learning & Design</span>
+    <span class="footer-copy">© 2026 PLAD · All rights reserved</span>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
