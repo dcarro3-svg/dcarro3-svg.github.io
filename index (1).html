@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phototropic Learning and Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1c1a16;
+      --parchment: #f5f0e8;
+      --moss:      #3d5c3a;
+      --amber:     #c17f3b;
+      --gold:      #e8b84b;
+      --sage:      #7a9e76;
+      --cream:     #faf7f0;
+      --muted:     #7a7163;
+      --border:    #d8cfbe;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(250, 247, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .nav-brand .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      line-height: 1.1;
+    }
+
+    .nav-brand .sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--moss); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 6rem 6rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--moss);
+    }
+
+    .hero-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 38ch;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-body {
+      font-size: 1rem;
+      color: var(--ink);
+      max-width: 42ch;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.75s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: transparent;
+      color: var(--moss);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--moss);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--moss);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    /* ── HERO RIGHT — botanical illustration area ── */
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 60% 40%, rgba(122,158,118,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 80%, rgba(193,127,59,0.12) 0%, transparent 50%);
+    }
+
+    .hero-illustration {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards 1s;
+    }
+
+    .hero-illustration svg {
+      width: 85%;
+      height: 85%;
+      opacity: 0.85;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      padding: 7rem 6rem;
+      background: var(--parchment);
+    }
+
+    .about-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 0.4rem;
+    }
+
+    .about-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+
+    .about-content h2 em {
+      font-style: italic;
+      color: var(--moss);
+    }
+
+    .about-content p {
+      font-size: 1rem;
+      color: #3a3630;
+      margin-bottom: 1.2rem;
+      max-width: 58ch;
+    }
+
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--cream);
+    }
+
+    /* ── PROJECTS ── */
+    .projects {
+      padding: 7rem 6rem;
+      background: var(--cream);
+    }
+
+    .projects-header {
+      display: flex;
+      align-items: baseline;
+      gap: 2rem;
+      margin-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .projects-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    .projects-header .count {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .project-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-bottom: 3rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(61,92,58,0.1);
+    }
+
+    .project-card.reverse { direction: rtl; }
+    .project-card.reverse > * { direction: ltr; }
+
+    .project-visual {
+      background: var(--parchment);
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(122,158,118,0.08) 0%, rgba(193,127,59,0.08) 100%);
+    }
+
+    .project-visual svg {
+      width: 60%;
+      height: 60%;
+      opacity: 0.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .project-info {
+      padding: 3rem;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .project-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .project-desc {
+      font-size: 0.95rem;
+      color: #3a3630;
+      margin-bottom: 1.5rem;
+      max-width: 44ch;
+      line-height: 1.75;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--moss);
+      text-decoration: none;
+      transition: gap 0.2s;
+    }
+
+    .project-link:hover { gap: 0.9rem; }
+    .project-link::after { content: '→'; }
+
+    /* ── PITCH ── */
+    .pitch {
+      background: var(--moss);
+      padding: 7rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pitch::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 60%;
+      height: 200%;
+      background: radial-gradient(ellipse, rgba(232,184,75,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .pitch-inner {
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .pitch-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .pitch h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .pitch h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .pitch p {
+      font-size: 1rem;
+      color: rgba(245,240,232,0.8);
+      margin-bottom: 2.5rem;
+      max-width: 52ch;
+      line-height: 1.75;
+    }
+
+    .pitch-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+    }
+
+    .pitch-example {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(232,184,75,0.4);
+      color: var(--gold);
+      background: rgba(232,184,75,0.06);
+    }
+
+    .pitch-cta {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .pitch-cta:hover {
+      background: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 6rem;
+      background: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--parchment);
+      text-transform: uppercase;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 7rem 2rem 4rem; }
+      .hero-right { display: none; }
+      .about { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 1.5rem; }
+      .projects { padding: 4rem 2rem; }
+      .project-card { grid-template-columns: 1fr; }
+      .project-card.reverse { direction: ltr; }
+      .pitch { padding: 4rem 2rem; }
+      footer { padding: 2rem 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-brand">
+      <span class="wordmark">PLAD</span>
+      <span class="sub">Phototropic Learning & Design</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#pitch">Work With Me</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Curriculum · Tools · Design</p>
+      <h1 class="hero-title">
+        You name it.<br>
+        <em>I build it.</em>
+      </h1>
+      <p class="hero-sub">Custom learning tools for educators who know what they need.</p>
+      <p class="hero-body">
+        I'm a former teacher and educational policy researcher who builds digital curriculum tools. 
+        Tell me what you wish existed in your classroom. I'll make it.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn-primary">See the Work</a>
+        <a href="#pitch" class="btn-secondary">Propose a Project</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-illustration">
+        <!-- Botanical / growth SVG illustration -->
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Main stem -->
+          <path d="M200 480 C200 380 190 300 205 200 C215 120 200 60 210 20" stroke="#3d5c3a" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Left branch 1 -->
+          <path d="M203 320 C180 300 150 295 120 285" stroke="#3d5c3a" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Left leaf 1 -->
+          <ellipse cx="108" cy="281" rx="22" ry="10" fill="#7a9e76" opacity="0.6" transform="rotate(-20 108 281)"/>
+          <!-- Right branch 1 -->
+          <path d="M205 260 C230 240 260 238 290 228" stroke="#3d5c3a" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Right leaf 1 -->
+          <ellipse cx="303" cy="224" rx="22" ry="10" fill="#7a9e76" opacity="0.6" transform="rotate(15 303 224)"/>
+          <!-- Left branch 2 -->
+          <path d="M206 200 C183 180 158 172 132 162" stroke="#3d5c3a" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="120" cy="158" rx="18" ry="8" fill="#7a9e76" opacity="0.5" transform="rotate(-25 120 158)"/>
+          <!-- Right branch 2 -->
+          <path d="M207 160 C228 138 252 130 275 118" stroke="#3d5c3a" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="286" cy="113" rx="18" ry="8" fill="#7a9e76" opacity="0.5" transform="rotate(20 286 113)"/>
+          <!-- Top small leaves -->
+          <path d="M208 100 C195 80 180 72 165 60" stroke="#3d5c3a" stroke-width="1.2" stroke-linecap="round"/>
+          <ellipse cx="155" cy="56" rx="14" ry="6" fill="#7a9e76" opacity="0.4" transform="rotate(-30 155 56)"/>
+          <path d="M209 80 C222 62 238 55 252 44" stroke="#3d5c3a" stroke-width="1.2" stroke-linecap="round"/>
+          <ellipse cx="261" cy="40" rx="14" ry="6" fill="#7a9e76" opacity="0.4" transform="rotate(25 261 40)"/>
+          <!-- Sun/light source -->
+          <circle cx="210" cy="22" r="18" fill="none" stroke="#e8b84b" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="210" cy="22" r="8" fill="#e8b84b" opacity="0.35"/>
+          <!-- Root system -->
+          <path d="M200 480 C185 490 165 492 145 498" stroke="#3d5c3a" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+          <path d="M200 480 C215 490 235 495 255 500" stroke="#3d5c3a" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+          <path d="M195 475 C178 485 168 498 155 508" stroke="#3d5c3a" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+          <path d="M205 475 C222 488 232 500 245 510" stroke="#3d5c3a" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+          <!-- Decorative dots / pollen -->
+          <circle cx="145" cy="240" r="2.5" fill="#c17f3b" opacity="0.4"/>
+          <circle cx="320" cy="190" r="2" fill="#c17f3b" opacity="0.35"/>
+          <circle cx="130" cy="130" r="2" fill="#c17f3b" opacity="0.3"/>
+          <circle cx="300" cy="90" r="2.5" fill="#c17f3b" opacity="0.35"/>
+          <circle cx="175" cy="350" r="2" fill="#e8b84b" opacity="0.3"/>
+          <circle cx="240" cy="300" r="1.5" fill="#e8b84b" opacity="0.25"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-label reveal">About</div>
+    <div class="about-content reveal">
+      <h2>Learning is <em>structural.</em><br>So are good tools.</h2>
+      <p>
+        I spent years in classrooms watching students struggle — not because the content was too hard, 
+        but because the instruction wasn't built around how understanding actually forms. 
+        I started building tools to fix that.
+      </p>
+      <p>
+        Now I'm a graduate student in educational policy, and I build custom digital tools for educators 
+        who have a clear vision of what their students need but no way to make it. 
+        If you can describe the problem, I can build something that addresses it.
+      </p>
+      <p>
+        I work at discounted rates for educators and curriculum teams willing to let me add the project 
+        to my portfolio. Small scope, real impact, no risk.
+      </p>
+      <div class="about-tags">
+        <span class="tag">Curriculum Design</span>
+        <span class="tag">Instructional Tools</span>
+        <span class="tag">Ed Policy Research</span>
+        <span class="tag">Former Teacher</span>
+        <span class="tag">HTML · CSS · JS</span>
+        <span class="tag">Interactive Learning</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PROJECTS -->
+  <section class="projects" id="projects">
+    <div class="projects-header reveal">
+      <h2>Projects</h2>
+      <span class="count">01 — 02</span>
+    </div>
+
+    <!-- Project 1: Groundwork -->
+    <div class="project-card reveal">
+      <div class="project-visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Bar model illustration -->
+          <rect x="30" y="60" width="140" height="28" rx="3" fill="#3d5c3a" opacity="0.7"/>
+          <rect x="30" y="100" width="85" height="28" rx="3" fill="#7a9e76" opacity="0.6"/>
+          <rect x="122" y="100" width="48" height="28" rx="3" fill="#c17f3b" opacity="0.5"/>
+          <rect x="30" y="140" width="60" height="28" rx="3" fill="#7a9e76" opacity="0.4"/>
+          <rect x="97" y="140" width="73" height="28" rx="3" fill="#3d5c3a" opacity="0.4"/>
+          <!-- labels -->
+          <text x="100" y="79" text-anchor="middle" font-family="serif" font-size="11" fill="#faf7f0" opacity="0.9">whole</text>
+          <text x="72" y="119" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">part</text>
+          <text x="146" y="119" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">part</text>
+        </svg>
+      </div>
+      <div class="project-info">
+        <p class="project-type">Math Curriculum · Interactive Tool</p>
+        <h3 class="project-title">Groundwork</h3>
+        <p class="project-desc">
+          A complete web-based curriculum for teaching relational understanding in mathematics. 
+          Four units covering simple, compound, and complex relations, word problems, 
+          math fact fluency, and computation — each with structured lessons, practice, 
+          and a bar model drawing tool. Built on the premise that comprehension is a teachable skill.
+        </p>
+        <a href="https://dcarro3-svg.github.io/relation-naming/" target="_blank" class="project-link">Visit Groundwork</a>
+      </div>
+    </div>
+
+    <!-- Project 2: Plant ID -->
+    <div class="project-card reverse reveal">
+      <div class="project-visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Leaf cluster illustration -->
+          <ellipse cx="100" cy="95" rx="35" ry="55" fill="#3d5c3a" opacity="0.5" transform="rotate(-15 100 95)"/>
+          <ellipse cx="130" cy="110" rx="28" ry="45" fill="#7a9e76" opacity="0.5" transform="rotate(20 130 110)"/>
+          <ellipse cx="70" cy="115" rx="25" ry="40" fill="#3d5c3a" opacity="0.4" transform="rotate(-30 70 115)"/>
+          <line x1="100" y1="150" x2="100" y2="180" stroke="#3d5c3a" stroke-width="2" opacity="0.5"/>
+          <!-- vein lines -->
+          <path d="M100 120 C108 105 112 90 108 70" stroke="#faf7f0" stroke-width="1" opacity="0.4" stroke-linecap="round"/>
+          <path d="M100 120 C92 105 88 90 92 70" stroke="#faf7f0" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <p class="project-type">Self-Directed Learning · Visual Discrimination</p>
+        <h3 class="project-title">Plant Family Identifier</h3>
+        <p class="project-desc">
+          A visual discrimination learning tool built to teach plant family identification 
+          through image-based practice. Designed as a self-study system using principles 
+          of perceptual learning — show, categorize, repeat. A prototype in instructional 
+          design for naturalist education.
+        </p>
+        <a href="#" class="project-link">Coming Soon</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PITCH -->
+  <section class="pitch" id="pitch">
+    <div class="pitch-inner">
+      <p class="pitch-eyebrow reveal">Work With Me</p>
+      <h2 class="reveal">
+        What do you wish<br>
+        <em>existed?</em>
+      </h2>
+      <p class="reveal">
+        I'm taking on small curriculum and ed-tool projects at heavily discounted rates. 
+        If you're an educator, curriculum developer, or instructional designer 
+        with a tool in mind — describe it. I'll tell you if I can build it.
+      </p>
+      <div class="pitch-examples reveal">
+        <span class="pitch-example">Progress trackers</span>
+        <span class="pitch-example">Fluency drills</span>
+        <span class="pitch-example">Intervention tools</span>
+        <span class="pitch-example">Visual learning aids</span>
+        <span class="pitch-example">Assessment tools</span>
+        <span class="pitch-example">Curriculum organizers</span>
+      </div>
+      <a href="mailto:hello@pladlearning.com" class="pitch-cta reveal">Propose a Project</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Phototropic Learning & Design</span>
+    <span class="footer-copy">© 2026 PLAD · All rights reserved</span>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
