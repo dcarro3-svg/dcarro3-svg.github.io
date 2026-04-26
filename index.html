@@ -378,9 +378,6 @@
     .project-visual {
       background: var(--parchment);
       min-height: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       position: relative;
       overflow: hidden;
     }
@@ -389,15 +386,24 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(122,158,118,0.08) 0%, rgba(193,127,59,0.08) 100%);
+      background: linear-gradient(135deg, rgba(122,158,118,0.04) 0%, rgba(193,127,59,0.04) 100%);
+      pointer-events: none;
+      z-index: 2;
     }
 
-    .project-visual svg {
-      width: 60%;
-      height: 60%;
-      opacity: 0.7;
-      position: relative;
-      z-index: 1;
+    .preview-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .preview-wrap iframe {
+      width: 1280px;
+      height: 900px;
+      border: none;
+      transform: scale(0.38);
+      transform-origin: top left;
+      pointer-events: none;
     }
 
     .project-info {
@@ -732,18 +738,9 @@
     <!-- Project 1: Groundwork -->
     <div class="project-card reveal">
       <div class="project-visual">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Bar model illustration -->
-          <rect x="30" y="60" width="140" height="28" rx="3" fill="#3d5c3a" opacity="0.7"/>
-          <rect x="30" y="100" width="85" height="28" rx="3" fill="#7a9e76" opacity="0.6"/>
-          <rect x="122" y="100" width="48" height="28" rx="3" fill="#c17f3b" opacity="0.5"/>
-          <rect x="30" y="140" width="60" height="28" rx="3" fill="#7a9e76" opacity="0.4"/>
-          <rect x="97" y="140" width="73" height="28" rx="3" fill="#3d5c3a" opacity="0.4"/>
-          <!-- labels -->
-          <text x="100" y="79" text-anchor="middle" font-family="serif" font-size="11" fill="#faf7f0" opacity="0.9">whole</text>
-          <text x="72" y="119" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">part</text>
-          <text x="146" y="119" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">part</text>
-        </svg>
+        <div class="preview-wrap">
+          <iframe src="https://dcarro3-svg.github.io/relation-naming/" scrolling="no" tabindex="-1"></iframe>
+        </div>
       </div>
       <div class="project-info">
         <p class="project-type">Math Curriculum · Interactive Tool</p>
@@ -761,27 +758,9 @@
     <!-- Project 2: Relation Naming Lessons -->
     <div class="project-card reverse reveal">
       <div class="project-visual">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Node A -->
-          <circle cx="55" cy="80" r="18" fill="#3d5c3a" opacity="0.7"/>
-          <text x="55" y="85" text-anchor="middle" font-family="serif" font-size="11" fill="#faf7f0" opacity="0.95">A</text>
-          <!-- Node B -->
-          <circle cx="145" cy="80" r="18" fill="#7a9e76" opacity="0.65"/>
-          <text x="145" y="85" text-anchor="middle" font-family="serif" font-size="11" fill="#faf7f0" opacity="0.95">B</text>
-          <!-- Arrow A→B -->
-          <line x1="74" y1="80" x2="124" y2="80" stroke="#c17f3b" stroke-width="2" opacity="0.8"/>
-          <polygon points="124,75 134,80 124,85" fill="#c17f3b" opacity="0.8"/>
-          <!-- Relation label -->
-          <text x="100" y="70" text-anchor="middle" font-family="serif" font-size="9" fill="#c17f3b" opacity="0.9" font-style="italic">part of</text>
-          <!-- Second relation row -->
-          <circle cx="55" cy="140" r="18" fill="#7a9e76" opacity="0.5"/>
-          <text x="55" y="145" text-anchor="middle" font-family="serif" font-size="9" fill="#faf7f0" opacity="0.9">whole</text>
-          <circle cx="145" cy="140" r="18" fill="#3d5c3a" opacity="0.45"/>
-          <text x="145" y="145" text-anchor="middle" font-family="serif" font-size="9" fill="#faf7f0" opacity="0.9">part</text>
-          <line x1="74" y1="140" x2="124" y2="140" stroke="#e8b84b" stroke-width="1.5" opacity="0.7"/>
-          <polygon points="124,136 133,140 124,144" fill="#e8b84b" opacity="0.7"/>
-          <text x="100" y="130" text-anchor="middle" font-family="serif" font-size="9" fill="#e8b84b" opacity="0.85" font-style="italic">contains</text>
-        </svg>
+        <div class="preview-wrap">
+          <iframe src="https://dcarro3-svg.github.io/relation-naming/lesson-one.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
       </div>
       <div class="project-info">
         <p class="project-type">Math Curriculum · Structured Lessons</p>
@@ -798,25 +777,9 @@
     <!-- Project 3: Bar Model Drawing Tool -->
     <div class="project-card reveal">
       <div class="project-visual">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Toolbar strip -->
-          <rect x="25" y="30" width="150" height="22" rx="3" fill="#3d5c3a" opacity="0.15" stroke="#3d5c3a" stroke-width="0.8" opacity="0.3"/>
-          <rect x="32" y="36" width="12" height="10" rx="1.5" fill="#3d5c3a" opacity="0.55"/>
-          <rect x="50" y="36" width="12" height="10" rx="1.5" fill="#7a9e76" opacity="0.45"/>
-          <rect x="68" y="36" width="12" height="10" rx="1.5" fill="#c17f3b" opacity="0.45"/>
-          <!-- Canvas area -->
-          <rect x="25" y="58" width="150" height="110" rx="2" fill="white" opacity="0.6" stroke="#d8cfbe" stroke-width="1"/>
-          <!-- Bar model on canvas -->
-          <rect x="35" y="72" width="130" height="22" rx="2" fill="#3d5c3a" opacity="0.6"/>
-          <text x="100" y="87" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">48</text>
-          <rect x="35" y="103" width="76" height="22" rx="2" fill="#7a9e76" opacity="0.55"/>
-          <text x="73" y="118" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">?</text>
-          <rect x="116" y="103" width="49" height="22" rx="2" fill="#c17f3b" opacity="0.5"/>
-          <text x="140" y="118" text-anchor="middle" font-family="serif" font-size="10" fill="#faf7f0" opacity="0.9">19</text>
-          <!-- Pencil icon hint -->
-          <line x1="140" y1="148" x2="155" y2="133" stroke="#c17f3b" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
-          <polygon points="155,133 160,130 157,137" fill="#c17f3b" opacity="0.5"/>
-        </svg>
+        <div class="preview-wrap">
+          <iframe src="https://dcarro3-svg.github.io/relation-naming/bar_model_draw.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
       </div>
       <div class="project-info">
         <p class="project-type">Math Curriculum · Interactive Tool</p>
@@ -833,21 +796,9 @@
     <!-- Project 4: Fluency Practice System -->
     <div class="project-card reverse reveal">
       <div class="project-visual">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Flash card stack -->
-          <rect x="42" y="55" width="116" height="82" rx="4" fill="#d8cfbe" opacity="0.5" transform="rotate(-4 42 55)"/>
-          <rect x="38" y="52" width="116" height="82" rx="4" fill="#f5f0e8" opacity="0.7" transform="rotate(-1.5 38 52)"/>
-          <rect x="35" y="50" width="116" height="82" rx="4" fill="white" stroke="#d8cfbe" stroke-width="1"/>
-          <!-- Equation on card -->
-          <text x="93" y="100" text-anchor="middle" font-family="serif" font-size="22" fill="#3d5c3a" opacity="0.85" font-weight="600">7 × 8</text>
-          <line x1="60" y1="110" x2="126" y2="110" stroke="#d8cfbe" stroke-width="1" opacity="0.8"/>
-          <text x="93" y="125" text-anchor="middle" font-family="serif" font-size="18" fill="#c17f3b" opacity="0.7" font-style="italic">= 56</text>
-          <!-- Timer arc -->
-          <circle cx="150" cy="155" r="18" stroke="#d8cfbe" stroke-width="2" fill="none" opacity="0.6"/>
-          <path d="M150 137 A18 18 0 0 1 168 155" stroke="#3d5c3a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-          <circle cx="150" cy="155" r="2.5" fill="#3d5c3a" opacity="0.6"/>
-          <line x1="150" y1="155" x2="150" y2="142" stroke="#3d5c3a" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-        </svg>
+        <div class="preview-wrap">
+          <iframe src="https://dcarro3-svg.github.io/relation-naming/fact-lesson-add-1.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
       </div>
       <div class="project-info">
         <p class="project-type">Math Curriculum · Fluency Practice</p>
@@ -864,25 +815,9 @@
     <!-- Project 5: Progress Chart -->
     <div class="project-card reveal">
       <div class="project-visual">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Chart axes -->
-          <line x1="38" y1="155" x2="170" y2="155" stroke="#d8cfbe" stroke-width="1.5"/>
-          <line x1="38" y1="50" x2="38" y2="155" stroke="#d8cfbe" stroke-width="1.5"/>
-          <!-- Grid lines -->
-          <line x1="38" y1="120" x2="170" y2="120" stroke="#d8cfbe" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
-          <line x1="38" y1="87" x2="170" y2="87" stroke="#d8cfbe" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
-          <!-- Progress bars -->
-          <rect x="52" y="105" width="18" height="50" rx="2" fill="#7a9e76" opacity="0.55"/>
-          <rect x="82" y="90" width="18" height="65" rx="2" fill="#7a9e76" opacity="0.6"/>
-          <rect x="112" y="72" width="18" height="83" rx="2" fill="#3d5c3a" opacity="0.6"/>
-          <rect x="142" y="58" width="18" height="97" rx="2" fill="#3d5c3a" opacity="0.7"/>
-          <!-- Trend line -->
-          <polyline points="61,105 91,90 121,72 151,58" stroke="#e8b84b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-          <circle cx="61" cy="105" r="3" fill="#e8b84b" opacity="0.8"/>
-          <circle cx="91" cy="90" r="3" fill="#e8b84b" opacity="0.8"/>
-          <circle cx="121" cy="72" r="3" fill="#e8b84b" opacity="0.8"/>
-          <circle cx="151" cy="58" r="3.5" fill="#e8b84b" opacity="0.9"/>
-        </svg>
+        <div class="preview-wrap">
+          <iframe src="https://dcarro3-svg.github.io/relation-naming/chart.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
       </div>
       <div class="project-info">
         <p class="project-type">Math Curriculum · Progress Tracking</p>
