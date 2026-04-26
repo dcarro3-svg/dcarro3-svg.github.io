@@ -117,6 +117,16 @@
       z-index: 2;
     }
 
+    .hero-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 2vw, 1.7rem);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
     .hero-eyebrow {
       font-family: 'DM Mono', monospace;
       font-size: 0.68rem;
@@ -615,6 +625,7 @@
   <section class="hero">
     <div class="hero-left">
       <p class="hero-eyebrow">Curriculum · Tools · Design</p>
+      <h2 class="hero-question">What do you wish existed in your classroom?</h2>
       <h1 class="hero-title">
         You name it.<br>
         <em>I build it.</em>
