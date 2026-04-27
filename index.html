@@ -65,7 +65,7 @@
 
     .nav-brand .wordmark {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.15rem;
+      font-size: 1.5rem;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -89,7 +89,7 @@
 
     .nav-links a {
       font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--muted);
@@ -102,8 +102,6 @@
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       position: relative;
       overflow: hidden;
     }
@@ -119,8 +117,9 @@
 
     .hero-question {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.3rem, 2vw, 1.7rem);
-      font-weight: 600;
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
       color: var(--ink);
       margin-bottom: 0.75rem;
       opacity: 0;
@@ -140,9 +139,8 @@
 
     .hero-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 5vw, 5.5rem);
-      font-weight: 300;
-      line-height: 1.05;
+      font-size: clamp(1.3rem, 2vw, 1.7rem);
+      font-weight: 600;
       color: var(--ink);
       margin-bottom: 1rem;
       opacity: 0;
@@ -223,34 +221,21 @@
       transform: translateY(-2px);
     }
 
-    /* ── HERO RIGHT — botanical illustration area ── */
     .hero-right {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-right::before {
-      content: '';
       position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 60% 40%, rgba(122,158,118,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse at 30% 80%, rgba(193,127,59,0.12) 0%, transparent 50%);
+      top: 5rem;
+      right: 3rem;
+      width: 200px;
+      z-index: 3;
     }
 
     .hero-illustration {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
       animation: fadeIn 1.2s ease forwards 1s;
     }
 
     .hero-illustration img {
-      width: 85%;
-      height: 85%;
+      width: 100%;
       object-fit: contain;
       opacity: 0.85;
     }
@@ -274,7 +259,7 @@
 
     .about-label {
       font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
+      font-size: 0.9rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--amber);
@@ -338,7 +323,7 @@
 
     .projects-header h2 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
+      font-size: 3rem;
       font-weight: 300;
       color: var(--ink);
     }
@@ -602,7 +587,6 @@
     @media (max-width: 900px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { gap: 1.5rem; }
-      .hero { grid-template-columns: 1fr; }
       .hero-left { padding: 7rem 2rem 4rem; }
       .hero-right { display: none; }
       .about { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 1.5rem; }
@@ -619,7 +603,7 @@
   <!-- NAV -->
   <nav>
     <div class="nav-brand">
-      <span class="wordmark">PLAD</span>
+      <span class="wordmark">P.L.A.D</span>
       <span class="sub">Phototropic Learning & Design</span>
     </div>
     <ul class="nav-links">
@@ -638,8 +622,7 @@
         You name it.<br>
         <em>I build it.</em>
       </h1>
-      <p class="hero-sub">Custom learning tools for educators who know what they need.</p>
-      <p class="hero-body">
+<p class="hero-body">
         I'm a former teacher and educational policy researcher who builds digital curriculum tools.
         Tell me what you wish existed in your classroom. I'll make it.
       </p>
