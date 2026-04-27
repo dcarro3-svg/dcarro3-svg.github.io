@@ -181,6 +181,11 @@
   </div>
 </div>
 
+<footer style="margin-top:20px;padding:2rem 0;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);">
+  <span style="font-family:'DM Serif Display',serif;font-size:1rem;font-weight:600;letter-spacing:0.08em;color:var(--text-secondary);text-transform:uppercase;">Phototropic Learning & Design</span>
+  <span style="font-family:'DM Sans',monospace;font-size:0.65rem;letter-spacing:0.15em;color:var(--text-muted);text-transform:uppercase;">© 2026 PLAD · All rights reserved</span>
+</footer>
+
 <script>
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -1034,7 +1039,6 @@ function init() {
           const banner = document.createElement('div');
           banner.className = 'keep-going-banner';
           banner.innerHTML = `
-            <img src="Icons/pigeon.png" alt="">
             <div class="keep-going-banner-text">
               <strong>Keep going!</strong>
               <span>You're ${gap} correct/min away from today's goal of ${Math.round(todayGoal)}. Practice again to get there.</span>
