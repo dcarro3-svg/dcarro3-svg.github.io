@@ -104,6 +104,18 @@
   @keyframes dotPop{0%{opacity:0;transform:scale(0)}70%{opacity:1;transform:scale(2)}100%{opacity:1;transform:scale(1)}}
   .new-dot{animation:dotPop 0.7s ease 0.5s both;transform-box:fill-box;transform-origin:center;}
 
+  /* ── Demo banner ────────────────────────────────────────────────────────────── */
+  .demo-banner{display:none;background:#1E1530;border:2px solid var(--accent);border-radius:var(--radius-lg);
+    padding:16px 20px;gap:14px;align-items:center;flex-wrap:wrap;animation:fadeUp 0.4s ease;}
+  .demo-banner.visible{display:flex;}
+  .demo-banner-text{flex:1;min-width:180px;}
+  .demo-banner-text strong{display:block;font-size:14px;font-weight:700;color:#EEE6FF;margin-bottom:3px;}
+  .demo-banner-text span{font-size:12px;color:var(--text-muted);}
+  .demo-progress{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);min-width:48px;text-align:center;}
+  .demo-bar-wrap{flex:1;min-width:120px;height:6px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+  .demo-bar{height:100%;background:var(--accent);border-radius:4px;transition:width 0.5s ease;width:0%;}
+  .demo-actions{display:flex;gap:8px;}
+
   /* ── Keep Going prompt (shown when arriving from fluency and goal not met) ── */
   .keep-going-banner{background:#EEE6FF;border:2px solid var(--accent);border-radius:var(--radius-lg);
     padding:20px 24px;display:flex;align-items:center;gap:16px;animation:fadeUp 0.4s ease;}
@@ -117,7 +129,22 @@
 <div class="app">
   <div class="header">
     <span class="title">Progress Chart</span>
+    <button class="nav-link primary" id="demoBtn" onclick="startDemo()">▶ Watch Demo</button>
     <a class="nav-link" href="index.html">Home</a>
+  </div>
+
+  <!-- Demo status banner -->
+  <div class="demo-banner" id="demoBanner">
+    <div class="demo-banner-text">
+      <strong id="demoBannerTitle">Demo: watching progress build over 2 weeks</strong>
+      <span id="demoBannerSub">Two students practicing fluency — sessions appearing in real time</span>
+    </div>
+    <div class="demo-progress" id="demoCounter">0</div>
+    <div class="demo-bar-wrap"><div class="demo-bar" id="demoBar"></div></div>
+    <div class="demo-actions">
+      <button class="nav-link" id="demoReplayBtn" style="display:none" onclick="replayDemo()">↺ Replay</button>
+      <button class="nav-link danger" onclick="clearDemo()">✕ Clear</button>
+    </div>
   </div>
 
   <div class="stats-row" id="statsRow"></div>
@@ -549,14 +576,123 @@ const LESSONS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// DEMO OVERLAY — synthetic sessions injected in-memory, never written to localStorage
+// ═══════════════════════════════════════════════════════════════════════════════
+let demoOverlay = {}; // { [lessonKey]: [session, ...] }
+
+function buildDemoSessions() {
+  const now = new Date();
+  function daysAgo(n, hour) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - n);
+    d.setHours(hour || 10, 15, 0, 0);
+    return d.toISOString();
+  }
+  // Two lesson series: "Equal" (id:1, key:'fluency_l1_sessions') and
+  // "Additive Facts" (id:6, key:'fluency_fact_add_sessions')
+  // Each shows a clear learning curve over ~13 days.
+  return [
+    // ── Equal (passoffAim: 30) ──────────────────────────────────────────────
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(13,9),  cpm:7,  epm:5, corrects:14, errors:10, phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(12,10), cpm:10, epm:4, corrects:20, errors:8,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(11,9),  cpm:13, epm:3, corrects:26, errors:6,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(10,10), cpm:15, epm:2, corrects:30, errors:4,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(8,11),  cpm:18, epm:2, corrects:36, errors:4,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(7,9),   cpm:21, epm:1, corrects:42, errors:2,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(6,10),  cpm:24, epm:1, corrects:48, errors:2,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(4,9),   cpm:27, epm:0, corrects:54, errors:0,  phase:'fluency' }},
+    { key:'fluency_l1_sessions', s:{ date:daysAgo(3,10),  cpm:31, epm:0, corrects:62, errors:0,  phase:'fluency' }},
+    // ── Additive Facts (passoffAim: 60) ────────────────────────────────────
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(13,14), cpm:11, epm:6, corrects:22, errors:12, phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(11,14), cpm:17, epm:4, corrects:34, errors:8,  phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(9,14),  cpm:24, epm:3, corrects:48, errors:6,  phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(8,14),  cpm:29, epm:2, corrects:58, errors:4,  phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(6,14),  cpm:36, epm:1, corrects:72, errors:2,  phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(4,14),  cpm:44, epm:1, corrects:88, errors:2,  phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(3,14),  cpm:51, epm:0, corrects:102, errors:0, phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(2,14),  cpm:57, epm:0, corrects:114, errors:0, phase:'fluency' }},
+    { key:'fluency_fact_add_sessions', s:{ date:daysAgo(1,14),  cpm:62, epm:0, corrects:124, errors:0, phase:'fluency' }},
+  ];
+}
+
+let demoTimers = [];
+let demoAllSessions = [];
+let demoRunning = false;
+
+function startDemo() {
+  clearDemo(true); // reset silently
+  demoAllSessions = buildDemoSessions();
+  demoRunning = true;
+  document.getElementById('demoBanner').classList.add('visible');
+  document.getElementById('demoBtn').style.display = 'none';
+  document.getElementById('demoReplayBtn').style.display = 'none';
+  document.getElementById('demoBannerTitle').textContent = 'Demo: watching progress build over 2 weeks';
+  document.getElementById('demoBannerSub').textContent = 'Two students practicing fluency — sessions appearing in real time';
+  document.getElementById('demoCounter').textContent = '0';
+  document.getElementById('demoBar').style.width = '0%';
+
+  const total = demoAllSessions.length;
+  demoAllSessions.forEach((entry, i) => {
+    const t = setTimeout(() => {
+      // Inject this session into the overlay
+      if (!demoOverlay[entry.key]) demoOverlay[entry.key] = [];
+      demoOverlay[entry.key].push(entry.s);
+
+      // Re-render everything
+      cachedLessonData = loadAll();
+      document.getElementById('statsRow').innerHTML = buildStats(cachedLessonData);
+      renderChart();
+      document.getElementById('legendSection').innerHTML = buildLegend(cachedLessonData);
+      document.getElementById('sessionTable').innerHTML = buildTable(cachedLessonData);
+
+      // Update counter + bar
+      document.getElementById('demoCounter').textContent = i + 1;
+      document.getElementById('demoBar').style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+
+      // Final step
+      if (i === total - 1) {
+        demoRunning = false;
+        document.getElementById('demoBannerTitle').textContent = 'Demo complete — this is what 2 weeks of progress looks like';
+        document.getElementById('demoBannerSub').textContent = 'The chart updates automatically after every real fluency session';
+        document.getElementById('demoReplayBtn').style.display = 'inline-block';
+      }
+    }, i * 620);
+    demoTimers.push(t);
+  });
+}
+
+function replayDemo() {
+  startDemo();
+}
+
+function clearDemo(silent) {
+  // Cancel any running timers
+  demoTimers.forEach(t => clearTimeout(t));
+  demoTimers = [];
+  demoOverlay = {};
+  demoRunning = false;
+  if (!silent) {
+    document.getElementById('demoBanner').classList.remove('visible');
+    document.getElementById('demoBtn').style.display = 'inline-block';
+    cachedLessonData = loadAll();
+    document.getElementById('statsRow').innerHTML = buildStats(cachedLessonData);
+    renderChart();
+    document.getElementById('legendSection').innerHTML = buildLegend(cachedLessonData);
+    document.getElementById('sessionTable').innerHTML = buildTable(cachedLessonData);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // STORAGE
 // ═══════════════════════════════════════════════════════════════════════════════
 function loadAll() {
   return LESSONS.map(L => {
     try {
       const raw = localStorage.getItem(L.key);
-      const sessions = raw ? JSON.parse(raw) : [];
-      return { ...L, sessions: sessions.filter(s => s.phase === 'fluency' && (s.cpm > 0 || s.epm > 0)) };
+      const stored = raw ? JSON.parse(raw) : [];
+      const demo = demoOverlay[L.key] || [];
+      const combined = [...stored, ...demo];
+      return { ...L, sessions: combined.filter(s => s.phase === 'fluency' && (s.cpm > 0 || s.epm > 0)) };
     } catch(e) { return { ...L, sessions: [] }; }
   });
 }
