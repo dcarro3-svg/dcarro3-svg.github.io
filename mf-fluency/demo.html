@@ -533,16 +533,9 @@ function daysAgo(n, hour) {
 
 // Pre-seeded sessions: 10 sessions over the past 13 days
 let chartSessions = [
-  { date: daysAgo(13), cpm: 12 },
-  { date: daysAgo(12), cpm: 15 },
-  { date: daysAgo(11), cpm: 19 },
-  { date: daysAgo(9),  cpm: 23 },
-  { date: daysAgo(8),  cpm: 27 },
-  { date: daysAgo(6),  cpm: 32 },
-  { date: daysAgo(5),  cpm: 36 },
-  { date: daysAgo(3),  cpm: 42 },
-  { date: daysAgo(2),  cpm: 47 },
-  { date: daysAgo(1),  cpm: 52 },
+  { date: daysAgo(3), cpm: 42 },
+  { date: daysAgo(2), cpm: 47 },
+  { date: daysAgo(1), cpm: 52 },
 ];
 
 // Live sessions added during demo (today)
@@ -563,7 +556,7 @@ function renderChart(highlightLast) {
   const PT = 24, PB = 48, PL = 50, PR = 24;
   const CW = W - PL - PR;
 
-  const startDate = daysAgo(13);
+  const startDate = daysAgo(3);
   startDate.setHours(0, 0, 0, 0);
   const endDate = new Date(now);
   endDate.setHours(0, 0, 0, 0);
@@ -602,7 +595,7 @@ function renderChart(highlightLast) {
 
   // X axis date labels
   let xLabels = '';
-  for (let di = 0; di < totalDays; di += 2) {
+  for (let di = 0; di < totalDays; di += 1) {
     const d = new Date(startDate);
     d.setDate(d.getDate() + di);
     const x = PL + (di / Math.max(totalDays - 1, 1)) * CW;
