@@ -1,272 +1,478 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bar Model Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bar Model Tool — Groundwork</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin: 0;
-    padding: 16px 20px;
-    font-family: 'DM Sans', sans-serif;
-    background: #F8F7F5;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1c1a16;
+    --parchment: #f5f0e8;
+    --moss:      #3d5c3a;
+    --amber:     #c17f3b;
+    --gold:      #e8b84b;
+    --sage:      #7a9e76;
+    --cream:     #faf7f0;
+    --muted:     #7a7163;
+    --border:    #d8cfbe;
+    --canvas-bg: #ffffff;
   }
 
-  #toolbar {
-    margin-bottom: 10px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-wrap: wrap;
+  html, body {
+    height: 100%;
+    background: var(--parchment);
+    font-family: 'DM Mono', monospace;
+    color: var(--ink);
+    overflow: hidden;
   }
-  #toolbar button, #toolbar label {
-    padding: 5px 11px;
-    border-radius: 6px;
-    border: 1px solid #D1D5DB;
-    background: #fff;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    color: #374151;
-    cursor: pointer;
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── Layout ── */
+  .tool-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0.75rem 1rem 0.75rem;
+    gap: 0.6rem;
+  }
+
+  /* ── Toolbar ── */
+  #toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    padding: 0.4rem 0.5rem;
+    background: var(--cream);
+    border: 1px solid var(--border);
+  }
+
+  .tool-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .tool-sep {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .tool-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-  }
-  #toolbar button:hover {
-    border-color: #6B7280;
-    background: #F3F4F6;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
   }
 
+  .tool-btn:hover {
+    color: var(--ink);
+    background: var(--parchment);
+    border-color: var(--border);
+  }
+
+  .tool-btn.active {
+    color: var(--moss);
+    background: rgba(61,92,58,0.08);
+    border-color: rgba(61,92,58,0.25);
+  }
+
+  .tool-btn svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    display: block;
+  }
+
+  /* Tooltip */
+  .tool-btn::after {
+    content: attr(data-tip);
+    position: absolute;
+    top: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.28rem 0.6rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    z-index: 100;
+  }
+
+  .tool-btn:hover::after { opacity: 1; }
+
+  /* Grid toggle — hide native checkbox */
+  #gridLabel input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  /* ── Canvas wrapper ── */
   #canvasWrapper {
     position: relative;
-    display: inline-block;
+    flex: 1;
+    min-height: 0;
   }
 
   #canvas {
-    border: 1px solid #000;
-    background: #fff;
-    display: block;
-    cursor: crosshair;
-  }
-
-  #contextMenu {
-    position: absolute;
-    background: #fff;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    padding: 4px 0;
-    font-size: 13px;
-    display: none;
-    z-index: 10;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  }
-
-  #contextMenu button {
     display: block;
     width: 100%;
-    padding: 6px 14px;
+    height: 100%;
+    cursor: crosshair;
+    background: var(--canvas-bg);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Context menu ── */
+  #contextMenu {
+    position: absolute;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0;
+    display: none;
+    z-index: 200;
+    box-shadow: 0 8px 28px rgba(28,26,22,0.14);
+    min-width: 148px;
+  }
+
+  .ctx-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.5rem 0.9rem;
     border: none;
     background: none;
     text-align: left;
     cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    transition: background 0.1s;
     white-space: nowrap;
-    font-family: inherit;
-    color: #374151;
   }
 
-  #contextMenu button:hover {
-    background: #F3F4F6;
+  .ctx-btn svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.6; }
+  .ctx-btn:hover { background: var(--parchment); }
+  .ctx-btn:hover svg { opacity: 1; }
+
+  .ctx-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.25rem 0;
   }
 
+  .ctx-delete { color: #8b1a0e; }
+  .ctx-delete svg { opacity: 0.55; }
+  .ctx-delete:hover { background: rgba(139,26,14,0.06); }
+
+  /* ── Label input overlay ── */
   .label-input {
     position: absolute;
-    font-size: 16px;
-    padding: 2px 4px;
-    border: 1px solid #888;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
     border-radius: 2px;
+    background: rgba(250,247,240,0.95);
+    color: var(--ink);
     z-index: 20;
     box-sizing: border-box;
     text-align: center;
+    outline: none;
   }
 
-  /* ── Equation Builder (Word Problem Mode) ──────────────────────────── */
+  .label-input:focus { border-color: var(--amber); }
+
+  /* ── Equation Builder ── */
   #eq-builder {
     display: none;
-    background: #fff;
-    border: 1px solid #D1D5DB;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 0.85rem 1rem;
+    flex-shrink: 0;
   }
-  #eq-builder.active {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+
+  #eq-builder.active { display: flex; flex-direction: column; gap: 0.6rem; }
+
   .eq-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: #9CA3AF;
+    font-size: 0.55rem;
+    font-weight: 400;
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.22em;
   }
-  .eq-bar-buttons {
+
+  .eq-bar-buttons, .eq-op-buttons {
     display: flex;
-    gap: 4px;
+    gap: 0.3rem;
     flex-wrap: wrap;
   }
-  .eq-bar-buttons button {
-    padding: 5px 11px;
-    border-radius: 6px;
-    border: 1px solid #D1D5DB;
-    background: #F9FAFB;
+
+  .eq-bar-buttons button, .eq-op-buttons button {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--parchment);
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: inherit;
-    color: #1F2937;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    transition: background 0.1s, border-color 0.1s;
   }
-  .eq-bar-buttons button:hover {
-    background: #F3F4F6;
-    border-color: #6B7280;
+
+  .eq-bar-buttons button:hover, .eq-op-buttons button:hover {
+    background: white;
+    border-color: var(--amber);
   }
-  .eq-op-buttons {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .eq-op-buttons button {
-    padding: 5px 11px;
-    border-radius: 6px;
-    border: 1px solid #D1D5DB;
-    background: #fff;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: inherit;
-    color: #374151;
-  }
-  .eq-op-buttons button:hover {
-    background: #F3F4F6;
-    border-color: #6B7280;
-  }
+
   .eq-strip {
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    padding: 8px 10px;
-    min-height: 36px;
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    min-height: 34px;
     display: flex;
-    gap: 4px;
+    gap: 0.3rem;
     align-items: center;
     flex-wrap: wrap;
   }
+
   .eq-token {
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    border-radius: 5px;
-    padding: 3px 9px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1D4ED8;
-    font-family: inherit;
+    background: rgba(61,92,58,0.1);
+    border: 1px solid rgba(61,92,58,0.25);
+    padding: 0.2rem 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--moss);
+    letter-spacing: 0.05em;
   }
-  .eq-controls {
-    display: flex;
-    gap: 6px;
-  }
+
+  .eq-controls { display: flex; gap: 0.4rem; }
+
   .eq-controls button {
-    padding: 7px 14px;
-    border-radius: 7px;
-    border: 1px solid #D1D5DB;
-    background: #fff;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    background: var(--parchment);
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: inherit;
-    color: #374151;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    transition: background 0.1s;
   }
-  .eq-controls button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  .eq-controls button:hover:not(:disabled) {
-    background: #F3F4F6;
-    border-color: #6B7280;
-  }
+
+  .eq-controls button:hover:not(:disabled) { background: white; border-color: var(--amber); }
+  .eq-controls button:disabled { opacity: 0.35; cursor: not-allowed; }
+
   #eq-submit-btn {
-    background: #1F2937;
-    color: #fff;
-    border-color: #1F2937;
+    background: var(--moss);
+    color: var(--cream);
+    border-color: var(--moss);
     flex: 1;
   }
-  #eq-submit-btn:hover:not(:disabled) {
-    background: #111827;
-    border-color: #111827;
-  }
+
+  #eq-submit-btn:hover:not(:disabled) { background: var(--ink); border-color: var(--ink); }
 </style>
 </head>
 <body>
 
-<div id="eq-builder">
-  <div class="eq-section-label">Labels</div>
-  <div class="eq-bar-buttons" id="eq-bar-buttons"></div>
-  <div class="eq-section-label">Words</div>
-  <div class="eq-op-buttons" id="eq-op-buttons"></div>
-  <div class="eq-strip" id="eq-strip"><span style="color:#9CA3AF;font-style:italic;font-size:12px;">Build the relation...</span></div>
-  <div class="eq-controls">
-    <button id="eq-back-btn">← Back</button>
-    <button id="eq-submit-btn" disabled>Submit →</button>
+<div class="tool-page">
+
+  <!-- Equation builder (word problem mode) -->
+  <div id="eq-builder">
+    <div class="eq-section-label">Labels</div>
+    <div class="eq-bar-buttons" id="eq-bar-buttons"></div>
+    <div class="eq-section-label">Words</div>
+    <div class="eq-op-buttons" id="eq-op-buttons"></div>
+    <div class="eq-strip" id="eq-strip">
+      <span style="color:var(--muted);font-style:italic;font-size:0.65rem;letter-spacing:0.06em;">Build the relation…</span>
+    </div>
+    <div class="eq-controls">
+      <button id="eq-back-btn">← Back</button>
+      <button id="eq-submit-btn" disabled>Submit →</button>
+    </div>
   </div>
-</div>
 
-<div id="toolbar">
-  <label>Grid: <input type="checkbox" id="gridToggle" checked></label>
-  <button id="addGuideBtn">Add guide line</button>
-  <button id="undoBtn">Undo</button>
-  <button id="clearBtn">Clear</button>
-  <button id="downloadBtn">Download PNG</button>
-</div>
+  <!-- Toolbar -->
+  <div id="toolbar">
 
-<div id="canvasWrapper">
-  <canvas id="canvas" width="900" height="450"></canvas>
+    <div class="tool-group">
+      <!-- Grid toggle -->
+      <label class="tool-btn" id="gridLabel" data-tip="Toggle grid">
+        <input type="checkbox" id="gridToggle" checked>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M1 7h18M1 13h18M7 1v18M13 1v18"/>
+        </svg>
+      </label>
 
-  <div id="contextMenu">
-    <button id="lockToggleBtn"></button>
-    <button id="fadedToggleBtn"></button>
-    <button id="editLabelBtn">Edit label</button>
-    <button id="deleteBtn">Delete</button>
+      <!-- Add guide line -->
+      <button class="tool-btn" id="addGuideBtn" data-tip="Add guide line">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="10" y1="3" x2="10" y2="17" stroke-dasharray="3 2.5"/>
+          <path d="M7 6l3-3 3 3"/>
+          <path d="M7 14l3 3 3-3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tool-sep"></div>
+
+    <div class="tool-group">
+      <!-- Undo -->
+      <button class="tool-btn" id="undoBtn" data-tip="Undo">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8L1 5l3-3"/>
+          <path d="M1.5 5C2 11.5 7 15 13 15a5.5 5.5 0 000-11H6"/>
+        </svg>
+      </button>
+
+      <!-- Clear all -->
+      <button class="tool-btn" id="clearBtn" data-tip="Clear all">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h14"/>
+          <path d="M8 6V4h4v2"/>
+          <path d="M5 6l1 11h8l1-11"/>
+          <path d="M9 10v4M11 10v4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tool-sep"></div>
+
+    <div class="tool-group">
+      <!-- Download -->
+      <button class="tool-btn" id="downloadBtn" data-tip="Download PNG">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 3v10"/>
+          <path d="M6 9l4 4 4-4"/>
+          <path d="M3 16h14"/>
+        </svg>
+      </button>
+    </div>
+
   </div>
+
+  <!-- Canvas -->
+  <div id="canvasWrapper">
+    <canvas id="canvas"></canvas>
+
+    <!-- Context menu -->
+    <div id="contextMenu">
+      <button id="lockToggleBtn" class="ctx-btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <rect x="2" y="6" width="10" height="7" rx="1"/>
+          <path d="M4.5 6V4.5a2.5 2.5 0 015 0V6"/>
+        </svg>
+        <span id="lockToggleLabel">Lock</span>
+      </button>
+      <button id="fadedToggleBtn" class="ctx-btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <ellipse cx="7" cy="7" rx="5" ry="3.5"/>
+          <circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+        </svg>
+        <span id="fadedToggleLabel">Make faded</span>
+      </button>
+      <button id="editLabelBtn" class="ctx-btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/>
+        </svg>
+        Edit label
+      </button>
+      <div class="ctx-divider"></div>
+      <button id="deleteBtn" class="ctx-btn ctx-delete">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 4h10M5 4V2.5h4V4M3.5 4l.75 7.5h5.5L10.5 4"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
 </div>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas      = document.getElementById('canvas');
+const ctx         = canvas.getContext('2d');
+const gridToggle  = document.getElementById('gridToggle');
+const gridLabel   = document.getElementById('gridLabel');
+const addGuideBtn = document.getElementById('addGuideBtn');
+const undoBtn     = document.getElementById('undoBtn');
+const clearBtn    = document.getElementById('clearBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const canvasWrapper   = document.getElementById('canvasWrapper');
+const contextMenu     = document.getElementById('contextMenu');
+const lockToggleBtn   = document.getElementById('lockToggleBtn');
+const lockToggleLabel = document.getElementById('lockToggleLabel');
+const fadedToggleBtn  = document.getElementById('fadedToggleBtn');
+const fadedToggleLabel= document.getElementById('fadedToggleLabel');
+const editLabelBtn    = document.getElementById('editLabelBtn');
+const deleteBtn       = document.getElementById('deleteBtn');
 
-const gridToggle    = document.getElementById("gridToggle");
-const addGuideBtn   = document.getElementById("addGuideBtn");
-const undoBtn       = document.getElementById("undoBtn");
-const clearBtn      = document.getElementById("clearBtn");
-const downloadBtn   = document.getElementById("downloadBtn");
-const canvasWrapper = document.getElementById("canvasWrapper");
-const contextMenu   = document.getElementById("contextMenu");
-const lockToggleBtn = document.getElementById("lockToggleBtn");
-const fadedToggleBtn= document.getElementById("fadedToggleBtn");
-const editLabelBtn  = document.getElementById("editLabelBtn");
-const deleteBtn     = document.getElementById("deleteBtn");
+/* ── DPR scaling for crisp rendering ── */
+const DPR = window.devicePixelRatio || 1;
+
+function initCanvas() {
+  const wrapper = canvasWrapper;
+  const w = wrapper.offsetWidth;
+  const h = wrapper.offsetHeight;
+  canvas.width  = Math.round(w * DPR);
+  canvas.height = Math.round(h * DPR);
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+
+function canvasW() { return Math.round(canvas.width  / DPR); }
+function canvasH() { return Math.round(canvas.height / DPR); }
+
+window.addEventListener('resize', () => { initCanvas(); scheduleRedraw(); });
+initCanvas();
 
 const GRID       = 25;
-const LABEL_FONT = "16px sans-serif";
+const LABEL_FONT = "15px 'Cormorant Garamond', Georgia, serif";
 
-let bars   = [];   // {x,y,w,h,color,label,labelX,labelY,locked,faded}
-let guides = [];   // {x,yTop,yBottom,locked}
+let bars   = [];
+let guides = [];
 
-// drawing state
-let drawing  = false;
-let drawStart = null;   // fixed anchor {x,y} while dragging out a new bar
+let drawing    = false;
+let drawStart  = null;
 let currentBar = null;
 
-// interaction state
-let selectedObjects  = [];   // [{type:'bar'|'guide', ref}]
+let selectedObjects  = [];
 let activeBar        = null;
 let resizingBarInfo  = null;
 let draggingLabelBar = null;
@@ -276,29 +482,43 @@ let draggingGuide    = null;
 let resizingGuide    = null;
 let guideResizeEdge  = null;
 
-// context menu / double-click tracking
 let contextTarget   = null;
 let lastClickTime   = 0;
 let lastClickTarget = null;
 
-/* ───────── render ───────── */
+/* ── RAF-throttled redraw ── */
+let rafPending = false;
+function scheduleRedraw() {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => { rafPending = false; redraw(); });
+}
+
+/* ── Render ── */
 function drawGrid() {
   if (!gridToggle.checked) return;
-  ctx.strokeStyle = "#e0e0e0";
-  ctx.lineWidth = 1;
-  for (let x = 0; x < canvas.width; x += GRID) {
-    ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, canvas.height); ctx.stroke();
+  const W = canvasW(), H = canvasH();
+
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < W; x += GRID) {
+    const major = (x / GRID) % 4 === 0;
+    ctx.strokeStyle = major ? 'rgba(193,127,59,0.18)' : 'rgba(193,127,59,0.09)';
+    ctx.lineWidth   = major ? 0.75 : 0.5;
+    ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); ctx.stroke();
   }
-  for (let y = 0; y < canvas.height; y += GRID) {
-    ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(canvas.width, y + 0.5); ctx.stroke();
+  for (let y = 0; y < H; y += GRID) {
+    const major = (y / GRID) % 4 === 0;
+    ctx.strokeStyle = major ? 'rgba(193,127,59,0.18)' : 'rgba(193,127,59,0.09)';
+    ctx.lineWidth   = major ? 0.75 : 0.5;
+    ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); ctx.stroke();
   }
 }
 
 function drawGuides() {
   ctx.setLineDash([5, 5]);
   for (const g of guides) {
-    ctx.strokeStyle = g.locked ? "#333" : "#000";
-    ctx.lineWidth   = g.locked ? 2 : 1;
+    ctx.strokeStyle = g.locked ? '#3d5c3a' : '#7a9e76';
+    ctx.lineWidth   = g.locked ? 2 : 1.5;
     ctx.beginPath();
     ctx.moveTo(g.x + 0.5, g.yTop);
     ctx.lineTo(g.x + 0.5, g.yBottom);
@@ -318,19 +538,16 @@ function centerLabel(bar) {
 function drawBars() {
   for (const b of bars) {
     ctx.save();
-    if (b.faded) {
-      ctx.globalAlpha = 0.4;
-      ctx.setLineDash([6, 4]);
-    }
-    ctx.fillStyle = b.faded ? '#F0F0F0' : '#FFFFFF';
+    if (b.faded) { ctx.globalAlpha = 0.28; ctx.setLineDash([6, 4]); }
+    ctx.fillStyle   = '#fdfcf9';
     ctx.fillRect(b.x, b.y, b.w, b.h);
-    ctx.strokeStyle = b.locked ? '#111827' : '#1A1714';
-    ctx.lineWidth   = b.locked ? 3 : 2;
+    ctx.strokeStyle = b.locked ? '#3d5c3a' : '#1c1a16';
+    ctx.lineWidth   = b.locked ? 2.5 : 1.5;
     ctx.strokeRect(b.x, b.y, b.w, b.h);
     ctx.restore();
     if (b.label) {
       ctx.font      = LABEL_FONT;
-      ctx.fillStyle = '#1A1714';
+      ctx.fillStyle = '#1c1a16';
       ctx.fillText(b.label, b.labelX, b.labelY);
     }
   }
@@ -338,12 +555,12 @@ function drawBars() {
 
 function drawHighlight(obj) {
   ctx.save();
-  ctx.strokeStyle = "rgba(0,0,0,0.25)";
-  ctx.lineWidth   = 2;
+  ctx.strokeStyle = '#c17f3b';
+  ctx.lineWidth   = 1.5;
   ctx.setLineDash([4, 4]);
-  if (obj.type === "bar") {
+  if (obj.type === 'bar') {
     const b = obj.ref;
-    ctx.strokeRect(b.x - 3, b.y - 3, b.w + 6, b.h + 6);
+    ctx.strokeRect(b.x - 4, b.y - 4, b.w + 8, b.h + 8);
   } else {
     const g = obj.ref;
     ctx.beginPath();
@@ -355,23 +572,30 @@ function drawHighlight(obj) {
 }
 
 function redraw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const W = canvasW(), H = canvasH();
+  ctx.clearRect(0, 0, W, H);
+
+  // Canvas background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
   drawGrid();
   drawBars();
   drawGuides();
   for (const obj of selectedObjects) drawHighlight(obj);
+
   if (currentBar) {
-    ctx.fillStyle   = 'rgba(0,0,0,0.04)';
+    ctx.fillStyle   = 'rgba(193,127,59,0.06)';
     ctx.fillRect(currentBar.x, currentBar.y, currentBar.w, currentBar.h);
-    ctx.strokeStyle = '#1A1714';
-    ctx.lineWidth   = 2;
+    ctx.strokeStyle = '#c17f3b';
+    ctx.lineWidth   = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.strokeRect(currentBar.x, currentBar.y, currentBar.w, currentBar.h);
     ctx.setLineDash([]);
   }
 }
 
-/* ───────── hit tests ───────── */
+/* ── Hit tests ── */
 function getPos(e) {
   const r = canvas.getBoundingClientRect();
   return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -391,8 +615,7 @@ function labelAt(x, y) {
     const b = bars[i];
     if (!b.label) continue;
     const w = ctx.measureText(b.label).width;
-    const h = 18;
-    if (x >= b.labelX && x <= b.labelX + w && y >= b.labelY - h && y <= b.labelY) return b;
+    if (x >= b.labelX && x <= b.labelX + w && y >= b.labelY - 18 && y <= b.labelY) return b;
   }
   return null;
 }
@@ -409,8 +632,8 @@ function guideHandleAt(x, y) {
   for (let i = guides.length - 1; i >= 0; i--) {
     const g = guides[i];
     if (Math.abs(g.x - x) < 8) {
-      if (Math.abs(y - g.yTop)    < 6) return { guide: g, edge: "top" };
-      if (Math.abs(y - g.yBottom) < 6) return { guide: g, edge: "bottom" };
+      if (Math.abs(y - g.yTop)    < 6) return { guide: g, edge: 'top' };
+      if (Math.abs(y - g.yBottom) < 6) return { guide: g, edge: 'bottom' };
     }
   }
   return null;
@@ -426,53 +649,50 @@ function barEdgeHit(b, x, y) {
   return { left, right, top, bottom };
 }
 
-/* ───────── smart cursor ───────── */
+/* ── Cursor ── */
 function updateCursor(p) {
   const gh = guideHandleAt(p.x, p.y);
-  if (gh) { canvas.style.cursor = "ns-resize"; return; }
-
+  if (gh) { canvas.style.cursor = 'ns-resize'; return; }
   const g = guideAt(p.x, p.y);
-  if (g) { canvas.style.cursor = "ew-resize"; return; }
-
+  if (g)  { canvas.style.cursor = 'ew-resize'; return; }
   const lb = labelAt(p.x, p.y);
-  if (lb) { canvas.style.cursor = "move"; return; }
-
+  if (lb) { canvas.style.cursor = 'move'; return; }
   const b = barAt(p.x, p.y);
   if (b) {
     const edges = barEdgeHit(b, p.x, p.y);
     if (edges) {
       const h = edges.left || edges.right;
       const v = edges.top  || edges.bottom;
-      canvas.style.cursor = (h && v) ? "nwse-resize" : h ? "ew-resize" : "ns-resize";
+      canvas.style.cursor = (h && v) ? 'nwse-resize' : h ? 'ew-resize' : 'ns-resize';
     } else {
-      canvas.style.cursor = "move";
+      canvas.style.cursor = 'move';
     }
     return;
   }
-  canvas.style.cursor = "crosshair";
+  canvas.style.cursor = 'crosshair';
 }
 
-/* ───────── selection ───────── */
+/* ── Selection ── */
 function clearSelection() { selectedObjects = []; }
 function selectObject(obj) { selectedObjects = [obj]; }
 
-/* ───────── label editor ───────── */
+/* ── Label editor ── */
 function startLabelEdit(bar) {
   if (bar.locked) return;
   ctx.font = LABEL_FONT;
-  const text   = bar.label || "";
-  const inputW = Math.max(80, Math.min(bar.w - 4, 220));
-  const inputH = 24;
+  const text   = bar.label || '';
+  const inputW = Math.max(80, Math.min(bar.w - 4, 240));
+  const inputH = 26;
   const cx     = bar.x + bar.w / 2;
   const cy     = bar.y + bar.h / 2;
 
-  const input = document.createElement("input");
-  input.type        = "text";
-  input.value       = text;
-  input.className   = "label-input";
-  input.style.left  = (cx - inputW / 2) + "px";
-  input.style.top   = (cy - inputH / 2) + "px";
-  input.style.width = inputW + "px";
+  const input   = document.createElement('input');
+  input.type    = 'text';
+  input.value   = text;
+  input.className = 'label-input';
+  input.style.left  = (cx - inputW / 2) + 'px';
+  input.style.top   = (cy - inputH / 2) + 'px';
+  input.style.width = inputW + 'px';
 
   canvasWrapper.appendChild(input);
   input.focus();
@@ -482,77 +702,81 @@ function startLabelEdit(bar) {
     if (commit) {
       bar.label = input.value.trim() || null;
       if (bar.label) centerLabel(bar);
-      redraw();
+      scheduleRedraw();
     }
     input.remove();
   }
 
-  input.addEventListener("blur", () => finish(true));
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter")  { e.stopPropagation(); finish(true); }
-    if (e.key === "Escape") { e.stopPropagation(); finish(false); }
+  input.addEventListener('blur',    () => finish(true));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.stopPropagation(); finish(true);  }
+    if (e.key === 'Escape') { e.stopPropagation(); finish(false); }
   });
 }
 
-/* ───────── context menu ───────── */
+/* ── Context menu ── */
 function showContextMenu(clientX, clientY) {
   if (!contextTarget) return;
   const r     = canvasWrapper.getBoundingClientRect();
-  const isBar = contextTarget.type === "bar";
+  const isBar = contextTarget.type === 'bar';
 
-  lockToggleBtn.textContent = isBar
-    ? (contextTarget.ref.locked ? "Unlock bar"   : "Lock bar")
-    : (contextTarget.ref.locked ? "Unlock guide" : "Lock guide");
+  lockToggleLabel.textContent = isBar
+    ? (contextTarget.ref.locked ? 'Unlock bar'   : 'Lock bar')
+    : (contextTarget.ref.locked ? 'Unlock guide' : 'Lock guide');
 
-  fadedToggleBtn.style.display = isBar ? "block" : "none";
-  fadedToggleBtn.textContent   = contextTarget.ref.faded ? "Make solid" : "Make faded";
-  editLabelBtn.style.display   = isBar ? "block" : "none";
+  fadedToggleBtn.style.display  = isBar ? 'flex' : 'none';
+  fadedToggleLabel.textContent  = contextTarget.ref.faded ? 'Make solid' : 'Make faded';
+  editLabelBtn.style.display    = isBar ? 'flex' : 'none';
 
-  contextMenu.style.left    = (clientX - r.left) + "px";
-  contextMenu.style.top     = (clientY - r.top)  + "px";
-  contextMenu.style.display = "block";
+  // Keep menu within canvas bounds
+  const menuW = 160, menuH = 120;
+  let left = clientX - r.left;
+  let top  = clientY - r.top;
+  if (left + menuW > r.width)  left = r.width  - menuW - 4;
+  if (top  + menuH > r.height) top  = r.height - menuH - 4;
+
+  contextMenu.style.left    = left + 'px';
+  contextMenu.style.top     = top  + 'px';
+  contextMenu.style.display = 'block';
 }
 
 function hideContextMenu() {
-  contextMenu.style.display = "none";
+  contextMenu.style.display = 'none';
   contextTarget = null;
 }
 
-/* ───────── mouse events ───────── */
-canvas.addEventListener("mousedown", e => {
+/* ── Mouse events ── */
+canvas.addEventListener('mousedown', e => {
   hideContextMenu();
   const p   = getPos(e);
   const now = Date.now();
 
-  // right-click → context menu
+  // Right-click → context menu
   if (e.button === 2) {
     const g = guideAt(p.x, p.y);
-    if (g) { contextTarget = { type: "guide", ref: g }; showContextMenu(e.clientX, e.clientY); return; }
+    if (g) { contextTarget = { type: 'guide', ref: g }; showContextMenu(e.clientX, e.clientY); return; }
     const b = barAt(p.x, p.y);
-    if (b) { contextTarget = { type: "bar",   ref: b }; showContextMenu(e.clientX, e.clientY); return; }
+    if (b) { contextTarget = { type: 'bar',   ref: b }; showContextMenu(e.clientX, e.clientY); return; }
     return;
   }
 
   if (e.button !== 0) return;
 
-  // guide handle resize
   const gh = guideHandleAt(p.x, p.y);
   if (gh && !gh.guide.locked) {
-    resizingGuide    = gh.guide;
-    guideResizeEdge  = gh.edge;
-    selectObject({ type: "guide", ref: gh.guide });
-    redraw(); return;
+    resizingGuide   = gh.guide;
+    guideResizeEdge = gh.edge;
+    selectObject({ type: 'guide', ref: gh.guide });
+    scheduleRedraw(); return;
   }
 
-  // guide drag
   const g = guideAt(p.x, p.y);
   if (g && !g.locked) {
     draggingGuide = g;
-    selectObject({ type: "guide", ref: g });
-    redraw(); return;
+    selectObject({ type: 'guide', ref: g });
+    scheduleRedraw(); return;
   }
 
-  // label area: double-click to edit, single to drag
   const labelBar = labelAt(p.x, p.y);
   if (labelBar && !labelBar.locked) {
     if (now - lastClickTime < 300 && lastClickTarget === labelBar) {
@@ -563,11 +787,10 @@ canvas.addEventListener("mousedown", e => {
     draggingLabelBar = labelBar;
     labelOffsetX = p.x - labelBar.labelX;
     labelOffsetY = p.y - labelBar.labelY;
-    selectObject({ type: "bar", ref: labelBar });
-    redraw(); return;
+    selectObject({ type: 'bar', ref: labelBar });
+    scheduleRedraw(); return;
   }
 
-  // bar: double-click to edit label, single to move/resize
   const b = barAt(p.x, p.y);
   if (b && !b.locked) {
     if (now - lastClickTime < 300 && lastClickTarget === b) {
@@ -580,52 +803,44 @@ canvas.addEventListener("mousedown", e => {
     resizingBarInfo = edges
       ? { startX: p.x, startY: p.y, origX: b.x, origY: b.y, origW: b.w, origH: b.h, edges }
       : { offsetX: p.x - b.x, offsetY: p.y - b.y };
-    selectObject({ type: "bar", ref: b });
-    redraw(); return;
+    selectObject({ type: 'bar', ref: b });
+    scheduleRedraw(); return;
   }
 
-  // blank canvas → start drawing
   lastClickTime = 0; lastClickTarget = null;
   clearSelection();
   drawing   = true;
   drawStart = { x: p.x, y: p.y };
-  currentBar = {
-    x: p.x, y: p.y, w: 0, h: 0,
-    color: '#000',
-    label: null, labelX: 0, labelY: 0,
-    locked: false, faded: false
-  };
+  currentBar = { x: p.x, y: p.y, w: 0, h: 0, color: '#000', label: null, labelX: 0, labelY: 0, locked: false, faded: false };
 });
 
-canvas.addEventListener("mousemove", e => {
+canvas.addEventListener('mousemove', e => {
   const p = getPos(e);
 
-  // drawing new bar
   if (drawing && currentBar && drawStart) {
     const x1 = Math.min(drawStart.x, p.x), x2 = Math.max(drawStart.x, p.x);
     const y1 = Math.min(drawStart.y, p.y), y2 = Math.max(drawStart.y, p.y);
     currentBar.x = x1; currentBar.y = y1;
     currentBar.w = x2 - x1; currentBar.h = y2 - y1;
-    redraw(); return;
+    scheduleRedraw(); return;
   }
 
-  // interactions
   if (draggingGuide && !draggingGuide.locked) {
-    draggingGuide.x = p.x; redraw(); return;
+    draggingGuide.x = p.x; scheduleRedraw(); return;
   }
 
   if (resizingGuide && !resizingGuide.locked) {
-    if (guideResizeEdge === "top")
+    if (guideResizeEdge === 'top')
       resizingGuide.yTop    = Math.min(p.y, resizingGuide.yBottom - 5);
     else
       resizingGuide.yBottom = Math.max(p.y, resizingGuide.yTop + 5);
-    redraw(); return;
+    scheduleRedraw(); return;
   }
 
   if (draggingLabelBar && !draggingLabelBar.locked) {
     draggingLabelBar.labelX = p.x - labelOffsetX;
     draggingLabelBar.labelY = p.y - labelOffsetY;
-    redraw(); return;
+    scheduleRedraw(); return;
   }
 
   if (activeBar && resizingBarInfo) {
@@ -644,256 +859,206 @@ canvas.addEventListener("mousemove", e => {
       if (edges.bottom) { const nh = origH + dy; if (nh > 5)   b.h = nh; }
       centerLabel(b);
     }
-    redraw(); return;
+    scheduleRedraw(); return;
   }
 
-  // idle — update cursor to reflect what's underneath
   updateCursor(p);
 });
 
-canvas.addEventListener("mouseup", () => {
+canvas.addEventListener('mouseup', () => {
   if (drawing && currentBar) {
     drawing = false;
     if (currentBar.w > 5 && currentBar.h > 5) {
       bars.push(currentBar);
       const newBar = currentBar;
-      currentBar = null;
-      drawStart  = null;
-      redraw();
-      startLabelEdit(newBar);   // prompt for label immediately
+      currentBar = null; drawStart = null;
+      scheduleRedraw();
+      startLabelEdit(newBar);
     } else {
-      currentBar = null;
-      drawStart  = null;
-      redraw();
+      currentBar = null; drawStart = null;
+      scheduleRedraw();
     }
     return;
   }
-
-  draggingGuide    = null;
-  resizingGuide    = null;
-  guideResizeEdge  = null;
-  draggingLabelBar = null;
-  activeBar        = null;
-  resizingBarInfo  = null;
-  redraw();
+  draggingGuide = null; resizingGuide = null; guideResizeEdge = null;
+  draggingLabelBar = null; activeBar = null; resizingBarInfo = null;
+  scheduleRedraw();
 });
 
-canvas.addEventListener("mouseleave", () => {
+canvas.addEventListener('mouseleave', () => {
   if (!drawing) {
     draggingGuide = null; resizingGuide = null;
     draggingLabelBar = null; activeBar = null; resizingBarInfo = null;
   }
-  redraw();
+  scheduleRedraw();
 });
 
-canvas.addEventListener("contextmenu", e => e.preventDefault());
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 
-/* ───────── toolbar ───────── */
-addGuideBtn.addEventListener("click", () => {
-  guides.push({ x: canvas.width / 2, yTop: 0, yBottom: canvas.height, locked: false });
-  redraw();
+/* ── Toolbar ── */
+addGuideBtn.addEventListener('click', () => {
+  guides.push({ x: canvasW() / 2, yTop: 0, yBottom: canvasH(), locked: false });
+  scheduleRedraw();
 });
 
-undoBtn.addEventListener("click", () => {
+undoBtn.addEventListener('click', () => {
   if (bars.length   > 0) bars.pop();
   else if (guides.length > 0) guides.pop();
-  clearSelection();
-  redraw();
+  clearSelection(); scheduleRedraw();
 });
 
-clearBtn.addEventListener("click", () => {
-  bars = []; guides = [];
-  clearSelection();
-  redraw();
+clearBtn.addEventListener('click', () => {
+  bars = []; guides = []; clearSelection(); scheduleRedraw();
 });
 
-gridToggle.addEventListener("change", redraw);
+gridToggle.addEventListener('change', () => {
+  gridLabel.classList.toggle('active', gridToggle.checked);
+  scheduleRedraw();
+});
 
-downloadBtn.addEventListener("click", () => {
-  const link  = document.createElement("a");
-  link.download = "bar-model.png";
-  link.href     = canvas.toDataURL("image/png");
+gridLabel.classList.toggle('active', gridToggle.checked);
+
+downloadBtn.addEventListener('click', () => {
+  // Render to a clean offscreen canvas (no DPR scaling artefacts)
+  const off    = document.createElement('canvas');
+  off.width    = canvasW();
+  off.height   = canvasH();
+  const octx   = off.getContext('2d');
+
+  // White background
+  octx.fillStyle = '#ffffff';
+  octx.fillRect(0, 0, off.width, off.height);
+
+  // Copy current canvas content (scaled back down)
+  octx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, off.width, off.height);
+
+  const link    = document.createElement('a');
+  link.download = 'bar-model.png';
+  link.href     = off.toDataURL('image/png');
   link.click();
 });
 
-/* ───────── context menu actions ───────── */
-lockToggleBtn.addEventListener("click", () => {
+/* ── Context menu actions ── */
+lockToggleBtn.addEventListener('click', () => {
   if (!contextTarget) return;
   contextTarget.ref.locked = !contextTarget.ref.locked;
-  hideContextMenu(); redraw();
+  hideContextMenu(); scheduleRedraw();
 });
 
-fadedToggleBtn.addEventListener("click", () => {
-  if (!contextTarget || contextTarget.type !== "bar") return;
+fadedToggleBtn.addEventListener('click', () => {
+  if (!contextTarget || contextTarget.type !== 'bar') return;
   contextTarget.ref.faded = !contextTarget.ref.faded;
-  hideContextMenu(); redraw();
+  hideContextMenu(); scheduleRedraw();
 });
 
-editLabelBtn.addEventListener("click", () => {
-  if (!contextTarget || contextTarget.type !== "bar") return;
+editLabelBtn.addEventListener('click', () => {
+  if (!contextTarget || contextTarget.type !== 'bar') return;
   const bar = contextTarget.ref;
   hideContextMenu();
   startLabelEdit(bar);
 });
 
-deleteBtn.addEventListener("click", () => {
+deleteBtn.addEventListener('click', () => {
   if (!contextTarget) return;
-  if (contextTarget.type === "bar")   bars   = bars.filter(b => b !== contextTarget.ref);
-  if (contextTarget.type === "guide") guides = guides.filter(g => g !== contextTarget.ref);
-  hideContextMenu(); clearSelection(); redraw();
+  if (contextTarget.type === 'bar')   bars   = bars.filter(b => b !== contextTarget.ref);
+  if (contextTarget.type === 'guide') guides = guides.filter(g => g !== contextTarget.ref);
+  hideContextMenu(); clearSelection(); scheduleRedraw();
 });
 
-document.addEventListener("click", e => {
+document.addEventListener('click', e => {
   if (!contextMenu.contains(e.target)) hideContextMenu();
 });
 
-/* ───────── keyboard ───────── */
-document.addEventListener("keydown", e => {
-  if (e.key === "Backspace" || e.key === "Delete") {
-    if (document.activeElement.tagName === "INPUT") return;
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Backspace' || e.key === 'Delete') {
+    if (document.activeElement.tagName === 'INPUT') return;
     e.preventDefault();
     for (const obj of selectedObjects) {
-      if (obj.type === "bar")   bars   = bars.filter(b => b !== obj.ref);
-      if (obj.type === "guide") guides = guides.filter(g => g !== obj.ref);
+      if (obj.type === 'bar')   bars   = bars.filter(b => b !== obj.ref);
+      if (obj.type === 'guide') guides = guides.filter(g => g !== obj.ref);
     }
-    clearSelection(); redraw();
+    clearSelection(); scheduleRedraw();
   }
-  if (e.key === "Escape") {
-    clearSelection(); redraw();
-  }
+  if (e.key === 'Escape') { clearSelection(); scheduleRedraw(); }
 });
 
-/* ───────── Equation Builder (Word Problem Mode) ───────── */
+/* ── Equation Builder (Word Problem Mode) ── */
 let currentProblem = null;
-let assembledEq = [];
+let assembledEq    = [];
 
-function appendToken(token) {
-  assembledEq.push(token);
-  renderEqStrip();
-  updateEqSubmitBtn();
-}
-
-function backToken() {
-  assembledEq.pop();
-  renderEqStrip();
-  updateEqSubmitBtn();
-}
+function appendToken(token) { assembledEq.push(token); renderEqStrip(); updateEqSubmitBtn(); }
+function backToken()        { assembledEq.pop();        renderEqStrip(); updateEqSubmitBtn(); }
 
 function renderEqStrip() {
-  const stripEl = document.getElementById('eq-strip');
-  if (assembledEq.length === 0) {
-    stripEl.innerHTML = '<span style="color:#999;font-style:italic;font-size:12px;">Click bars or buttons to build equation</span>';
-  } else {
-    stripEl.innerHTML = assembledEq.map(t => `<span class="eq-token">${t}</span>`).join('');
-  }
+  const el = document.getElementById('eq-strip');
+  el.innerHTML = assembledEq.length === 0
+    ? '<span style="color:var(--muted);font-style:italic;font-size:0.65rem;letter-spacing:0.06em;">Click bars or buttons to build equation…</span>'
+    : assembledEq.map(t => `<span class="eq-token">${t}</span>`).join('');
 }
 
 function updateEqSubmitBtn() {
-  const btn = document.getElementById('eq-submit-btn');
-  btn.disabled = assembledEq.length < 3;
+  document.getElementById('eq-submit-btn').disabled = assembledEq.length < 3;
 }
 
 function submitEquation() {
   if (assembledEq.length < 3) return;
-  const simpleBars = bars.map(b => ({
-    label: b.label || null,
-    w: b.w,
-    h: b.h,
-    x: b.x,
-    y: b.y,
-    faded: b.faded,
-    locked: b.locked
-  }));
   window.parent.postMessage({
-    type: 'wp:submit',
-    bars: simpleBars,
+    type:     'wp:submit',
+    bars:     bars.map(b => ({ label: b.label || null, w: b.w, h: b.h, x: b.x, y: b.y, faded: b.faded, locked: b.locked })),
     equation: assembledEq
   }, '*');
 }
 
 function loadProblem(problem) {
   currentProblem = problem;
-  assembledEq = [];
+  assembledEq    = [];
   document.getElementById('eq-builder').classList.add('active');
 
-  // Generate bar buttons from problem labels
-  const barBtnsEl = document.getElementById('eq-bar-buttons');
-  barBtnsEl.innerHTML = problem.labels.map(label =>
-    `<button onclick="appendToken('${label.replace(/'/g,"\\'")}')">${label}</button>`
+  document.getElementById('eq-bar-buttons').innerHTML = problem.labels.map(label =>
+    `<button onclick="appendToken('${label.replace(/'/g, "\\'")}')">${label}</button>`
   ).join('');
 
-  // Generate op buttons from problem.ops
-  const opBtnsEl = document.getElementById('eq-op-buttons');
-  opBtnsEl.innerHTML = problem.ops.map(op =>
-    `<button onclick="appendToken('${op.replace(/'/g,"\\'")}')">${op}</button>`
+  document.getElementById('eq-op-buttons').innerHTML = problem.ops.map(op =>
+    `<button onclick="appendToken('${op.replace(/'/g, "\\'")}')">${op}</button>`
   ).join('');
 
-  renderEqStrip();
-  updateEqSubmitBtn();
-
-  // Adjust canvas height to fit eq-builder
-  const eqBuilder = document.getElementById('eq-builder');
-  const eqHeight = eqBuilder.offsetHeight;
-  canvas.height = Math.max(300, window.innerHeight - eqHeight - 200);
-  redraw();
+  renderEqStrip(); updateEqSubmitBtn();
+  scheduleRedraw();
 }
 
 function resetCanvas() {
-  bars = [];
-  guides = [];
-  assembledEq = [];
-  selectedObjects = [];
-  activeBar = null;
-  currentProblem = null;
+  bars = []; guides = []; assembledEq = []; selectedObjects = [];
+  activeBar = null; currentProblem = null;
   document.getElementById('eq-builder').classList.remove('active');
-  renderEqStrip();
-  updateEqSubmitBtn();
-  redraw();
+  renderEqStrip(); updateEqSubmitBtn(); scheduleRedraw();
 }
 
-// postMessage listener for word problem mode
 window.addEventListener('message', e => {
-  if (e.data.type === 'wp:load') {
-    loadProblem(e.data.problem);
-  } else if (e.data.type === 'wp:reset') {
-    resetCanvas();
-  }
+  if (e.data.type === 'wp:load')  loadProblem(e.data.problem);
+  if (e.data.type === 'wp:reset') resetCanvas();
 });
 
-// Signal to parent that iframe is ready
 document.addEventListener('DOMContentLoaded', () => {
   window.parent.postMessage({ type: 'wp:ready' }, '*');
 });
 
-// Add equation builder button event listeners
-document.getElementById('eq-back-btn').addEventListener('click', () => {
-  if (assembledEq.length > 0) backToken();
-});
-
-document.getElementById('eq-submit-btn').addEventListener('click', () => {
-  submitEquation();
-});
-
-// Add click handler to canvas for tapping bars
 canvas.addEventListener('click', e => {
   if (!currentProblem) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  // Find which bar was clicked
+  const p = getPos(e);
   for (let i = bars.length - 1; i >= 0; i--) {
     const b = bars[i];
-    if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h && b.label) {
-      appendToken(b.label);
-      break;
+    if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h && b.label) {
+      appendToken(b.label); break;
     }
   }
 });
 
-/* ───────── init ───────── */
-redraw();
-</script>
+document.getElementById('eq-back-btn').addEventListener('click',   () => { if (assembledEq.length > 0) backToken(); });
+document.getElementById('eq-submit-btn').addEventListener('click',  submitEquation);
 
+/* ── Init ── */
+scheduleRedraw();
+</script>
 </body>
 </html>
