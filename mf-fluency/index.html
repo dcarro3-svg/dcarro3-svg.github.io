@@ -379,6 +379,56 @@
     .pathway-link:hover { gap: 0.9rem; }
     .pathway-link::after { content: '→'; }
 
+    /* ── LESSON PICKER ── */
+    .lesson-picker {
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .picker-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .picker-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      min-width: 3.5rem;
+    }
+
+    .picker-chips {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.9rem;
+      height: 1.9rem;
+      padding: 0 0.3rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      text-decoration: none;
+      border: 1px solid;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .chip-lesson { border-color: var(--moss); color: var(--moss); }
+    .chip-lesson:hover { background: var(--moss); color: var(--cream); }
+
+    .chip-review { border-color: var(--amber); color: var(--amber); }
+    .chip-review:hover { background: var(--amber); color: var(--cream); }
+
     /* ── FEATURE CARDS (fluency drills) ── */
     .feature-grid {
       display: grid;
@@ -739,7 +789,33 @@
           Five review sets reinforce across families before moving on.
         </p>
         <p class="pathway-meta">10 lessons · 5 review sets</p>
-        <a href="fact-lesson-add-1.html" class="pathway-link">Begin Sequence</a>
+        <div class="lesson-picker">
+          <div class="picker-row">
+            <span class="picker-label">Lessons</span>
+            <div class="picker-chips">
+              <a href="fact-lesson-add-1.html"  class="chip chip-lesson" title="1+2, 2+3">1</a>
+              <a href="fact-lesson-add-2.html"  class="chip chip-lesson" title="3+3, 2+4">2</a>
+              <a href="fact-lesson-add-3.html"  class="chip chip-lesson" title="3+4, 2+5">3</a>
+              <a href="fact-lesson-add-4.html"  class="chip chip-lesson" title="4+4, 3+5">4</a>
+              <a href="fact-lesson-add-5.html"  class="chip chip-lesson" title="4+5, 3+6">5</a>
+              <a href="fact-lesson-add-6.html"  class="chip chip-lesson" title="5+5, 4+6">6</a>
+              <a href="fact-lesson-add-7.html"  class="chip chip-lesson" title="5+6, 4+7">7</a>
+              <a href="fact-lesson-add-8.html"  class="chip chip-lesson" title="5+7, 6+6">8</a>
+              <a href="fact-lesson-add-9.html"  class="chip chip-lesson" title="6+7, 5+8">9</a>
+              <a href="fact-lesson-add-10.html" class="chip chip-lesson" title="7+7, 6+8">10</a>
+            </div>
+          </div>
+          <div class="picker-row">
+            <span class="picker-label">Reviews</span>
+            <div class="picker-chips">
+              <a href="fact-lesson-add-numonly-1.html" class="chip chip-review" title="Review: 1+2, 2+3, 3+3, 2+4">R1</a>
+              <a href="fact-lesson-add-numonly-2.html" class="chip chip-review" title="Review: 3+4, 2+5, 4+4, 3+5">R2</a>
+              <a href="fact-lesson-add-numonly-3.html" class="chip chip-review" title="Review: 4+5, 3+6, 5+5, 4+6">R3</a>
+              <a href="fact-lesson-add-numonly-4.html" class="chip chip-review" title="Review: 5+6, 4+7, 5+7, 6+6">R4</a>
+              <a href="fact-lesson-add-numonly-5.html" class="chip chip-review" title="Review: 6+7, 5+8, 7+7, 6+8">R5</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="pathway-card reveal">
@@ -752,7 +828,27 @@
           Three review sets reinforce across families.
         </p>
         <p class="pathway-meta">6 lessons · 3 review sets</p>
-        <a href="fact-lesson-mult-1.html" class="pathway-link">Begin Sequence</a>
+        <div class="lesson-picker">
+          <div class="picker-row">
+            <span class="picker-label">Lessons</span>
+            <div class="picker-chips">
+              <a href="fact-lesson-mult-1.html" class="chip chip-lesson" title="2×2, 2×3">1</a>
+              <a href="fact-lesson-mult-2.html" class="chip chip-lesson" title="2×4, 2×5">2</a>
+              <a href="fact-lesson-mult-3.html" class="chip chip-lesson" title="2×6, 3×3">3</a>
+              <a href="fact-lesson-mult-4.html" class="chip chip-lesson" title="3×4, 3×5">4</a>
+              <a href="fact-lesson-mult-5.html" class="chip chip-lesson" title="4×4, 4×5">5</a>
+              <a href="fact-lesson-mult-6.html" class="chip chip-lesson" title="5×5, 5×6">6</a>
+            </div>
+          </div>
+          <div class="picker-row">
+            <span class="picker-label">Reviews</span>
+            <div class="picker-chips">
+              <a href="fact-lesson-mult-numonly-1.html" class="chip chip-review" title="Review: 2×2, 2×3, 2×4, 2×5">R1</a>
+              <a href="fact-lesson-mult-numonly-2.html" class="chip chip-review" title="Review: 2×6, 3×3, 3×4, 3×5">R2</a>
+              <a href="fact-lesson-mult-numonly-3.html" class="chip chip-review" title="Review: 4×4, 4×5, 5×5, 5×6">R3</a>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
