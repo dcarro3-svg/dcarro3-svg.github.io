@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computation — Mixed with Regrouping: Add or Subtract?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;}
+
+  .app{width:100%;max-width:640px;display:flex;flex-direction:column;gap:14px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+
+  /* Problem display */
+  .model-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;display:flex;align-items:center;justify-content:center;min-height:160px;overflow:visible;}
+
+  /* Answer row */
+  .answer-row{display:flex;align-items:center;gap:12px;}
+  .answer-prompt{font-size:14px;font-weight:600;color:var(--text-secondary);flex:1;}
+  .num-input{width:96px;height:52px;border:2px solid var(--border);border-radius:var(--radius);background:var(--surface);font-family:'DM Serif Display',serif;font-size:28px;text-align:center;color:var(--text-primary);outline:none;transition:border-color 0.15s,background 0.15s;-moz-appearance:textfield;}
+  .num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .num-input:focus{border-color:var(--accent);}
+  .num-input.correct{border-color:#2D6A4F;background:#E8F5EE;}
+  .num-input.wrong{border-color:var(--error);background:#FDE8E8;}
+  .btn-check{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s,box-shadow 0.15s;flex-shrink:0;}
+  .btn-check:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.52),0 0 26px 7px rgba(240,146,43,0.24);}
+
+  /* Feedback */
+  .feedback-flash{font-size:15px;font-weight:700;min-height:22px;text-align:center;}
+  .flash-ok{color:#2D6A4F;}
+  .flash-err{color:var(--error);}
+
+  /* Drill header */
+  .drill-header{display:flex;align-items:center;gap:14px;}
+  .score-block{flex:1;display:flex;gap:16px;align-items:baseline;}
+  .score-c{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);}
+  .score-e{font-family:'DM Serif Display',serif;font-size:20px;color:var(--error);}
+  .score-sub{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+  /* Timer */
+  .timer-ring{position:relative;width:56px;height:56px;flex-shrink:0;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .bg{fill:none;stroke:var(--border);stroke-width:5;}
+  .timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+  .timer-ring .fg.urgent{stroke:var(--error);}
+  .timer-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;}
+
+  /* Cards */
+  .intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;}
+  .intro-card h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:12px;}
+  .intro-card p{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:8px;}
+  .start-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:14px;transition:background 0.15s,box-shadow 0.15s;}
+  .start-btn:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+  .results-card h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);margin-bottom:18px;}
+  .rate-row{display:flex;gap:20px;justify-content:center;margin-bottom:16px;}
+  .rate-stat{text-align:center;}
+  .rate-num{font-family:'DM Serif Display',serif;font-size:44px;}
+  .rate-num.c{color:var(--accent);}
+  .rate-num.e{color:var(--error);}
+  .rate-sub{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+  /* Example problems on intro */
+  .examples{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 4px;}
+  .example-eq{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius);padding:10px 16px;font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);white-space:nowrap;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .fu{animation:fadeUp 0.18s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Computation 6</span>
+    <span class="phase-label" id="phaseLabel">Practice</span>
+  </div>
+  <div id="main"></div>
+</div>
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────────
+const CFG={id:6,label:'Mixed with Regrouping: Add or Subtract?',compType:'dd-mixed-bar-regroup',storageKey:'computation_6_fluency_sessions',chartId:37,chartHref:'chart.html'};
+
+// ── Storage ────────────────────────────────────────────────────────────────────
+function loadSessions(){try{const r=localStorage.getItem(CFG.storageKey);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveSession(s){try{const a=loadSessions();a.push(s);localStorage.setItem(CFG.storageKey,JSON.stringify(a));}catch(e){}}
+
+// ── Equation renderer ──────────────────────────────────────────────────────────
+function numSpan(val,isUnk){
+  const text=isUnk?'?':String(val);
+  const len=String(val).length;
+  const fs=isUnk?'52px':len>=3?'38px':len>=2?'48px':'56px';
+  const color=isUnk?'var(--accent)':'var(--text-primary)';
+  const fi=isUnk?'italic':'normal';
+  const minW=len>=3?'58px':'52px';
+  return`<span style="font-family:'DM Serif Display',serif;font-size:${fs};color:${color};font-style:${fi};min-width:${isUnk?'52px':minW};text-align:center;display:inline-block;line-height:1">${text}</span>`;
+}
+function opSpan(op){
+  return`<span style="font-family:'DM Sans',sans-serif;font-size:36px;color:var(--text-muted);font-weight:300;padding:0 8px">${op}</span>`;
+}
+
+function renderEq(item){
+  const{a,b,whole,op,unknownRole}=item;
+  return`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:nowrap">
+    ${numSpan(a,unknownRole==='p1')}${opSpan(op)}${numSpan(b,unknownRole==='p2')}${opSpan('=')}${numSpan(whole,unknownRole==='whole')}
+  </div>`;
+}
+
+function renderVertical(item,showAnswer){
+  const{a,b,whole,op}=item;
+  const opSym=op==='-'?'−':'+';
+  const answerVal=showAnswer?String(whole):'?';
+  const ansColor=showAnswer?'var(--text-primary)':'var(--accent)';
+  const ansStyle=showAnswer?'':'font-style:italic';
+  return`<div style="display:inline-block;font-family:'DM Serif Display',serif;font-size:52px;line-height:1.3">
+    <div style="display:flex;align-items:center">
+      <span style="width:46px;display:inline-block"></span>
+      <span style="min-width:96px;text-align:right">${a}</span>
+    </div>
+    <div style="display:flex;align-items:center">
+      <span style="width:46px;text-align:center;font-size:40px;color:var(--text-muted)">${opSym}</span>
+      <span style="min-width:96px;text-align:right">${b}</span>
+    </div>
+    <div style="height:3px;background:var(--text-primary);margin:8px 0 8px 46px"></div>
+    <div style="display:flex;align-items:center">
+      <span style="width:46px;display:inline-block"></span>
+      <span style="min-width:96px;text-align:right;color:${ansColor};${ansStyle}">${answerVal}</span>
+    </div>
+  </div>`;
+}
+
+// ── Bar model renderer (lesson 3) ──────────────────────────────────────────────
+const BAR_H=58,BAR_W=300;
+const C_WHOLE='#6845A8',C_P1='#2B5DC7',C_P2='#D4600A',C_UNK_BG='#EDE5FF';
+
+function numBarDiv(w,val,color,isUnk,radius){
+  const bg=isUnk?C_UNK_BG:color;
+  const col=isUnk?'#584C72':'#fff';
+  const bdr=isUnk?'2px dashed #9B9591':'none';
+  const text=isUnk?'?':String(val);
+  const fs=isUnk?'26px':String(val).length>=3?'18px':'22px';
+  const fi=isUnk?'italic':'normal';
+  return`<div style="width:${w}px;height:${BAR_H}px;background:${bg};border:${bdr};border-radius:${radius};display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-family:'DM Serif Display',serif;font-size:${fs};color:${col};font-style:${fi}">${text}</span></div>`;
+}
+
+function renderBar(item){
+  const{a,b,whole,unknownRole}=item;
+  const aW=Math.max(28,Math.round(a/whole*BAR_W)), bW=BAR_W-aW;
+  const lines=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9B9591"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9B9591"></div>`;
+  const wBar=numBarDiv(BAR_W,whole,C_WHOLE,unknownRole==='whole','6px');
+  const aBar=numBarDiv(aW,a,C_P1,unknownRole==='p1','6px 0 0 6px');
+  const bBar=numBarDiv(bW,b,C_P2,unknownRole==='p2','0 6px 6px 0');
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wBar}<div style="display:flex">${aBar}${bBar}</div></div></div>`;
+}
+
+function isVerticalType(){
+  const t=CFG.compType;
+  return t==='dd-add-no-regroup'||t==='dd-sub-no-regroup'||t==='dd-add-regroup'||t==='dd-sub-regroup';
+}
+function renderItem(item){
+  if(CFG.compType==='dd-mixed-bar'||CFG.compType==='dd-mixed-bar-regroup') return renderBar(item);
+  if(isVerticalType()) return renderVertical(item,false);
+  return renderEq(item);
+}
+
+// ── Item generators ────────────────────────────────────────────────────────────
+function genDDAddNoRegroup(){
+  const aTens=1+Math.floor(Math.random()*8);
+  const bTens=1+Math.floor(Math.random()*(9-aTens));
+  const aOnes=Math.floor(Math.random()*9);
+  const bOnes=Math.floor(Math.random()*(10-aOnes));
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a+b;
+  return{a,b,whole,op:'+',unknownRole:'whole',answer:whole};
+}
+
+function genDDSubNoRegroup(){
+  const aTens=2+Math.floor(Math.random()*7); // 2–8, ensures result tens ≥ 1
+  const bTens=1+Math.floor(Math.random()*(aTens-1)); // 1 to aTens-1
+  const aOnes=Math.floor(Math.random()*10);
+  const bOnes=Math.floor(Math.random()*(aOnes+1)); // ≤ aOnes, no borrow
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a-b;
+  return{a,b,whole,op:'-',unknownRole:'whole',answer:whole};
+}
+
+function genDDMixedBar(){
+  const aTens=1+Math.floor(Math.random()*8);
+  const bTens=1+Math.floor(Math.random()*(9-aTens));
+  const aOnes=Math.floor(Math.random()*9);
+  const bOnes=Math.floor(Math.random()*(10-aOnes));
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a+b;
+  const roles=['whole','p1','p2'], unknownRole=roles[Math.floor(Math.random()*3)];
+  const answer=unknownRole==='whole'?whole:unknownRole==='p1'?a:b;
+  return{a,b,whole,unknownRole,answer};
+}
+
+function genDDAddRegroup(){
+  const aTens=1+Math.floor(Math.random()*9); // 1–9
+  const bTens=1+Math.floor(Math.random()*9); // 1–9
+  const aOnes=1+Math.floor(Math.random()*9); // 1–9
+  const bOnes=(10-aOnes)+Math.floor(Math.random()*aOnes); // 10-aOnes to 9, guarantees carry
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a+b;
+  return{a,b,whole,op:'+',unknownRole:'whole',answer:whole};
+}
+
+function genDDSubRegroup(){
+  const aTens=2+Math.floor(Math.random()*8); // 2–9, ensures positive result after borrow
+  const bTens=1+Math.floor(Math.random()*(aTens-1)); // 1 to aTens-1
+  const bOnes=1+Math.floor(Math.random()*9); // 1–9
+  const aOnes=Math.floor(Math.random()*bOnes); // 0 to bOnes-1, forces borrow
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a-b;
+  return{a,b,whole,op:'-',unknownRole:'whole',answer:whole};
+}
+
+function genDDMixedBarRegroup(){
+  const aTens=1+Math.floor(Math.random()*9);
+  const bTens=1+Math.floor(Math.random()*9);
+  const aOnes=1+Math.floor(Math.random()*9);
+  const bOnes=(10-aOnes)+Math.floor(Math.random()*aOnes); // forces carry in ones
+  const a=aTens*10+aOnes, b=bTens*10+bOnes, whole=a+b;
+  const roles=['whole','p1','p2'], unknownRole=roles[Math.floor(Math.random()*3)];
+  const answer=unknownRole==='whole'?whole:unknownRole==='p1'?a:b;
+  return{a,b,whole,unknownRole,answer};
+}
+
+function genItem(){
+  const t=CFG.compType;
+  if(t==='dd-sub-no-regroup')    return genDDSubNoRegroup();
+  if(t==='dd-mixed-bar')         return genDDMixedBar();
+  if(t==='dd-add-regroup')       return genDDAddRegroup();
+  if(t==='dd-sub-regroup')       return genDDSubRegroup();
+  if(t==='dd-mixed-bar-regroup') return genDDMixedBarRegroup();
+  return genDDAddNoRegroup();
+}
+
+// ── Examples for intro ─────────────────────────────────────────────────────────
+function makeExamples(){
+  const t=CFG.compType;
+  if(t==='dd-mixed-bar'||t==='dd-mixed-bar-regroup'){
+    const gen=t==='dd-mixed-bar-regroup'?genDDMixedBarRegroup:genDDMixedBar;
+    const ex1=gen();ex1.unknownRole='whole';ex1.answer=ex1.whole;
+    const ex2=gen();ex2.unknownRole='p1';ex2.answer=ex2.a;
+    return`<div style="display:flex;flex-direction:column;gap:14px;margin:14px 0;align-items:flex-start">${renderBar(ex1)}${renderBar(ex2)}</div>`;
+  }
+  if(isVerticalType()){
+    const ex=[];
+    for(let i=0;i<3;i++){const it=genItem();ex.push(`<div style="background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius);padding:14px 20px;display:inline-block">${renderVertical(it,true)}</div>`);}
+    return`<div style="display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 4px;align-items:flex-start">${ex.join('')}</div>`;
+  }
+  const op=(t==='dd-sub-no-regroup'||t==='dd-sub-regroup')?'−':'+';
+  const ex=[];
+  for(let i=0;i<3;i++){const it=genItem();ex.push(`<div class="example-eq">${it.a} ${op} ${it.b} = ${it.whole}</div>`);}
+  return`<div class="examples">${ex.join('')}</div>`;
+}
+
+// ── Timer ──────────────────────────────────────────────────────────────────────
+const DUR=60,CIRC=2*Math.PI*24;
+function tRing(t){const off=CIRC*(1-t/DUR);return`<div class="timer-ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg${t<=10?' urgent':''}" cx="28" cy="28" r="24" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><div class="timer-label">${t}</div></div>`;}
+
+// ── State ──────────────────────────────────────────────────────────────────────
+const S={phase:'intro',t:DUR,timer:null,cor:0,err:0,item:null,start:null};
+function render(h){document.getElementById('main').innerHTML=h;}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+
+
+// ── Intro ──────────────────────────────────────────────────────────────────────
+function showIntro(){
+  S.phase='intro';setPhase('Practice');
+  render(`<div class="intro-card fu">
+    <h2>${CFG.label}</h2>
+    <p>Look at the bar model and find the missing number.</p>
+    <p>Find the Unknown.</p>
+    ${makeExamples()}
+    <p style="color:var(--accent);font-weight:600">60 seconds — go as fast as you accurately can.</p>
+    <button class="start-btn" onclick="startDrill()">Start</button>
+  </div>`);
+}
+
+// ── Drill ──────────────────────────────────────────────────────────────────────
+function startDrill(){
+  S.phase='drill';S.cor=0;S.err=0;S.t=DUR;S.start=new Date().toISOString();
+  setPhase('Practice');
+  nextItem();
+  S.timer=setInterval(()=>{S.t--;updateT();if(S.t<=0)endDrill();},1000);
+}
+
+function nextItem(){
+  S.item=genItem();
+  drawDrill();
+  setTimeout(()=>{const el=document.getElementById('answerInput');if(el){el.value='';el.focus();}},40);
+}
+
+function drawDrill(){
+  render(`<div class="drill-header fu">
+    ${tRing(S.t)}
+    <div class="score-block">
+      <div><div class="score-c">${S.cor}</div><div class="score-sub">correct</div></div>
+      ${S.err?`<div><div class="score-e">${S.err}</div><div class="score-sub">errors</div></div>`:''}
+    </div>
+  </div>
+  <div class="model-area fu">${renderItem(S.item)}</div>
+  <div class="answer-row">
+    <span class="answer-prompt">Type the missing number</span>
+    <input type="text" inputmode="numeric" id="answerInput" class="num-input" autocomplete="off" onkeydown="if(event.key==='Enter')submitAnswer()">
+    <button class="btn-check" onclick="submitAnswer()">✓</button>
+  </div>
+  <div class="feedback-flash" id="flashMsg"></div>`);
+}
+
+function updateT(){
+  const r=document.querySelector('.timer-ring');if(!r)return;
+  const off=CIRC*(1-S.t/DUR);
+  const fg=r.querySelector('.fg'),lb=r.querySelector('.timer-label');
+  if(fg){fg.setAttribute('stroke-dashoffset',off.toFixed(1));if(S.t<=10)fg.classList.add('urgent');}
+  if(lb)lb.textContent=S.t;
+}
+
+function submitAnswer(){
+  if(S.phase!=='drill')return;
+  const el=document.getElementById('answerInput');if(!el)return;
+  const val=parseInt(el.value,10);if(isNaN(val)){el.focus();return;}
+  const fm=document.getElementById('flashMsg');
+  if(val===S.item.answer){
+    S.cor++;
+    el.classList.add('correct');
+    if(fm){fm.className='feedback-flash flash-ok';fm.textContent='✓';}
+    setTimeout(nextItem,220);
+  }else{
+    S.err++;
+    el.classList.add('wrong');
+    if(fm){fm.className='feedback-flash flash-err';fm.textContent=`Answer: ${S.item.answer}`;}
+    setTimeout(()=>{
+      if(S.phase!=='drill')return;
+      el.classList.remove('wrong');el.value='';
+      if(fm)fm.textContent='';el.focus();
+    },1300);
+  }
+}
+
+// ── End drill ─────────────────────────────────────────────────────────────────
+function endDrill(){
+  clearInterval(S.timer);S.phase='results';setPhase('Results');
+  const cpm=S.cor,epm=S.err;
+  saveSession({date:S.start,lesson:CFG.chartId,phase:'fluency',corrects:S.cor,errors:S.err,cpm,epm,duration:DUR});
+  render(`<div class="results-card fu">
+    <h2>Session Complete</h2>
+    <div class="rate-row">
+      <div class="rate-stat"><div class="rate-num c">${cpm}</div><div class="rate-sub">Correct / min</div></div>
+      <div style="font-size:26px;color:var(--text-muted);padding-top:10px">/</div>
+      <div class="rate-stat"><div class="rate-num e">${epm}</div><div class="rate-sub">Errors / min</div></div>
+    </div>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">${S.cor} correct and ${S.err} error${S.err!==1?'s':''} in 60 seconds.</p>
+  </div>`);
+  showPigeonTransition(1500);
+}
+
+// ── Pigeon transition ─────────────────────────────────────────────────────────
+function showPigeonTransition(delayMs){
+  setTimeout(()=>{
+    try{localStorage.setItem('chart_new_lesson',String(CFG.chartId));}catch(e){}
+    window.location.href=CFG.chartHref;
+  },delayMs||0);
+}
+
+showIntro();
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Facts — Review: 4×4=16, 4×5=20, 5×5=25, 5×6=30</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;}
+
+  .app{width:100%;max-width:640px;display:flex;flex-direction:column;gap:14px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+
+  /* Equation display area */
+  .model-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;display:flex;align-items:center;justify-content:center;min-height:160px;overflow:visible;}
+
+  /* Cards */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 28px;}
+  .card h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:10px;}
+  .card p{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:8px;}
+
+  /* Family pills — show all 4 on intro */
+  .fam-pills{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+  .fam-pill{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius);padding:11px 18px;font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);text-align:center;letter-spacing:1px;}
+
+  /* Practice progress */
+  .pra-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .pra-step{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+  .pra-count{font-size:13px;font-weight:700;color:var(--accent);}
+  .progress-track{background:var(--border);border-radius:99px;height:5px;overflow:hidden;}
+  .progress-fill{background:var(--accent);border-radius:99px;height:100%;transition:width 0.3s;}
+
+  /* Answer input */
+  .answer-row{display:flex;align-items:center;gap:12px;}
+  .answer-prompt{font-size:14px;font-weight:600;color:var(--text-secondary);flex:1;}
+  .num-input{width:88px;height:50px;border:2px solid var(--border);border-radius:var(--radius);background:var(--surface);font-family:'DM Serif Display',serif;font-size:28px;text-align:center;color:var(--text-primary);outline:none;transition:border-color 0.15s,background 0.15s;-moz-appearance:textfield;}
+  .num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .num-input:focus{border-color:var(--accent);}
+  .num-input.correct{border-color:#2D6A4F;background:#E8F5EE;}
+  .num-input.wrong{border-color:var(--error);background:#FDE8E8;}
+  .btn-check{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s,box-shadow 0.15s;flex-shrink:0;}
+  .btn-check:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.52),0 0 26px 7px rgba(240,146,43,0.24);}
+
+  /* Feedback */
+  .feedback-flash{font-size:15px;font-weight:700;min-height:22px;text-align:center;}
+  .flash-ok{color:#2D6A4F;}
+  .flash-err{color:var(--error);}
+
+  /* Drill header */
+  .drill-header{display:flex;align-items:center;gap:14px;}
+  .score-block{flex:1;display:flex;gap:16px;align-items:baseline;}
+  .score-c{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);}
+  .score-e{font-family:'DM Serif Display',serif;font-size:20px;color:var(--error);}
+  .score-sub{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+  /* Timer */
+  .timer-ring{position:relative;width:56px;height:56px;flex-shrink:0;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .bg{fill:none;stroke:var(--border);stroke-width:5;}
+  .timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+  .timer-ring .fg.urgent{stroke:var(--error);}
+  .timer-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;}
+
+  /* Results */
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+  .results-card h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);margin-bottom:18px;}
+  .rate-row{display:flex;gap:20px;justify-content:center;margin-bottom:16px;}
+  .rate-stat{text-align:center;}
+  .rate-num{font-family:'DM Serif Display',serif;font-size:44px;}
+  .rate-num.c{color:var(--accent);}
+  .rate-num.e{color:var(--error);}
+  .rate-sub{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+  /* Buttons */
+  .start-btn,.continue-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:background 0.15s,box-shadow 0.15s;}
+  .start-btn:hover,.continue-btn:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .fu{animation:fadeUp 0.18s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Math Facts</span>
+    <span class="phase-label" id="phaseLabel">Review</span>
+  </div>
+  <div id="main"></div>
+</div>
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────────
+const CFG={factType:'mult',label:'Review: 4×4=16, 4×5=20, 5×5=25, 5×6=30',storageKey:'fact_mult_numonly_3_sessions',chartId:31,chartHref:'chart.html',nextHref:'index.html'};
+const FAMS=[[4,4,16],[4,5,20],[5,5,25],[5,6,30]];   // array of 4 [a,b,whole] or [partSize,numParts,whole] families
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function isAdd(){return CFG.factType==='add';}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+
+function famLabel(fam){
+  return isAdd()?`${fam[0]} + ${fam[1]} = ${fam[2]}`:`${fam[0]} × ${fam[1]} = ${fam[2]}`;
+}
+
+// ── Equation renderer ──────────────────────────────────────────────────────────
+function numSpan(val,isUnk){
+  const color=isUnk?'var(--accent)':'var(--text-primary)';
+  const fi=isUnk?'italic':'normal';
+  const text=isUnk?'?':String(val);
+  const len=String(val).length;
+  const fs=isUnk?'52px':len>=3?'36px':len>=2?'48px':'56px';
+  return`<span style="font-family:'DM Serif Display',serif;font-size:${fs};color:${color};font-style:${fi};min-width:${isUnk?'52px':'44px'};text-align:center;display:inline-block;line-height:1">${text}</span>`;
+}
+function opSpan(op){
+  return`<span style="font-family:'DM Sans',sans-serif;font-size:36px;color:var(--text-muted);font-weight:300;padding:0 6px">${op}</span>`;
+}
+
+function renderEq(item){
+  if(isAdd()){
+    const{a,b,whole,unknownRole}=item;
+    return`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:nowrap">
+      ${numSpan(a,unknownRole==='p1')}${opSpan('+')}${numSpan(b,unknownRole==='p2')}${opSpan('=')}${numSpan(whole,unknownRole==='whole')}
+    </div>`;
+  }else{
+    const{partSize,numParts,whole,unknownRole}=item;
+    return`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:nowrap">
+      ${numSpan(partSize,unknownRole==='part')}${opSpan('×')}${numSpan(numParts,unknownRole==='count')}${opSpan('=')}${numSpan(whole,unknownRole==='whole')}
+    </div>`;
+  }
+}
+
+// Equation with all values shown (for intro display)
+function renderEqFull(fam){
+  if(isAdd()){
+    const[a,b,w]=fam;
+    return`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:nowrap">
+      ${numSpan(a,false)}${opSpan('+')}${numSpan(b,false)}${opSpan('=')}${numSpan(w,false)}
+    </div>`;
+  }else{
+    const[p,n,w]=fam;
+    return`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:nowrap">
+      ${numSpan(p,false)}${opSpan('×')}${numSpan(n,false)}${opSpan('=')}${numSpan(w,false)}
+    </div>`;
+  }
+}
+
+// ── Practice item generation ───────────────────────────────────────────────────
+function famPracticeItems(fam){
+  if(isAdd()){
+    const[a,b,w]=fam;
+    return shuffle([
+      {a,b,whole:w,unknownRole:'whole',answer:w},
+      {a,b,whole:w,unknownRole:'p1',answer:a},
+      {a,b,whole:w,unknownRole:'p2',answer:b}
+    ]);
+  }else{
+    const[p,n,w]=fam;
+    return shuffle([
+      {partSize:p,numParts:n,whole:w,unknownRole:'whole',answer:w},
+      {partSize:p,numParts:n,whole:w,unknownRole:'part',answer:p},
+      {partSize:p,numParts:n,whole:w,unknownRole:'count',answer:n}
+    ]);
+  }
+}
+
+function genFluencyItem(){
+  const fam=FAMS[Math.floor(Math.random()*FAMS.length)];
+  if(isAdd()){
+    const[a,b,w]=fam;
+    const roles=['whole','p1','p2'],role=roles[Math.floor(Math.random()*3)];
+    return{a,b,whole:w,unknownRole:role,answer:role==='whole'?w:role==='p1'?a:b};
+  }else{
+    const[p,n,w]=fam;
+    const roles=['whole','part','count'],role=roles[Math.floor(Math.random()*3)];
+    return{partSize:p,numParts:n,whole:w,unknownRole:role,answer:role==='whole'?w:role==='part'?p:n};
+  }
+}
+
+// ── Storage ────────────────────────────────────────────────────────────────────
+function loadSessions(){try{const r=localStorage.getItem(CFG.storageKey);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveSession(s){try{const a=loadSessions();a.push(s);localStorage.setItem(CFG.storageKey,JSON.stringify(a));}catch(e){}}
+
+// ── Timer ──────────────────────────────────────────────────────────────────────
+const DUR=60,CIRC=2*Math.PI*24;
+function tRing(t){const off=CIRC*(1-t/DUR);return`<div class="timer-ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg${t<=10?' urgent':''}" cx="28" cy="28" r="24" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><div class="timer-label">${t}</div></div>`;}
+
+
+// ── State ──────────────────────────────────────────────────────────────────────
+const S={phase:'intro',praQ:[],praIdx:0,cor:0,err:0,t:DUR,timer:null,start:null};
+function render(h){document.getElementById('main').innerHTML=h;}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+function focusInput(){setTimeout(()=>{const el=document.getElementById('answerInput');if(el){el.value='';el.focus();}},40);}
+
+// ── Phase 1: Lesson intro ──────────────────────────────────────────────────────
+function showLessonIntro(){
+  S.phase='intro';setPhase('Review');
+  const pills=FAMS.map(f=>`<div class="fam-pill">${renderEqFull(f)}</div>`).join('');
+  render(`<div class="card fu">
+    <h2>Number Review</h2>
+    <p>Same families — no bar models this time. Practice each fact using numbers only, then do a 60-second timed drill.</p>
+    <div class="fam-pills">${pills}</div>
+    <button class="start-btn" onclick="startPractice()">Begin</button>
+  </div>`);
+}
+
+// ── Phase 2: Practice ──────────────────────────────────────────────────────────
+function startPractice(){
+  S.phase='practice';
+  // Build a single shuffled queue from all families
+  S.praQ=shuffle(FAMS.flatMap(f=>famPracticeItems(f))).map(item=>({...item,done:false}));
+  S.praIdx=S.praQ.findIndex(x=>!x.done);
+  showPracticeItem();
+}
+
+function showPracticeItem(){
+  S.phase='practice';setPhase('Practice');
+  const done=S.praQ.filter(x=>x.done).length;
+  const total=S.praQ.length;
+  const pct=Math.round(done/total*100);
+  const item=S.praQ[S.praIdx];
+  render(`<div class="pra-header">
+    <span class="pra-step">Practice</span>
+    <span class="pra-count">${done} / ${total}</span>
+  </div>
+  <div class="progress-track" style="margin-bottom:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="model-area fu">${renderEq(item)}</div>
+  <div class="answer-row">
+    <span class="answer-prompt">Type the missing number</span>
+    <input type="text" inputmode="numeric" id="answerInput" class="num-input" autocomplete="off" onkeydown="if(event.key==='Enter')submitPractice()">
+    <button class="btn-check" onclick="submitPractice()">✓</button>
+  </div>
+  <div class="feedback-flash" id="flashMsg"></div>`);
+  focusInput();
+}
+
+function submitPractice(){
+  const el=document.getElementById('answerInput');
+  if(!el)return;
+  const val=parseInt(el.value,10);
+  if(isNaN(val)){el.focus();return;}
+  const item=S.praQ[S.praIdx];
+  const fm=document.getElementById('flashMsg');
+  if(val===item.answer){
+    item.done=true;
+    el.classList.add('correct');
+    if(fm){fm.className='feedback-flash flash-ok';fm.textContent='✓';}
+    setTimeout(()=>{
+      const next=S.praQ.findIndex(x=>!x.done);
+      if(next===-1){showPreFluency();}
+      else{S.praIdx=next;showPracticeItem();}
+    },300);
+  }else{
+    el.classList.add('wrong');
+    if(fm){fm.className='feedback-flash flash-err';fm.textContent=`Answer: ${item.answer}`;}
+    setTimeout(()=>{
+      el.classList.remove('wrong');el.value='';
+      if(fm)fm.textContent='';
+      el.focus();
+    },1500);
+  }
+}
+
+// ── Phase 3: Pre-fluency gate ──────────────────────────────────────────────────
+function showPreFluency(){
+  S.phase='pre-fluency';setPhase('Fluency');
+  const pills=FAMS.map(f=>`<div class="fam-pill">${famLabel(f)}</div>`).join('');
+  render(`<div class="card fu">
+    <h2>All facts done.</h2>
+    <p>Now: 60 seconds, all families mixed. Answer as many as you can.</p>
+    <div class="fam-pills">${pills}</div>
+    <button class="start-btn" onclick="startDrill()">Start Fluency</button>
+  </div>`);
+}
+
+// ── Phase 4: Fluency drill ─────────────────────────────────────────────────────
+function startDrill(){
+  S.phase='drill';S.cor=0;S.err=0;S.t=DUR;S.start=new Date().toISOString();
+  setPhase('Fluency Drill');
+  nextItem();
+  S.timer=setInterval(()=>{S.t--;updateT();if(S.t<=0)endDrill();},1000);
+}
+
+function nextItem(){
+  const item=genFluencyItem();
+  S.praQ=[{...item,done:false}];
+  drawDrill(item);
+  focusInput();
+}
+
+function drawDrill(item){
+  render(`<div class="drill-header fu">
+    ${tRing(S.t)}
+    <div class="score-block">
+      <div><div class="score-c">${S.cor}</div><div class="score-sub">correct</div></div>
+      ${S.err?`<div><div class="score-e">${S.err}</div><div class="score-sub">errors</div></div>`:''}
+    </div>
+  </div>
+  <div class="model-area fu">${renderEq(item)}</div>
+  <div class="answer-row">
+    <span class="answer-prompt">Type the missing number</span>
+    <input type="text" inputmode="numeric" id="answerInput" class="num-input" autocomplete="off" onkeydown="if(event.key==='Enter')submitDrill()">
+    <button class="btn-check" onclick="submitDrill()">✓</button>
+  </div>
+  <div class="feedback-flash" id="flashMsg"></div>`);
+}
+
+function updateT(){
+  const r=document.querySelector('.timer-ring');if(!r)return;
+  const off=CIRC*(1-S.t/DUR);
+  const fg=r.querySelector('.fg'),lb=r.querySelector('.timer-label');
+  if(fg){fg.setAttribute('stroke-dashoffset',off.toFixed(1));if(S.t<=10)fg.classList.add('urgent');}
+  if(lb)lb.textContent=S.t;
+}
+
+function submitDrill(){
+  if(S.phase!=='drill')return;
+  const el=document.getElementById('answerInput');if(!el)return;
+  const val=parseInt(el.value,10);if(isNaN(val)){el.focus();return;}
+  const item=S.praQ[0];
+  const fm=document.getElementById('flashMsg');
+  if(val===item.answer){
+    S.cor++;el.classList.add('correct');
+    if(fm){fm.className='feedback-flash flash-ok';fm.textContent='✓';}
+    setTimeout(nextItem,220);
+  }else{
+    S.err++;el.classList.add('wrong');
+    if(fm){fm.className='feedback-flash flash-err';fm.textContent=`Answer: ${item.answer}`;}
+    setTimeout(()=>{
+      if(S.phase!=='drill')return;
+      el.classList.remove('wrong');el.value='';
+      if(fm)fm.textContent='';el.focus();
+    },1300);
+  }
+}
+
+// ── Phase 5: End & results ─────────────────────────────────────────────────────
+function endDrill(){
+  clearInterval(S.timer);S.phase='results';setPhase('Results');
+  const cpm=S.cor,epm=S.err;
+  saveSession({date:S.start,lesson:CFG.chartId,phase:'fluency',corrects:S.cor,errors:S.err,cpm,epm,duration:DUR});
+  render(`<div class="results-card fu">
+    <h2>Session Complete</h2>
+    <div class="rate-row">
+      <div class="rate-stat"><div class="rate-num c">${cpm}</div><div class="rate-sub">Correct / min</div></div>
+      <div style="font-size:26px;color:var(--text-muted);padding-top:10px">/</div>
+      <div class="rate-stat"><div class="rate-num e">${epm}</div><div class="rate-sub">Errors / min</div></div>
+    </div>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">${S.cor} correct and ${S.err} error${S.err!==1?'s':''} in 60 seconds.</p>
+  </div>`);
+  showPigeonTransition(1500);
+}
+
+// ── Pigeon transition ─────────────────────────────────────────────────────────
+function showPigeonTransition(delayMs){
+  setTimeout(()=>{
+    try{localStorage.setItem('chart_new_lesson',String(CFG.chartId));}catch(e){}
+    window.location.href=CFG.nextHref;
+  },delayMs||0);
+}
+
+showLessonIntro();
+</script>
+</body>
+</html>

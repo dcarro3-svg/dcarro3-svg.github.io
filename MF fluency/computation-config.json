@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "label": "Double-Digit Addition (No Regrouping)",
+    "compType": "dd-add-no-regroup",
+    "chartId": 32,
+    "storageKey": "computation_1_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "What is the sum? Type it and press <strong>Enter</strong>.",
+    "introDesc": "Find the sum of two double-digit numbers.",
+    "output": "computation-1-fluency.html"
+  },
+  {
+    "id": 2,
+    "label": "Double-Digit Subtraction (No Regrouping)",
+    "compType": "dd-sub-no-regroup",
+    "chartId": 33,
+    "storageKey": "computation_2_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "What is the difference? Type it and press <strong>Enter</strong>.",
+    "introDesc": "Find the difference of two double-digit numbers.",
+    "output": "computation-2-fluency.html"
+  },
+  {
+    "id": 3,
+    "label": "Mixed: Add or Subtract?",
+    "compType": "dd-mixed-bar",
+    "chartId": 34,
+    "storageKey": "computation_3_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "Look at the bar model and find the missing number.",
+    "introDesc": "The unknown could be the whole or a part. Decide whether to add or subtract based on which box has the question mark.",
+    "output": "computation-3-fluency.html"
+  },
+  {
+    "id": 4,
+    "label": "Double-Digit Addition (With Regrouping)",
+    "compType": "dd-add-regroup",
+    "chartId": 35,
+    "storageKey": "computation_4_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "What is the sum? Type it and press <strong>Enter</strong>.",
+    "introDesc": "Find the sum of two double-digit numbers.",
+    "output": "computation-4-fluency.html"
+  },
+  {
+    "id": 5,
+    "label": "Double-Digit Subtraction (With Regrouping)",
+    "compType": "dd-sub-regroup",
+    "chartId": 36,
+    "storageKey": "computation_5_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "What is the difference? Type it and press <strong>Enter</strong>.",
+    "introDesc": "Find the difference of two double-digit numbers.",
+    "output": "computation-5-fluency.html"
+  },
+  {
+    "id": 6,
+    "label": "Mixed with Regrouping: Add or Subtract?",
+    "compType": "dd-mixed-bar-regroup",
+    "chartId": 37,
+    "storageKey": "computation_6_fluency_sessions",
+    "chartHref": "chart.html",
+    "introQ": "Look at the bar model and find the missing number.",
+    "introDesc": "Find the Unknown.",
+    "output": "computation-6-fluency.html"
+  }
+]
