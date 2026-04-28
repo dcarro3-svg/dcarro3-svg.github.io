@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Fact Fluency — Groundwork</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1c1a16;
+      --parchment: #f5f0e8;
+      --moss:      #3d5c3a;
+      --amber:     #c17f3b;
+      --gold:      #e8b84b;
+      --sage:      #7a9e76;
+      --cream:     #faf7f0;
+      --muted:     #7a7163;
+      --border:    #d8cfbe;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(250, 247, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      text-decoration: none;
+    }
+
+    .nav-brand .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      line-height: 1.1;
+    }
+
+    .nav-brand .sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--moss); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 80vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 5rem;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 6rem 6rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 4.5vw, 4.8rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title em { font-style: italic; color: var(--moss); }
+
+    .hero-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      max-width: 40ch;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.55s;
+    }
+
+    .hero-body {
+      font-size: 0.95rem;
+      color: var(--ink);
+      max-width: 44ch;
+      margin-bottom: 2.5rem;
+      line-height: 1.75;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.7s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.85s;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--ink); transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: transparent;
+      color: var(--moss);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--moss);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { background: var(--moss); color: var(--cream); transform: translateY(-2px); }
+
+    .hero-right {
+      background: var(--parchment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.6s;
+    }
+
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(61,92,58,0.1) 0%, transparent 60%);
+    }
+
+    .hero-right svg {
+      width: 72%;
+      max-width: 380px;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* ── OVERVIEW ── */
+    .overview {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      padding: 7rem 6rem;
+      background: var(--parchment);
+    }
+
+    .overview-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 0.4rem;
+    }
+
+    .overview-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+
+    .overview-content h2 em { font-style: italic; color: var(--moss); }
+
+    .overview-content p {
+      font-size: 1rem;
+      color: #3a3630;
+      margin-bottom: 1.2rem;
+      max-width: 58ch;
+    }
+
+    /* ── TOOL SECTIONS ── */
+    .tool-section {
+      padding: 7rem 6rem;
+      background: var(--cream);
+    }
+
+    .tool-section.alt { background: var(--parchment); }
+
+    .tool-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+
+    .tool-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    .section-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .tool-intro {
+      font-size: 0.95rem;
+      color: #3a3630;
+      max-width: 60ch;
+      margin-bottom: 3rem;
+      line-height: 1.75;
+    }
+
+    /* ── PATHWAY CARDS (fact lesson sequences) ── */
+    .pathway-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .pathway-card {
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .pathway-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(61,92,58,0.1);
+    }
+
+    .pathway-op {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+    }
+
+    .pathway-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .pathway-desc {
+      font-size: 0.92rem;
+      color: #3a3630;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .pathway-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .pathway-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--moss);
+      text-decoration: none;
+      transition: gap 0.2s;
+    }
+
+    .pathway-link:hover { gap: 0.9rem; }
+    .pathway-link::after { content: '→'; }
+
+    /* ── FEATURE CARDS (fluency drills) ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .feature-card {
+      border: 1px solid var(--border);
+      padding: 2rem;
+      background: white;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(61,92,58,0.09);
+    }
+
+    .feature-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.6rem;
+    }
+
+    .feature-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.65rem;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: #3a3630;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--moss);
+      text-decoration: none;
+      transition: gap 0.2s;
+    }
+
+    .feature-link:hover { gap: 0.9rem; }
+    .feature-link::after { content: '→'; }
+
+    /* ── COMPUTATION CARDS ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .comp-card {
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+      background: white;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .comp-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(61,92,58,0.09);
+    }
+
+    .comp-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .comp-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .comp-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .comp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--moss);
+      text-decoration: none;
+      margin-top: 1.25rem;
+      transition: gap 0.2s;
+    }
+
+    .comp-link:hover { gap: 0.9rem; }
+    .comp-link::after { content: '→'; }
+
+    /* ── PROGRESS CTA BAND ── */
+    .progress-band {
+      background: var(--moss);
+      padding: 7rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-band::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 60%;
+      height: 200%;
+      background: radial-gradient(ellipse, rgba(232,184,75,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .progress-inner {
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .progress-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-band h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-band h2 em { font-style: italic; color: var(--gold); }
+
+    .progress-band p {
+      font-size: 1rem;
+      color: rgba(245,240,232,0.82);
+      margin-bottom: 2.5rem;
+      max-width: 52ch;
+      line-height: 1.75;
+    }
+
+    .progress-link {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .progress-link:hover { background: var(--cream); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 6rem;
+      background: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--parchment);
+      text-transform: uppercase;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 7rem 2rem 4rem; }
+      .hero-right { display: none; }
+      .overview { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 1.5rem; }
+      .tool-section { padding: 4rem 2rem; }
+      .pathway-grid { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .progress-band { padding: 4rem 2rem; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="../index.html" class="nav-brand">
+      <span class="wordmark">P.L.A.D</span>
+      <span class="sub">Phototropic Learning & Design</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#lessons">Fact Lessons</a></li>
+      <li><a href="#fluency">Fluency Drills</a></li>
+      <li><a href="#computation">Computation</a></li>
+      <li><a href="#progress">Progress</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Groundwork · Math Fact Fluency</p>
+      <h1 class="hero-title">
+        Math Fact<br>
+        <em>Fluency</em>
+      </h1>
+      <p class="hero-sub">A complete system for building automatic recall.</p>
+      <p class="hero-body">
+        From fact family instruction to timed fluency drills to computation practice —
+        everything a student needs to build the automatic recall that frees working
+        memory for real problem-solving.
+      </p>
+      <div class="hero-cta">
+        <a href="fact-lesson-add-1.html" class="btn-primary">Begin with Addition</a>
+        <a href="#lessons" class="btn-secondary">See All Tools</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Number bond: whole at top -->
+        <circle cx="200" cy="90" r="44" fill="#3d5c3a" opacity="0.72"/>
+        <text x="200" y="100" text-anchor="middle" font-family="serif" font-size="26" fill="#faf7f0" opacity="0.95">12</text>
+        <!-- Connecting lines -->
+        <line x1="168" y1="126" x2="130" y2="192" stroke="#d8cfbe" stroke-width="2" opacity="0.8"/>
+        <line x1="232" y1="126" x2="270" y2="192" stroke="#d8cfbe" stroke-width="2" opacity="0.8"/>
+        <!-- Parts -->
+        <circle cx="110" cy="214" r="36" fill="#7a9e76" opacity="0.68"/>
+        <text x="110" y="224" text-anchor="middle" font-family="serif" font-size="22" fill="#faf7f0" opacity="0.95">5</text>
+        <circle cx="290" cy="214" r="36" fill="#c17f3b" opacity="0.62"/>
+        <text x="290" y="224" text-anchor="middle" font-family="serif" font-size="22" fill="#faf7f0" opacity="0.95">7</text>
+        <!-- Plus sign between parts -->
+        <text x="200" y="222" text-anchor="middle" font-family="serif" font-size="22" fill="#7a7163" opacity="0.55">+</text>
+        <!-- Equals lines -->
+        <line x1="80" y1="268" x2="320" y2="268" stroke="#e8b84b" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+        <line x1="80" y1="280" x2="320" y2="280" stroke="#e8b84b" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+        <!-- Fact family text -->
+        <text x="200" y="324" text-anchor="middle" font-family="serif" font-size="13.5" fill="#7a7163" opacity="0.65" font-style="italic">5 + 7 = 12  ·  7 + 5 = 12</text>
+        <text x="200" y="350" text-anchor="middle" font-family="serif" font-size="13.5" fill="#7a7163" opacity="0.45" font-style="italic">12 − 5 = 7  ·  12 − 7 = 5</text>
+        <!-- Decorative dots -->
+        <circle cx="48" cy="148" r="3" fill="#c17f3b" opacity="0.3"/>
+        <circle cx="352" cy="118" r="2.5" fill="#e8b84b" opacity="0.35"/>
+        <circle cx="58" cy="312" r="2" fill="#7a9e76" opacity="0.3"/>
+        <circle cx="360" cy="298" r="3" fill="#c17f3b" opacity="0.25"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- OVERVIEW -->
+  <section class="overview">
+    <div class="overview-label reveal">Overview</div>
+    <div class="overview-content reveal">
+      <h2>Fluency isn't just speed.<br>It's <em>freedom.</em></h2>
+      <p>
+        When students have to stop and calculate 6 × 8 mid-problem, they lose the thread
+        of their reasoning. Working memory is finite — every fact that isn't automatic
+        is a tax on it. This system eliminates that tax.
+      </p>
+      <p>
+        The sequence moves from structured fact family instruction to timed fluency
+        drills to applied double-digit computation. Each phase builds on the one before.
+        Together, they develop the automatic recall the Groundwork curriculum depends on.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- FACT FAMILY LESSONS -->
+  <section class="tool-section" id="lessons">
+    <div class="tool-header reveal">
+      <h2>Fact Family Lessons</h2>
+      <span class="section-tag">Start Here</span>
+    </div>
+    <p class="tool-intro reveal">
+      Structured lessons that teach the relationships within fact families before drilling
+      any facts. Students build a genuine understanding of part-whole structure as the
+      foundation for both addition and multiplication fluency.
+    </p>
+    <div class="pathway-grid">
+
+      <div class="pathway-card reveal">
+        <p class="pathway-op">Addition · Subtraction</p>
+        <h3 class="pathway-title">Additive Fact Families</h3>
+        <p class="pathway-desc">
+          Ten lessons covering additive fact families through structured bar model
+          instruction. Each lesson introduces two related fact families — students
+          learn the part-whole relationships before practicing recall.
+          Five review sets reinforce across families before moving on.
+        </p>
+        <p class="pathway-meta">10 lessons · 5 review sets</p>
+        <a href="fact-lesson-add-1.html" class="pathway-link">Begin Sequence</a>
+      </div>
+
+      <div class="pathway-card reveal">
+        <p class="pathway-op">Multiplication · Division</p>
+        <h3 class="pathway-title">Multiplicative Fact Families</h3>
+        <p class="pathway-desc">
+          Six lessons covering multiplicative fact families through structured
+          equal-groups instruction. Students learn the part-size, number-of-parts,
+          and whole relationships before any rote practice begins.
+          Three review sets reinforce across families.
+        </p>
+        <p class="pathway-meta">6 lessons · 3 review sets</p>
+        <a href="fact-lesson-mult-1.html" class="pathway-link">Begin Sequence</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- FLUENCY DRILLS -->
+  <section class="tool-section alt" id="fluency">
+    <div class="tool-header reveal">
+      <h2>Fact Fluency Drills</h2>
+      <span class="section-tag">Practice</span>
+    </div>
+    <p class="tool-intro reveal">
+      Timed fluency drills for additive and multiplicative fact families. After completing
+      the lessons, students use these tools to build automatic recall through repeated
+      timed practice with session tracking.
+    </p>
+    <div class="feature-grid">
+
+      <div class="feature-card reveal">
+        <p class="feature-type">Addition · Subtraction</p>
+        <h3 class="feature-title">Additive Fact Fluency</h3>
+        <p class="feature-desc">
+          Timed practice across all additive fact families. Students work through
+          randomized sets, self-marking each response. Sessions are logged
+          and tracked on the progress chart.
+        </p>
+        <a href="fact-fluency-add.html" class="feature-link">Open Drill</a>
+      </div>
+
+      <div class="feature-card reveal">
+        <p class="feature-type">Multiplication · Division</p>
+        <h3 class="feature-title">Multiplicative Fact Fluency</h3>
+        <p class="feature-desc">
+          Timed practice across all multiplicative fact families. Same structure
+          as additive fluency — randomized sets, self-marking, and session
+          tracking linked to the progress chart.
+        </p>
+        <a href="fact-fluency-mult.html" class="feature-link">Open Drill</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- COMPUTATION FLUENCY -->
+  <section class="tool-section" id="computation">
+    <div class="tool-header reveal">
+      <h2>Computation Fluency</h2>
+      <span class="section-tag">Application</span>
+    </div>
+    <p class="tool-intro reveal">
+      Applied computation practice using double-digit problems. These tools build
+      procedural fluency in addition and subtraction — with and without regrouping —
+      using bar model scaffolding to connect computation back to structure.
+    </p>
+    <div class="comp-grid">
+
+      <div class="comp-card reveal">
+        <div class="comp-num">01</div>
+        <h3 class="comp-title">Double-Digit Addition</h3>
+        <p class="comp-sub">No Regrouping</p>
+        <a href="computation-1-fluency.html" class="comp-link">Open</a>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-num">02</div>
+        <h3 class="comp-title">Double-Digit Subtraction</h3>
+        <p class="comp-sub">No Regrouping</p>
+        <a href="computation-2-fluency.html" class="comp-link">Open</a>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-num">03</div>
+        <h3 class="comp-title">Mixed: Add or Subtract?</h3>
+        <p class="comp-sub">Bar Model Scaffolding</p>
+        <a href="computation-3-fluency.html" class="comp-link">Open</a>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-num">04</div>
+        <h3 class="comp-title">Double-Digit Addition</h3>
+        <p class="comp-sub">With Regrouping</p>
+        <a href="computation-4-fluency.html" class="comp-link">Open</a>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-num">05</div>
+        <h3 class="comp-title">Double-Digit Subtraction</h3>
+        <p class="comp-sub">With Regrouping</p>
+        <a href="computation-5-fluency.html" class="comp-link">Open</a>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-num">06</div>
+        <h3 class="comp-title">Mixed with Regrouping</h3>
+        <p class="comp-sub">Add or Subtract?</p>
+        <a href="computation-6-fluency.html" class="comp-link">Open</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PROGRESS -->
+  <section class="progress-band" id="progress">
+    <div class="progress-inner">
+      <p class="progress-eyebrow reveal">Progress</p>
+      <h2 class="reveal">
+        Growth you can<br>
+        <em>actually see.</em>
+      </h2>
+      <p class="reveal">
+        The progress chart tracks every session across fact lessons, fluency drills,
+        and computation practice. Students and teachers can see mastery at a glance —
+        and know exactly where to focus next.
+      </p>
+      <a href="chart.html" class="progress-link reveal">Open Progress Chart</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Phototropic Learning & Design</span>
+    <span class="footer-copy">© 2026 PLAD · Math Fact Fluency</span>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
