@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complex Relations — Lesson 3.1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;color:var(--text-primary);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+  .app{width:100%;max-width:680px;display:flex;flex-direction:column;gap:20px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+  .tts-toggle{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);
+    background:var(--surface);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all 0.15s;flex-shrink:0;margin-left:auto;}
+  .tts-toggle svg{width:16px;height:16px;fill:var(--text-muted);transition:fill 0.15s;}
+  .tts-toggle.on{border-color:var(--accent);background:var(--accent-light);}
+  .tts-toggle.on svg{fill:var(--accent);}
+  .tts-toggle:hover{border-color:var(--accent);}
+  .tts-toggle:hover svg{fill:var(--accent);}
+  .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s ease;}
+
+  /* Canvas */
+  .canvas{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:44px 40px;display:flex;align-items:center;justify-content:center;
+    min-height:200px;box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.35s ease;overflow:visible;}
+
+  /* Instruction text — always visible, letter-by-letter animation */
+  .instruct-text{background:var(--accent-light);border:1px solid #B8DAC8;border-radius:var(--radius-lg);
+    padding:18px 24px;font-size:16px;font-weight:400;color:var(--text-primary);
+    line-height:1.7;animation:fadeUp 0.35s ease;display:flex;align-items:flex-start;gap:12px;}
+  .instruct-text.correction{background:var(--accent-warm-light);border-color:#E8C99A;}
+  .instruct-text.neutral{background:var(--surface);border-color:var(--border);}
+  .instruct-text.bridge{background:#EEE6FF;border-color:#C4ADEE;}
+  .instruct-text.positive{background:var(--accent-light);border-color:#C4ADEE;}
+
+  /* Letter-by-letter animation */
+  .typed-text .char{opacity:0;animation:charFade 0.04s forwards;}
+  @keyframes charFade{to{opacity:1;}}
+
+  /* Audio replay button */
+  .audio-indicator{width:32px;height:32px;border-radius:50%;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;
+    transition:all 0.15s;border:none;margin-top:2px;}
+  .audio-indicator:hover{background:#512F8A;transform:scale(1.05);}
+  .audio-indicator.speaking{background:var(--accent-warm);animation:pulse 1s infinite;}
+  .audio-indicator svg{width:16px;height:16px;fill:white;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+  /* Question prompt */
+  .question-prompt{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 18px;font-size:15px;font-weight:500;color:var(--text-primary);animation:fadeUp 0.2s ease;}
+
+  /* Word bank — full-width below question for instruction phase */
+  .instruct-layout{display:flex;gap:12px;align-items:flex-start;}
+  .instruct-model{flex:1;}
+  .instruct-word-bank{width:100%;border:2px solid var(--text-primary);
+    border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;
+    gap:5px;background:var(--surface);}
+  .wb-group{display:flex;flex-direction:column;gap:6px;}
+  .wb-row{display:flex;gap:3px;}
+  .wb-div{height:1px;background:var(--border);margin:3px 0;}
+  .wb-btn{width:100%;padding:10px 14px;border-radius:7px;border:1px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+    color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:left;line-height:1.4;}
+  .wb-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn:active{transform:scale(0.96);}
+  .wb-btn.selected{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn.correct{border-color:var(--accent);background:var(--accent);color:white;}
+  .wb-btn.incorrect{border-color:#C0392B;background:#FDF0F0;color:#C0392B;}
+
+  /* Assembled relation strip */
+  .relation-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px;}
+  .r-token{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:5px;
+    padding:3px 9px;font-size:13px;font-weight:600;color:var(--accent);}
+  .r-token.unk{background:#EEE6FF;border-color:#C4ADEE;color:#6845A8;}
+  .strip-ph{font-size:13px;color:var(--text-muted);font-style:italic;}
+  .strip-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+  .btn-back{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;}
+  .btn-back:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+  .btn-submit{padding:7px 16px;border-radius:var(--radius);border:none;background:var(--accent);
+    color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-submit:hover{background:#512F8A;}
+  .btn-submit:disabled{opacity:0.35;pointer-events:none;}
+
+  /* Response buttons (for review/ident phases) */
+  .response-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{flex:1;padding:15px 20px;border-radius:var(--radius);border:2px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;
+    color:var(--text-primary);cursor:pointer;transition:all 0.15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-continue{width:100%;padding:15px;border-radius:var(--radius);border:none;
+    background:var(--accent);color:white;font-family:'DM Sans',sans-serif;
+    font-size:16px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .btn-continue:hover{background:#512F8A;transform:translateY(-1px);}
+
+  /* Relations found tags */
+  .relations-found{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .relation-tag{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:20px;
+    padding:4px 12px;font-size:13px;font-weight:500;color:var(--accent);}
+
+  /* Bar styles */
+  .bar-h{height:62px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .bar-label{font-size:12px;font-weight:600;text-transform:capitalize;letter-spacing:0.3px;}
+
+  /* Completion */
+  .completion{text-align:center;padding:44px 32px;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.5s ease;}
+  .completion h2{font-family:'DM Serif Display',serif;font-size:26px;margin:12px 0 10px;color:var(--accent);}
+  .completion p{color:var(--text-secondary);font-size:15px;line-height:1.6;max-width:380px;margin:0 auto;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Complex Relations</span>
+    <span class="phase-label" id="phaseLabel">Introduction</span>
+    <button class="tts-toggle" id="ttsToggle" onclick="toggleTTS()" title="Toggle audio">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </button>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div id="mainContent"></div>
+  <div id="responseArea"></div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIG — injected per lesson
+// ═══════════════════════════════════════════════════════════════════════════════
+const CFG = {
+  id: 7,
+  storageKey: 'fluency_unit3_sessions',
+  fluencyHref: 'fluency-unit3.html',
+  nextLessonHref: 'lesson-unit4.html',
+  nextLessonLabel: 'Lesson 4.1 →',
+  completionTitle: 'Complex Relations',
+  completionSummary: 'A complex relation chains two steps through a bridge color.<br><br><em>solve the step with the unknown — part-whole or fractional</em>',
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TTS
+// ═══════════════════════════════════════════════════════════════════════════════
+let ttsEnabled = true;
+let currentUtterance = null;
+let isSpeaking = false;
+
+function toggleTTS() {
+  ttsEnabled = !ttsEnabled;
+  const btn = document.getElementById('ttsToggle');
+  if (btn) btn.classList.toggle('on', ttsEnabled);
+  if (!ttsEnabled) window.speechSynthesis.cancel();
+}
+
+function speak(text, onEnd) {
+  if (!ttsEnabled) { if (onEnd) onEnd(); return; }
+  const clean = text.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.rate = 0.92; utt.pitch = 1.0; utt.volume = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const pref = voices.find(v => v.name.includes('Samantha')||v.name.includes('Karen')||v.name.includes('Daniel')||v.name.includes('Google')||v.lang==='en-US');
+  if (pref) utt.voice = pref;
+  utt.onstart = () => { isSpeaking=true; const b=document.getElementById('audioBtn'); if(b)b.classList.add('speaking'); };
+  utt.onend = () => { isSpeaking=false; const b=document.getElementById('audioBtn'); if(b)b.classList.remove('speaking'); if(onEnd)onEnd(); };
+  utt.onerror = () => { isSpeaking=false; if(onEnd)onEnd(); };
+  currentUtterance = utt;
+  window.speechSynthesis.speak(utt);
+}
+
+function replayAudio() { if (currentUtterance && ttsEnabled) speak(currentUtterance.text); }
+function audioBtn() {
+  return `<button class="audio-indicator" id="audioBtn" onclick="replayAudio()">
+    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+  </button>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LETTER-BY-LETTER TEXT ANIMATION
+// ~33 chars/sec — fast enough to feel responsive, slow enough to feel intentional
+// ═══════════════════════════════════════════════════════════════════════════════
+const CHAR_DELAY_MS = 30; // 33 chars/sec
+
+function animateText(text, containerId, onDone) {
+  const el = document.getElementById(containerId);
+  if (!el) { if (onDone) onDone(); return; }
+  el.innerHTML = '';
+  // Strip any HTML tags for animation, then show plain text char by char
+  const plain = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+  const chars = plain.split('');
+  chars.forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch === '\n' ? '' : ch;
+    if (ch === '\n') span.appendChild(document.createElement('br'));
+    span.style.animationDelay = `${i * CHAR_DELAY_MS}ms`;
+    el.appendChild(span);
+  });
+  if (onDone) setTimeout(onDone, chars.length * CHAR_DELAY_MS + 80);
+}
+
+// Wrap text content for animation — always shown regardless of TTS state
+function typedText(text) {
+  const safe = text.replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+  return `<span class="typed-text" id="animText_${Date.now()}" data-text="${safe}"></span>`;
+}
+
+// Show text with animation
+function showAnimText(text, containerId, onDone) {
+  animateText(text, containerId, onDone);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COLORS & UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════════
+const COLORS=[{name:'blue',hex:'#1B6CA8'},{name:'orange',hex:'#D4600A'},{name:'green',hex:'#2D6A4F'},
+  {name:'red',hex:'#C0392B'},{name:'purple',hex:'#6C3483'},{name:'teal',hex:'#0E7E7E'},
+  {name:'pink',hex:'#B03A6E'},{name:'navy',hex:'#1A3A5C'}];
+const CF={blue:['blue','navy','teal'],navy:['navy','blue'],teal:['teal','blue','green'],
+  green:['green','teal'],red:['red','pink'],pink:['pink','red'],orange:['orange'],purple:['purple']};
+function fam(n){const f=CF[n]||[n];return COLORS.filter(c=>f.includes(c.name)||(CF[c.name]||[c.name]).includes(n)).map(c=>c.name);}
+function randColor(ex=[]){const ef=ex.flatMap(n=>fam(n));const pool=COLORS.filter(c=>!ef.includes(c.name));return pool.length?pool[Math.floor(Math.random()*pool.length)]:COLORS.filter(c=>!ex.includes(c.name))[0];}
+function cmatch(r,n){return[...(CF[n]||[n]),n].some(f=>r.toLowerCase().includes(f));}
+function tc(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1A1714':'#FFFFFF';}
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+const FRAC_NAMES=['half','third','fourth','fifth'];
+const FRAC_DENOMS=[2,3,4,5];
+function fracName(n){return FRAC_NAMES[n-2]||`${n}th`;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BAR RENDERERS — shared across all lessons
+// ═══════════════════════════════════════════════════════════════════════════════
+const BH=62, BASE=320;
+
+function sbar(hex,name,w,isUnk=false){
+  const col=tc(hex);
+  const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:24px;font-style:italic;color:${col}">?</span>`
+    :`<span class="bar-label" style="color:${col}">${name}</span>`;
+  return `<div class="bar-h" style="width:${w}px;background:${hex}">${c}</div>`;
+}
+
+function renderEqual(m){
+  if(m.layout==='dotted'){const w=m.w1;return`<div style="position:relative;display:inline-block;padding:0 20px"><div style="position:absolute;left:16px;top:0;bottom:0;border-left:2px dashed #9589B8"></div><div style="position:absolute;right:16px;top:0;bottom:0;border-right:2px dashed #9589B8"></div><div style="margin-bottom:8px">${sbar(m.c1.hex,m.c1.name,w,m.unk===m.c1.name)}</div>${sbar(m.c2.hex,m.c2.name,w,m.unk===m.c2.name)}</div>`;}
+  return`<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${sbar(m.c1.hex,m.c1.name,m.w1,m.unk===m.c1.name)}${sbar(m.c2.hex,m.c2.name,m.w2,m.unk===m.c2.name)}</div>`;
+}
+
+function renderPW(m){
+  const{whole,p1,p2}=m;
+  const wB=sbar(whole.color.hex,whole.color.name,whole.w,m.unknownRole==='whole');
+  const p1Raw=sbar(p1.color.hex,p1.color.name,p1.w,m.unknownRole==='p1');
+  const p2Raw=sbar(p2.color.hex,p2.color.name,p2.w,m.unknownRole==='p2');
+  const p1B=m.fadedPart==='p1'?`<div style="opacity:0.35">${p1Raw}</div>`:p1Raw;
+  const p2B=m.fadedPart==='p2'?`<div style="opacity:0.35">${p2Raw}</div>`:p2Raw;
+  const lines=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9589B8"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9589B8"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${wB}<div style="display:flex">${p1B}${p2B}</div></div></div>`;
+}
+
+function renderComparison(m){
+  const{larger,smaller,diff}=m;
+  const lB=sbar(larger.color.hex,larger.color.name,larger.w,m.unknownRole==='larger');
+  const sB=sbar(smaller.color.hex,smaller.color.name,smaller.w,m.unknownRole==='smaller');
+  const dPale=diff?`<div style="width:${diff.w}px;height:${BH}px;background:${diff.color.hex}44;border:2px dashed #9589B8;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.unknownRole==='diff'?`<span style="font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:#777">?</span>`:`<span style="font-size:11px;font-weight:600;color:#777;text-transform:capitalize">${diff.color.name}</span>`}</div>`:'';
+  const lines=diff?`<div style="position:absolute;left:${smaller.w}px;top:0;bottom:0;border-left:2px dashed #584C72"></div><div style="position:absolute;left:${larger.w}px;top:0;bottom:0;border-left:2px dashed #584C72"></div>`:'';
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${lB}<div style="display:flex">${sB}${dPale}</div></div></div>`;
+}
+
+function renderFractional(m){
+  const{wholeColor,partColor,denominator,filledIndex,unknownRole,wholeW}=m;
+  const boxW=wholeW/denominator;
+  const wBar=sbar(wholeColor.hex,wholeColor.name,wholeW,unknownRole==='whole');
+  let boxes='';
+  for(let i=0;i<denominator;i++){
+    const iF=i===filledIndex,isUnk=iF&&unknownRole==='part';
+    const bg=iF?partColor.hex:partColor.hex+'33',bdr=iF?'none':'2px dashed #9589B8',col=iF?tc(partColor.hex):'#9589B8';
+    const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:${col}">?</span>`:iF?`<span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${col}">${partColor.name}</span>`:' ';
+    boxes+=`<div style="width:${boxW}px;height:${BH}px;background:${bg};border:${bdr};${i===0?'border-radius:6px 0 0 6px;':''}${i===denominator-1?'border-radius:0 6px 6px 0;':''}display:flex;align-items:center;justify-content:center;flex-shrink:0">${c}</div>`;
+  }
+  let lines='';
+  for(let i=1;i<denominator;i++) lines+=`<div style="position:absolute;left:${i*boxW}px;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:${wholeW}px;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${wBar}<div style="display:flex">${boxes}</div></div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WORD BANK BUILDER — for instruction phase button responses
+// Always exactly 3 options, shuffled.
+// Pass distractors=null with a 3-item [correct, close, far] array as first arg,
+// or pass acc + distractors array to use the legacy auto-build path.
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildInstructWB(accOrOpts, distractors, onSelect) {
+  let opts;
+  if (distractors === null) {
+    // Pre-built [correct, close, far] — shuffle and use directly
+    opts = shuffle([...accOrOpts]);
+  } else {
+    const correct = accOrOpts[0];
+    const pool = shuffle([correct, ...distractors.filter(d=>d!==correct)]).slice(0, 3);
+    if (!pool.includes(correct)) { pool[pool.length-1] = correct; shuffle(pool); }
+    opts = pool;
+  }
+  const btns = opts.map(o =>
+    `<button class="wb-btn" onclick="${onSelect}('${o.replace(/'/g,"\\'")}')">${o}</button>`
+  ).join('');
+  return `<div class="instruct-word-bank"><div class="wb-group">${btns}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RELATION STRIP — for naming phases
+// ═══════════════════════════════════════════════════════════════════════════════
+function strip(asm, subFn, backFn) {
+  const toks = asm.length
+    ? asm.map(t=>`<span class="r-token${t==='unknown'?' unk':''}">${t}</span>`).join('')
+    : `<span class="strip-ph">Tap buttons to build the relation...</span>`;
+  return `<div class="relation-strip">${toks}</div>
+    <div class="strip-row">
+      <button class="btn-back" onclick="${backFn}()">← Back</button>
+      <button class="btn-submit" onclick="${subFn}()" ${asm.length<2?'disabled':''}>Submit</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+const S = {
+  phase:'intro',
+  reviewStep:0, instructStep:0, identStep:0, namingStep:0, freeStep:0,
+  instructFU:false, instructM:null,
+  currentOpts:null, currentFuOpts:null,
+  instructMastery:[], instructCurrentMode:'D', instructItemErrors:0,
+  reviewItemErrors:0, identItemErrors:0, namingItemErrors:0,
+  currentModel:null, currentAnswer:null, currentNaming:null,
+  scaffoldColorActive:true, scaffoldColorStreak:0, scaffoldColorLocked:false,
+  scaffoldRoleActive:true, scaffoldRoleStreak:0, scaffoldRoleLocked:false,
+  freeModel:null, freeRelationsFound:[], freeTarget:4,
+  totalReview:4, totalIdent:12, totalNaming:8, totalFree:3,
+  sessionData:[], itemStartTime:null,
+  assembled:[], correctionAsm:[],
+};
+
+function startTimer(){S.itemStartTime=Date.now();}
+function recordResp(phase,correct){S.sessionData.push({phase,correct,responseTimeMs:S.itemStartTime?Date.now()-S.itemStartTime:null,timestamp:new Date().toISOString()});}
+function updateColorScaffold(ok){if(S.scaffoldColorLocked)return;if(ok){S.scaffoldColorStreak++;if(S.scaffoldColorStreak>=3){S.scaffoldColorActive=false;S.scaffoldColorLocked=true;}}else{S.scaffoldColorActive=true;S.scaffoldColorStreak=0;}}
+function updateRoleScaffold(ok){if(S.scaffoldRoleLocked)return;if(ok){S.scaffoldRoleStreak++;if(S.scaffoldRoleStreak>=3){S.scaffoldRoleActive=false;S.scaffoldRoleLocked=true;}}else{S.scaffoldRoleActive=true;S.scaffoldRoleStreak=0;}}
+function setProgress(p){document.getElementById('progressFill').style.width=p+'%';}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+function render(m,r){document.getElementById('mainContent').innerHTML=m;document.getElementById('responseArea').innerHTML=r;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INSTRUCTION PHASE ENGINE
+// Shared across all lessons. Per-lesson INSTRUCT array and renderModel injected below.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INSTRUCTION ENGINE — D / G / T mode
+// D = Demonstrate: full instruction text shown, learner picks the given answer
+// G = Guide: short hint shown, learner infers
+// T = Test: no text, learner works alone
+// Error correction goes backwards: T → G → D
+// initialMode per INSTRUCT step encodes cross-lesson prior knowledge
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const POSITIVE_MSGS = ['Yes!','Right!','Good!','That\'s it!','Nice work.','Exactly.'];
+function randPos() { return POSITIVE_MSGS[Math.floor(Math.random()*POSITIVE_MSGS.length)]; }
+
+function showInstruct(step) {
+  if (step >= INSTRUCT.length) { afterInstruct(); return; }
+  S.instructStep = step;
+  S.instructFU = false;
+  S.instructItemErrors = 0;
+  // Lazy-init mastery array from each step's initialMode
+  if (!S.instructMastery.length) {
+    S.instructMastery = INSTRUCT.map(d => d.initialMode || 'D');
+  }
+  S.instructCurrentMode = S.instructMastery[step];
+  const def = INSTRUCT[step];
+  S.instructM = def.build ? def.build() : null;
+  S.currentOpts = typeof def.opts === 'function' ? def.opts(S.instructM) : def.opts;
+  setProgress(22 + (step / INSTRUCT.length) * 20);
+  showInstructItem();
+}
+
+function showInstructItem() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const mode = S.instructCurrentMode;
+  const question = typeof def.question === 'function' ? def.question(m) : def.question;
+  const opts = S.currentOpts;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+
+  if (mode === 'T') {
+    // Test: model + question + buttons immediately, no instruction text
+    render(
+      `${modelHtml}<div class="question-prompt">${question}</div>`,
+      `<div id="instructBtns">${buildInstructWB(opts, null, 'submitInstruct')}</div>`
+    );
+    speak(question);
+    return;
+  }
+
+  // D or G: show text, animate, then reveal question + buttons
+  const audioText = mode === 'D'
+    ? (typeof def.audio === 'function' ? def.audio(m) : def.audio)
+    : (typeof def.guide === 'function' ? def.guide(m) : def.guide);
+  const cls = mode === 'D' ? 'instruct-text' : 'instruct-text neutral';
+
+  render(
+    `${modelHtml}
+     <div class="${cls}" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${question}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(audioText);
+  animateText(audioText, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(opts, null, 'submitInstruct'); }
+  });
+}
+
+function submitInstruct(chosen) {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+
+  if (!S.instructFU) {
+    const ok = chosen === S.currentOpts[0];
+    if (ok) {
+      recordResp('instruct', true);
+      // Upgrade mastery for this step
+      if (S.instructCurrentMode === 'D') S.instructMastery[S.instructStep] = 'G';
+      else if (S.instructCurrentMode === 'G') S.instructMastery[S.instructStep] = 'T';
+      showInstructFU();
+    } else {
+      recordResp('instruct', false);
+      S.instructItemErrors++;
+      // Drop mode backwards
+      if (S.instructCurrentMode === 'T') S.instructCurrentMode = 'G';
+      else if (S.instructCurrentMode === 'G' && S.instructItemErrors >= 2) S.instructCurrentMode = 'D';
+      showInstructItem();
+    }
+  } else {
+    const ok = chosen === S.currentFuOpts[0];
+    if (ok) {
+      recordResp('instruct_fu', true);
+      showInstruct(S.instructStep + 1);
+    } else {
+      recordResp('instruct_fu', false);
+      S.instructItemErrors++;
+      showInstructFUError();
+    }
+  }
+}
+
+function showInstructFU() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const mode = S.instructCurrentMode;
+  S.instructFU = true;
+  const fuQ = typeof def.fuQ === 'function' ? def.fuQ(m) : def.fuQ;
+  S.currentFuOpts = typeof def.fuOpts === 'function' ? def.fuOpts(m) : def.fuOpts;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+  const pos = randPos();
+
+  if (mode === 'T') {
+    // Test follow-up: brief positive then question + buttons immediately
+    render(
+      `${modelHtml}
+       <div class="instruct-text positive"><strong>${pos}</strong></div>
+       <div class="question-prompt">${fuQ}</div>`,
+      `<div id="instructBtns">${buildInstructWB(S.currentFuOpts, null, 'submitInstruct')}</div>`
+    );
+    speak(pos);
+    return;
+  }
+
+  // D or G follow-up: play fu() text then show fuQ + buttons
+  const fuText = typeof def.fu === 'function' ? def.fu(m) : def.fu;
+  const fullAudio = `${pos} ${fuText}`;
+  render(
+    `${modelHtml}
+     <div class="instruct-text bridge" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${fuQ}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(fullAudio);
+  animateText(fullAudio, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(S.currentFuOpts, null, 'submitInstruct'); }
+  });
+}
+
+function showInstructFUError() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const fuQ = typeof def.fuQ === 'function' ? def.fuQ(m) : def.fuQ;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+
+  // Drop mode, pick guidance text
+  let guideText;
+  if (S.instructCurrentMode === 'T') {
+    S.instructCurrentMode = 'G';
+    guideText = typeof def.fuGuide === 'function' ? def.fuGuide(m) : def.fuGuide;
+  } else {
+    guideText = typeof def.fu === 'function' ? def.fu(m) : def.fu;
+  }
+
+  render(
+    `${modelHtml}
+     <div class="instruct-text correction" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${fuQ}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(guideText);
+  animateText(guideText, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(S.currentFuOpts, null, 'submitInstruct'); }
+  });
+}
+
+
+// Build plausible distractors from the same conceptual pool
+function buildDistractors(acc, m, def, isFU=false) {
+  const correct = acc[0];
+  const pool = [];
+
+  // Color distractors — pick wrong colors from COLORS
+  const colorNames = COLORS.map(c=>c.name);
+  if (colorNames.some(c => acc.some(a => a.includes(c)))) {
+    const usedColors = colorNames.filter(c => acc.some(a => a.includes(c)));
+    const otherColors = colorNames.filter(c => !usedColors.includes(c));
+    shuffle(otherColors).slice(0,2).forEach(c => pool.push(c));
+  }
+
+  // Relation word distractors
+  const relWords = ['equal','not equal','plus','minus','part-whole','comparison','difference','halves','thirds','fourths','fifths','times','fraction'];
+  relWords.filter(w => !acc.some(a=>a.includes(w))).slice(0,3).forEach(w=>pool.push(w));
+
+  // Yes/no if acc includes yes/no
+  if (acc.some(a=>a==='yes')) pool.push('no');
+  if (acc.some(a=>a==='no')) pool.push('yes');
+
+  // Fraction distractors
+  if (acc.some(a=>FRAC_NAMES.includes(a))) {
+    FRAC_NAMES.filter(f=>!acc.includes(f)).forEach(f=>pool.push(f));
+  }
+
+  // Number distractors
+  ['two','three','four','five'].filter(n=>!acc.some(a=>a.includes(n))).slice(0,2).forEach(n=>pool.push(n));
+
+  return shuffle(pool.filter(d=>d&&d!==correct)).slice(0,2);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════════════════════════
+function saveSession() {
+  try {
+    const corrects = S.sessionData.filter(d=>d.correct).length;
+    const errors   = S.sessionData.filter(d=>!d.correct).length;
+    const record = { date:new Date().toISOString(), lesson:CFG.id, phase:'instruction', corrects, errors, cpm:0, epm:0, duration:null };
+    const raw = localStorage.getItem(CFG.storageKey);
+    const existing = raw ? JSON.parse(raw) : [];
+    existing.push(record);
+    localStorage.setItem(CFG.storageKey, JSON.stringify(existing));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPLETION
+// ═══════════════════════════════════════════════════════════════════════════════
+function showComplete() {
+  setProgress(100); setPhase('Complete');
+  saveSession();
+  render(`<div class="completion">
+    <div style="font-size:44px;margin-bottom:12px">◈</div>
+    <h2>${CFG.completionTitle}</h2>
+    <p>${CFG.completionSummary}</p>
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+      <a href="${CFG.fluencyHref}" style="display:block;padding:14px 24px;background:var(--accent);color:white;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">Practice for Fluency →</a>
+      <a href="${CFG.nextLessonHref}" style="display:block;padding:14px 24px;background:var(--surface);color:var(--accent);border:2px solid var(--accent);border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">${CFG.nextLessonLabel}</a>
+      <a href="chart.html" style="display:block;padding:14px 24px;background:var(--surface);color:var(--text-secondary);border:2px solid var(--border);border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">View Progress Chart</a>
+    </div>
+  </div>`,``);
+  speak(`Well done. ${CFG.completionTitle} complete.`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LESSON-SPECIFIC CODE
+// Injected by build script:
+//   - INSTRUCT array
+//   - renderModel(m) function
+//   - Generator functions
+//   - Review phase block (showIntro, startReview, nextReview, submitReview, showInstructIntro)
+//   - afterInstruct() — what happens after instruction phase completes
+//   - Identification phase
+//   - Naming phase
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LESSON UNIT 3 — COMPLEX RELATIONS
+// Two-step models: part-whole (step 1) → fractional (step 2)
+// Complex relations are new → all INSTRUCT steps start at D.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const NUM_WORDS=['two','three','four','five'];
+function numWord(n){return NUM_WORDS[n-2]||String(n);}
+
+// ── Generator ──────────────────────────────────────────────────────────────────
+function genComplex(unknownStep=null){
+  const c1=randColor([]);
+  const c2=randColor([c1.name]);
+  const c3=randColor([c1.name,c2.name]);
+  const c4=randColor([c1.name,c2.name,c3.name]);
+
+  const tw=BASE*(0.65+Math.random()*0.2);
+  const sp=0.35+Math.random()*0.3;
+  const d=FRAC_DENOMS[Math.floor(Math.random()*FRAC_DENOMS.length)];
+  const fi=Math.floor(Math.random()*d);
+
+  const step=unknownStep||(Math.random()<0.5?1:2);
+
+  const step1Roles=['whole','p1','p2'];
+  const step1UnkRole=step===1?step1Roles[Math.floor(Math.random()*step1Roles.length)]:null;
+
+  const step1={
+    whole:{color:c3,w:tw},
+    p1:{color:c1,w:tw*sp},
+    p2:{color:c2,w:tw*(1-sp)},
+    unknownRole:step1UnkRole,
+    confirmed:true,
+  };
+
+  const step2={
+    wholeColor:c3,
+    partColor:c4,
+    denominator:d,
+    filledIndex:fi,
+    unknownRole:step===2?'part':null,
+    wholeW:tw,
+    isFractional:true,
+  };
+
+  let correct;
+  if(step===1){
+    if(step1UnkRole==='whole') correct=[c1.name,'plus',c2.name,'equals','unknown'];
+    else if(step1UnkRole==='p1') correct=[c3.name,'minus',c2.name,'equals','unknown'];
+    else correct=[c3.name,'minus',c1.name,'equals','unknown'];
+  } else {
+    correct=['one',fracName(d),'of',c3.name,'equals','unknown'];
+  }
+
+  return{step1,step2,c1,c2,c3,c4,d,fi,tw,sp,correct,unknownStep:step};
+}
+
+// ── Renderer ───────────────────────────────────────────────────────────────────
+function renderComplex(m){
+  const r1=renderPW(m.step1);
+  const r2=renderFractional(m.step2);
+  return `<div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
+    ${r1}
+    <div style="display:flex;align-items:center;gap:8px;padding-left:4px">
+      <div style="width:20px;height:2px;background:#9589B8;border-radius:1px"></div>
+      <span style="font-size:11px;font-weight:600;color:#9589B8;text-transform:uppercase;letter-spacing:0.8px">then</span>
+      <div style="width:20px;height:2px;background:#9589B8;border-radius:1px"></div>
+    </div>
+    ${r2}
+  </div>`;
+}
+
+function renderModel(m){return renderComplex(m);}
+
+// ── INSTRUCT ───────────────────────────────────────────────────────────────────
+const INSTRUCT=[
+
+  // Step 0: Identify the bridge — D
+  {
+    initialMode:'D',
+    build(){
+      const c1=COLORS[0],c2=COLORS[1],c3=COLORS[2],c4=COLORS[3];
+      const tw=300,sp=0.45,d=2,fi=0;
+      return{
+        step1:{whole:{color:c3,w:tw},p1:{color:c1,w:tw*sp},p2:{color:c2,w:tw*(1-sp)},unknownRole:null,confirmed:true},
+        step2:{wholeColor:c3,partColor:c4,denominator:d,filledIndex:fi,unknownRole:null,wholeW:tw,isFractional:true},
+        c1,c2,c3,c4,d,fi,tw,sp,
+        correct:[c1.name,'plus',c2.name,'equals',c3.name],
+        unknownStep:null,
+      };
+    },
+    audio(m){return`This picture has two steps. Step one: ${m.c1.name} and ${m.c2.name} combine to make ${m.c3.name}. Step two: ${m.c3.name} is split into equal parts, and one part is ${m.c4.name}. The ${m.c3.name} bar appears in both steps. It links them. We call it the bridge.`;},
+    guide(m){return`Which color appears in both step one and step two?`;},
+    question(m){return`What is the bridge between the two steps?`;},
+    opts(m){return shuffle([`The ${m.c3.name} bar is the bridge.`,`The ${m.c1.name} bar is the bridge.`,`The ${m.c4.name} bar is the bridge.`]);},
+    fu(m){return`${m.c3.name} is the bridge. It is the result of step one and the starting point for step two.`;},
+    fuQ(m){return`Why is ${m.c3.name} called the bridge?`;},
+    fuOpts:[`It appears in both steps — it connects them.`,`It is the smallest bar.`,`It is the final unknown.`],
+    fuGuide(m){return`The bridge is in both steps. Look at both models — which color shows up in each one?`;},
+  },
+
+  // Step 1: Unknown in step 1 — D
+  {
+    initialMode:'D',
+    build(){return genComplex(1);},
+    audio(m){
+      const role=m.step1.unknownRole;
+      const unkColor=role==='whole'?m.c3:role==='p1'?m.c1:m.c2;
+      return`The first step has an unknown — ${unkColor.name}. Name the relation to find it. Then the bridge will be known for step two.`;
+    },
+    guide(m){return`Look at the first step only. What are the known bars?`;},
+    question:`What equals the unknown in the first step?`,
+    opts(m){
+      const role=m.step1.unknownRole;
+      const correct=m.correct.join(' ');
+      let close,far;
+      if(role==='whole'){
+        close=`${m.c2.name} plus ${m.c1.name} equals unknown`;
+        far=`${m.c3.name} minus ${m.c1.name} equals unknown`;
+      } else if(role==='p1'){
+        close=`${m.c3.name} minus ${m.c1.name} equals unknown`;
+        far=`${m.c1.name} plus ${m.c2.name} equals unknown`;
+      } else {
+        close=`${m.c3.name} minus ${m.c2.name} equals unknown`;
+        far=`${m.c1.name} plus ${m.c2.name} equals unknown`;
+      }
+      return shuffle([correct,close,far]);
+    },
+    fu(m){return`${m.correct.join(' ')}. The bridge ${m.c3.name} now has a value. That unlocks the second step.`;},
+    fuQ:`What does solving the first step unlock?`,
+    fuOpts:[`It unlocks the second step.`,`It closes the problem.`,`It changes the bridge color.`],
+    fuGuide(m){return`Solving step one gives you the bridge value. The bridge is the starting point for step two. What does that unlock?`;},
+  },
+
+  // Step 2: Unknown in step 2 — D
+  {
+    initialMode:'D',
+    build(){return genComplex(2);},
+    audio(m){return`Step one is solved. You know ${m.c3.name}. Now look at step two — ${m.c3.name} is split into ${numWord(m.d)} equal parts. The ${m.c4.name} part is unknown. What equals it?`;},
+    guide(m){return`Count the equal parts in step two. How many are there?`;},
+    question(m){return`What equals the unknown ${m.c4.name} part?`;},
+    opts(m){
+      const correct=`one ${fracName(m.d)} of ${m.c3.name} equals unknown`;
+      const wrongFrac=fracName(m.d===2?3:2);
+      const close=`one ${wrongFrac} of ${m.c3.name} equals unknown`;
+      const far=`${m.c3.name} minus ${m.c1.name} equals unknown`;
+      return shuffle([correct,close,far]);
+    },
+    fu(m){return`One ${fracName(m.d)} of ${m.c3.name} equals unknown. Both steps are solved. The bridge connected them.`;},
+    fuQ:`What allowed you to name the second relation?`,
+    fuOpts:[`Step one was solved, so the bridge was known.`,`The second step has two unknowns.`,`The unknown always appears in step two.`],
+    fuGuide(m){return`The bridge was the starting point for step two. What had to happen first?`;},
+  },
+
+  // Step 3: Full problem — find which step has the unknown, then name it — D
+  {
+    initialMode:'D',
+    build(){return genComplex(null);},
+    audio(){return`Here is a full complex relation. One of the two steps has an unknown — look for the question mark bar. Find which step it is in.`;},
+    guide(){return`Look at both steps. The question mark bar is in only one of them. Which one?`;},
+    question:`Which step has the unknown?`,
+    opts(m){
+      const correct=m.unknownStep===1?`The first step has the unknown.`:`The second step has the unknown.`;
+      const wrong=m.unknownStep===1?`The second step has the unknown.`:`The first step has the unknown.`;
+      return shuffle([correct,wrong,`Both steps have an unknown.`]);
+    },
+    fu(m){const stepLabel=m.unknownStep===1?'first':'second';return`The ${stepLabel} step has the unknown. Name the relation to find it: ${m.correct.join(' ')}.`;},
+    fuQ:`Name the relation to find the unknown.`,
+    fuOpts(m){
+      const correct=m.correct.join(' ');
+      let close,far;
+      if(m.unknownStep===1){
+        const role=m.step1.unknownRole;
+        if(role==='whole'){
+          close=`${m.c2.name} plus ${m.c1.name} equals unknown`;
+          far=`one ${fracName(m.d)} of ${m.c3.name} equals unknown`;
+        } else if(role==='p1'){
+          close=`${m.c3.name} minus ${m.c1.name} equals unknown`;
+          far=`one ${fracName(m.d)} of ${m.c3.name} equals unknown`;
+        } else {
+          close=`${m.c3.name} minus ${m.c2.name} equals unknown`;
+          far=`one ${fracName(m.d)} of ${m.c3.name} equals unknown`;
+        }
+      } else {
+        const wrongFrac=fracName(m.d===2?3:2);
+        close=`one ${wrongFrac} of ${m.c3.name} equals unknown`;
+        far=`${m.c1.name} plus ${m.c2.name} equals unknown`;
+      }
+      return shuffle([correct,close,far]);
+    },
+    fuGuide(m){return`Look only at the step with the unknown. What are the known bars in that step?`;},
+  },
+];
+
+// ── Phase functions ─────────────────────────────────────────────────────────────
+function showIntro(){
+  S.phase='intro';setPhase('Introduction');setProgress(2);
+  const audio=`You have learned simple and compound relations. Now you will learn complex relations. A complex relation has two steps. Each step builds on the one before it. A bridge color links the steps.`;
+  render(`<div class="instruct-text neutral" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="startInstructIntro()">Let's see it</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+
+function startInstructIntro(){
+  S.phase='instruction';setPhase('Instruction');setProgress(14);
+  const audio=`Each picture shows two models with a "then" between them. Look for the bridge color — it appears in both steps.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="showInstruct(0)">Show me</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+
+function afterInstruct(){showIdentIntro();}
+
+// ── Identification phase ────────────────────────────────────────────────────────
+function showIdentIntro(){
+  S.phase='ident';S.identStep=0;setPhase('Practice');setProgress(42);
+  const audio=`Tell me which step has the unknown. Look at both steps and find the question mark bar.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="nextIdent()">Ready</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+
+function nextIdent(){
+  if(S.identStep>=S.totalIdent){showNamingIntro();return;}
+  setProgress(44+(S.identStep/S.totalIdent)*18);
+  S.identItemErrors=0;
+  S.currentModel=genComplex(null);
+  S.currentAnswer=S.currentModel.unknownStep===1?'first':'second';
+  startTimer();
+  render(
+    `<div class="canvas">${renderComplex(S.currentModel)}</div>
+     <div class="question-prompt">Which step has the unknown?</div>`,
+    `<div class="response-buttons">
+       <button class="btn" onclick="submitIdent('first')">First step</button>
+       <button class="btn" onclick="submitIdent('second')">Second step</button>
+     </div>`
+  );
+  speak('Which step has the unknown?');
+}
+
+function submitIdent(r){
+  const ok=r===S.currentAnswer;
+  recordResp('ident',ok);
+  if(ok){
+    document.getElementById('responseArea').innerHTML=`<div class="instruct-text positive" style="text-align:center;font-weight:700">${randPos()}</div>`;
+    setTimeout(()=>{S.identStep++;nextIdent();},400);
+    return;
+  }
+  S.identItemErrors++;
+  let audio;
+  if(S.identItemErrors>=2){
+    audio=`The unknown is in the ${S.currentAnswer} step. Look for the bar without a color label.`;
+  } else {
+    audio=`Find the bar with the question mark. It is in only one of the two steps.`;
+  }
+  render(
+    `<div class="canvas">${renderComplex(S.currentModel)}</div>
+     <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div class="response-buttons">
+       <button class="btn" onclick="submitIdent('first')">First step</button>
+       <button class="btn" onclick="submitIdent('second')">Second step</button>
+     </div>`
+  );
+  speak(audio);animateText(audio,'instructAnim');
+}
+
+// ── Naming phase ───────────────────────────────────────────────────────────────
+function showNamingIntro(){
+  S.phase='naming';S.namingStep=0;setPhase('Relation Naming');setProgress(64);
+  const audio=`Name the relation for the unknown bar. Use the word buttons to build your answer.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="nextNaming()">Ready</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+
+function nextNaming(){
+  if(S.namingStep>=S.totalNaming){showComplete();return;}
+  setProgress(66+(S.namingStep/S.totalNaming)*28);
+  S.namingItemErrors=0;
+  S.currentModel=genComplex(null);
+  S.assembled=[];
+  startTimer();
+  renderNamingItem();
+}
+
+function renderNamingItem(){
+  const m=S.currentModel;
+  const fn=fracName(m.d);
+  const colorBtns=[m.c1,m.c2,m.c3,m.c4].map(c=>
+    `<button class="wb-btn" onclick="addNaming3('${c.name}')">${c.name}</button>`
+  ).join('');
+  const opBtns=`
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('plus')">plus</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('minus')">minus</button>
+    </div>
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('one')">one</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('${fn}')">${fn}</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('of')">of</button>
+    </div>
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('equals')">equals</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('unknown')">unknown</button>
+    </div>
+  `;
+  const wordBank=`<div class="instruct-word-bank">
+    <div class="wb-group">${colorBtns}</div>
+    <div class="wb-div"></div>
+    <div class="wb-group">${opBtns}</div>
+  </div>`;
+
+  render(
+    `<div class="canvas" style="padding:24px 20px">${renderComplex(m)}</div>
+     <div class="question-prompt">Name the relation for the unknown bar.</div>`,
+    `<div style="display:flex;flex-direction:column;gap:10px">
+       ${wordBank}
+       ${strip(S.assembled,'submitNaming3','undoNaming3')}
+     </div>`
+  );
+}
+
+function addNaming3(w){S.assembled.push(w);renderNamingItem();}
+function undoNaming3(){S.assembled.pop();renderNamingItem();}
+
+function submitNaming3(){
+  const m=S.currentModel;
+  const s=S.assembled.join(' ');
+  const cor=m.correct.join(' ');
+  const ok=s===cor;
+  recordResp('naming',ok);
+  if(ok){
+    S.assembled=[];
+    document.getElementById('responseArea').innerHTML=`<div class="instruct-text positive" style="text-align:center;font-weight:700">${randPos()}</div>`;
+    setTimeout(()=>{S.namingStep++;nextNaming();},500);
+    return;
+  }
+  S.namingItemErrors++;
+  let fb;
+  const qi=S.assembled.indexOf('unknown');
+  if(qi>=0&&qi<S.assembled.length-1){
+    fb=`Put the unknown at the end. Try: ${cor}`;
+  } else if(S.namingItemErrors>=2){
+    fb=`The relation is: ${cor}.`;
+  } else if(m.unknownStep===1){
+    const role=m.step1.unknownRole;
+    const hasPlus=S.assembled.includes('plus'),hasMinus=S.assembled.includes('minus');
+    if(role==='whole'&&hasMinus) fb=`The unknown is the whole — add the parts. Use plus.`;
+    else if(role!=='whole'&&hasPlus) fb=`The unknown is a part — subtract from the whole. Use minus.`;
+    else fb=`Look at the first step only. What are the known bars?`;
+  } else {
+    const spokenFrac=FRAC_NAMES.find(f=>S.assembled.includes(f));
+    if(spokenFrac&&spokenFrac!==fracName(m.d)) fb=`Count the equal parts — there are ${m.d}. Use ${fracName(m.d)}.`;
+    else fb=`Name the fractional relation for the second step. The whole is ${m.c3.name}.`;
+  }
+  S.assembled=[];
+  const fn=fracName(m.d);
+  const colorBtns=[m.c1,m.c2,m.c3,m.c4].map(c=>
+    `<button class="wb-btn" onclick="addNaming3('${c.name}')">${c.name}</button>`
+  ).join('');
+  const opBtns=`
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('plus')">plus</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('minus')">minus</button>
+    </div>
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('one')">one</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('${fn}')">${fn}</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('of')">of</button>
+    </div>
+    <div class="wb-row">
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('equals')">equals</button>
+      <button class="wb-btn" style="flex:1" onclick="addNaming3('unknown')">unknown</button>
+    </div>
+  `;
+  const wordBank=`<div class="instruct-word-bank">
+    <div class="wb-group">${colorBtns}</div>
+    <div class="wb-div"></div>
+    <div class="wb-group">${opBtns}</div>
+  </div>`;
+  render(
+    `<div class="canvas" style="padding:24px 20px">${renderComplex(m)}</div>
+     <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div style="display:flex;flex-direction:column;gap:10px">
+       ${wordBank}
+       ${strip(S.assembled,'submitNaming3','undoNaming3')}
+     </div>`
+  );
+  speak(fb);animateText(fb,'instructAnim');
+}
+
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+if (window.speechSynthesis) { window.speechSynthesis.onvoiceschanged=()=>{}; window.speechSynthesis.getVoices(); }
+document.getElementById('ttsToggle').classList.add('on');
+showIntro();
+</script>
+</body>
+</html>

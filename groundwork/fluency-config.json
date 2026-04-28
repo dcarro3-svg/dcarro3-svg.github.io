@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "label": "Equal Relations",
+    "storageKey": "fluency_l1_sessions",
+    "lessonType": "equal",
+    "lessonHref": "lesson-one.html",
+    "chartHref": "chart.html",
+    "output": "fluency-l1.html"
+  },
+  {
+    "id": 2,
+    "label": "Part-Whole Relations",
+    "storageKey": "fluency_l2_sessions",
+    "lessonType": "partwhole",
+    "lessonHref": "lesson-two.html",
+    "chartHref": "chart.html",
+    "output": "fluency-l2.html"
+  },
+  {
+    "id": 3,
+    "label": "Comparisons & Differences",
+    "storageKey": "fluency_l3_sessions",
+    "lessonType": "comparison",
+    "lessonHref": "lesson-three.html",
+    "chartHref": "chart.html",
+    "output": "fluency-l3.html"
+  },
+  {
+    "id": 4,
+    "label": "Fractional Relations",
+    "storageKey": "fluency_l4_sessions",
+    "lessonType": "fractional",
+    "lessonHref": "lesson-four.html",
+    "chartHref": "chart.html",
+    "output": "fluency-l4.html"
+  },
+  {
+    "id": 5,
+    "label": "Multiplicative Relations",
+    "storageKey": "fluency_l5_sessions",
+    "lessonType": "multiplicative",
+    "lessonHref": "lesson-five.html",
+    "chartHref": "chart.html",
+    "output": "fluency-l5.html"
+  }
+]

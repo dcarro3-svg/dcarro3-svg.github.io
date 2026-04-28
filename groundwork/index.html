@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relation Naming</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{
+    --bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;
+    --text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;
+    --accent:#6845A8;--accent-light:#EEE6FF;
+    --accent-blue:#2B5DC7;--accent-blue-light:#E8EEFF;
+    --accent-orange:#D4600A;--accent-orange-light:#FBF0E4;
+    --radius:12px;--radius-lg:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background-color:var(--bg);color:var(--text-primary);
+    min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0 24px 32px;
+    background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='50' y='39' width='5' height='5' fill='%232B5DC7' fill-opacity='0.20'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");
+    background-size:128px 128px;}
+  .app{width:100%;max-width:660px;display:flex;flex-direction:column;gap:22px;}
+  h1{font-family:'DM Serif Display',serif;font-size:36px;letter-spacing:-0.5px;}
+  .section-label{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+    color:var(--text-primary);margin-bottom:14px;}
+  .divider{height:1px;background:var(--border);}
+
+  /* ── Unit accordion button ─────────────────────────────────────────────── */
+  .unit{display:flex;flex-direction:column;gap:0;}
+
+  .unit-btn{display:flex;align-items:center;gap:20px;padding:18px 28px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    cursor:pointer;transition:all 0.15s;box-shadow:0 1px 4px rgba(0,0,0,0.04);
+    text-align:left;width:100%;font-family:'DM Sans',sans-serif;}
+  .unit-btn:hover{border-color:var(--accent);background:var(--accent-light);
+    box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.50),0 0 28px 8px rgba(240,146,43,0.22);}
+  .unit-btn.open{border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom-color:transparent;background:var(--accent-light);border-color:var(--accent);}
+
+  .unit-icon{width:78px;height:78px;border-radius:14px;display:flex;align-items:center;
+    justify-content:center;font-size:24px;font-weight:700;flex-shrink:0;
+    background:var(--accent-light);color:var(--accent);}
+  .unit-icon.empty{background:#EDE8F8;color:var(--text-muted);}
+
+  .unit-text{flex:1;}
+  .unit-text strong{display:block;font-size:20px;font-weight:700;color:var(--text-primary);}
+  .unit-text span{font-size:15px;color:var(--text-muted);}
+  .unit-btn.open .unit-text strong{color:var(--accent);}
+
+  .unit-chevron{font-size:12px;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
+  .unit-btn.open .unit-chevron{transform:rotate(180deg);color:var(--accent);}
+
+  .unit-btn.empty-unit{opacity:0.6;cursor:default;}
+  .unit-btn.empty-unit:hover{border-color:var(--border);background:var(--surface);}
+
+  /* ── Unit body — nested content ───────────────────────────────────────── */
+  .unit-body{display:none;flex-direction:column;gap:0;
+    border:1px solid var(--accent);border-top:none;
+    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+    background:var(--surface);overflow:hidden;}
+  .unit-body.open{display:flex;}
+
+  /* ── Nested accordion (sub-section within a unit) ─────────────────────── */
+  .sub-section{display:flex;flex-direction:column;gap:0;}
+
+  .sub-btn{display:flex;align-items:center;gap:18px;padding:14px 28px 14px 40px;
+    background:var(--surface);border:none;border-top:1px solid var(--border);
+    cursor:pointer;transition:all 0.15s;text-align:left;width:100%;
+    font-family:'DM Sans',sans-serif;}
+  .sub-btn:hover{background:var(--accent-light);
+    box-shadow:0 0 0 2px #F0922B,0 0 10px 3px rgba(240,146,43,0.42),0 0 24px 6px rgba(240,146,43,0.18);}
+  .sub-btn.open{background:var(--accent-light);}
+
+  .sub-icon{width:63px;height:63px;border-radius:11px;display:flex;align-items:center;
+    justify-content:center;font-size:18px;flex-shrink:0;}
+  .sub-icon.lesson{background:var(--accent-light);color:var(--accent);}
+  .sub-icon.fluency{background:var(--accent-blue-light);color:var(--accent-blue);}
+  .sub-icon.chart{background:var(--accent-light);color:var(--accent);}
+  .sub-icon.empty{background:#EDE8F8;color:var(--text-muted);}
+
+  .sub-text{flex:1;}
+  .sub-text strong{display:block;font-size:18px;font-weight:600;color:var(--text-primary);}
+  .sub-text span{font-size:14px;color:var(--text-muted);}
+  .sub-btn.open .sub-text strong{color:var(--accent);}
+
+  .sub-chevron{font-size:11px;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
+  .sub-btn.open .sub-chevron{transform:rotate(180deg);color:var(--accent);}
+
+  .sub-body{display:none;flex-direction:column;gap:0;background:#F9F6FF;}
+  .sub-body.open{display:flex;}
+
+  /* ── Leaf items (lessons, fluency links) ──────────────────────────────── */
+  a.leaf{display:flex;align-items:center;gap:18px;padding:14px 28px 14px 60px;
+    border-top:1px solid var(--border);text-decoration:none;color:var(--text-primary);
+    background:var(--surface);transition:all 0.12s;font-size:17px;}
+  a.leaf:hover{background:var(--accent-light);color:var(--accent);}
+
+  .leaf-icon{width:66px;height:75px;border-radius:11px;display:flex;align-items:center;
+    justify-content:center;font-size:19px;font-weight:700;flex-shrink:0;}
+  .leaf-icon.lesson{background:var(--accent-light);color:var(--accent);}
+  .leaf-icon.fluency{background:var(--accent-blue-light);color:var(--accent-blue);font-size:11px;letter-spacing:0.5px;}
+  .unit-icon img{width:100%;height:100%;object-fit:fill;image-rendering:pixelated;}
+  .leaf-icon img{width:100%;height:100%;object-fit:fill;image-rendering:pixelated;}
+  .leaf-icon.lesson img{object-fit:contain;}
+
+  .leaf-text strong{display:block;font-size:18px;font-weight:600;}
+  .leaf-text span{font-size:14px;color:var(--text-muted);}
+
+  /* ── Direct leaf (no sub-section, sits in unit-body) ─────────────────── */
+  a.direct-leaf{display:flex;align-items:center;gap:16px;padding:16px 22px;
+    border-top:1px solid var(--border);text-decoration:none;color:var(--text-primary);
+    background:var(--surface);transition:all 0.15s;}
+  a.direct-leaf:hover{background:var(--accent-light);color:var(--accent);}
+  .direct-leaf .item-icon{width:36px;height:36px;border-radius:8px;display:flex;
+    align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .ic{background:var(--accent-light);}
+  .direct-leaf .item-text strong{display:block;font-size:15px;font-weight:600;}
+  .direct-leaf .item-text span{font-size:13px;color:var(--text-muted);}
+
+  /* ── Empty placeholder sub-button (coming soon) ───────────────────────── */
+  .sub-btn.empty-sub{opacity:0.55;cursor:default;}
+  .sub-btn.empty-sub:hover{background:var(--surface);}
+
+  /* ── Third-level accordion (sub2 — inside a sub-body) ─────────────────── */
+  .sub2-section{display:flex;flex-direction:column;gap:0;}
+
+  .sub2-btn{display:flex;align-items:center;gap:14px;padding:11px 28px 11px 56px;
+    background:#F9F6FF;border:none;border-top:1px solid var(--border);
+    cursor:pointer;transition:all 0.15s;text-align:left;width:100%;
+    font-family:'DM Sans',sans-serif;}
+  .sub2-btn:hover{background:var(--accent-light);}
+  .sub2-btn.open{background:var(--accent-light);}
+  .sub2-btn.empty-sub2{opacity:0.5;cursor:default;}
+  .sub2-btn.empty-sub2:hover{background:#F9F6FF;}
+
+  .sub2-icon{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;
+    justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;
+    background:var(--accent-light);color:var(--accent);}
+
+  .sub2-text{flex:1;}
+  .sub2-text strong{display:block;font-size:15px;font-weight:600;color:var(--text-primary);}
+  .sub2-text span{font-size:13px;color:var(--text-muted);}
+  .sub2-btn.open .sub2-text strong{color:var(--accent);}
+
+  .sub2-chevron{font-size:10px;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
+  .sub2-btn.open .sub2-chevron{transform:rotate(180deg);color:var(--accent);}
+
+  .sub2-body{display:none;flex-direction:column;gap:0;background:#F4F1FC;}
+  .sub2-body.open{display:flex;}
+
+  /* ── Leaf items inside sub2-body ──────────────────────────────────────── */
+  a.sub2-leaf{display:flex;align-items:center;gap:14px;padding:12px 28px 12px 72px;
+    border-top:1px solid var(--border);text-decoration:none;color:var(--text-primary);
+    background:#F4F1FC;transition:all 0.12s;}
+  a.sub2-leaf:hover{background:var(--accent-light);color:var(--accent);}
+  .sub2-leaf-icon{width:50px;height:50px;border-radius:9px;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;}
+  .sub2-leaf-icon.lesson{background:var(--accent-light);color:var(--accent);}
+  .sub2-leaf-icon.fluency{background:var(--accent-blue-light);color:var(--accent-blue);}
+  .sub2-leaf-icon img{width:100%;height:100%;object-fit:fill;image-rendering:pixelated;}
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     SECTION 1 — BANNER STYLES
+  ══════════════════════════════════════════════════════════════════════════ */
+
+  /* Full-bleed banner */
+  .banner{width:calc(100% + 48px);margin:0 -24px;
+    padding:72px 56px 60px 80px;
+    background:linear-gradient(145deg,#150934 0%,#2E1666 40%,#5B38A0 80%,#6845A8 100%);
+    display:flex;align-items:center;justify-content:flex-start;
+    position:relative;overflow:hidden;margin-bottom:48px;}
+  /* Orange accent bar at base */
+  .banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,transparent 5%,#C55208 20%,#F0922B 50%,#C55208 80%,transparent 95%);}
+  /* Pixel echo inside banner */
+  .banner::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%23ffffff' fill-opacity='0.09'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%23ffffff' fill-opacity='0.06'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%234A8FE8' fill-opacity='0.18'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%234A8FE8' fill-opacity='0.20'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%23ffffff' fill-opacity='0.07'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%23ffffff' fill-opacity='0.09'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%234A8FE8' fill-opacity='0.16'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%234A8FE8' fill-opacity='0.18'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%23ffffff' fill-opacity='0.06'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%234A8FE8' fill-opacity='0.14'/%3E%3C/svg%3E");
+    background-size:128px 128px;}
+
+  .banner-inner{width:100%;max-width:900px;display:flex;align-items:center;gap:52px;}
+
+  .banner-text{flex:1;display:flex;flex-direction:column;gap:22px;min-width:0;}
+  .banner-eyebrow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:3px;
+    color:rgba(255,255,255,0.5);}
+  .banner-title{font-family:'DM Serif Display',serif;
+    font-size:clamp(44px,6vw,80px);line-height:1.04;letter-spacing:-2px;color:#fff;}
+  .banner-title em{font-style:italic;color:#F0922B;}
+  .banner-sub{font-size:18px;line-height:1.7;color:rgba(255,255,255,0.68);max-width:440px;}
+  .banner-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+
+  .btn-primary{padding:15px 36px;background:var(--accent-orange);color:#fff;border:none;
+    border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:16px;
+    font-weight:600;cursor:pointer;transition:background 0.15s,transform 0.1s,box-shadow 0.15s;}
+  .btn-primary:hover{background:#B85009;transform:translateY(-1px);
+    box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.65),0 0 32px 10px rgba(240,146,43,0.30);}
+  .btn-primary:active{transform:none;box-shadow:none;}
+  .btn-ghost{padding:14px 24px;background:none;color:rgba(255,255,255,0.72);
+    border:1px solid rgba(255,255,255,0.28);border-radius:var(--radius);
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;
+    transition:all 0.15s;}
+  .btn-ghost:hover{border-color:#F0922B;color:#fff;background:rgba(255,255,255,0.08);
+    box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.50),0 0 32px 10px rgba(240,146,43,0.22);}
+
+  /* Hero visual card (inside banner) */
+  .hero-visual{flex:0 0 320px;background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    border-radius:var(--radius-lg);padding:28px;
+    backdrop-filter:blur(4px);
+    display:flex;flex-direction:column;gap:16px;}
+  .hv-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;
+    color:rgba(255,255,255,0.45);min-height:16px;}
+  .hv-model{min-height:92px;display:flex;align-items:center;
+    opacity:1;transition:opacity 0.3s;}
+  .hv-model.fade{opacity:0;}
+  .hv-dots{display:flex;gap:5px;}
+  .hv-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);
+    transition:background 0.2s;}
+  .hv-dot.active{background:#F0922B;}
+
+  /* Feature cards */
+  .features{width:100%;max-width:900px;display:grid;grid-template-columns:repeat(3,1fr);
+    gap:18px;padding-bottom:56px;}
+  .feat-card{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);padding:32px 28px;
+    display:flex;flex-direction:column;gap:12px;}
+  .feat-number{font-family:'DM Serif Display',serif;font-size:42px;
+    color:var(--accent);line-height:1;letter-spacing:-0.5px;}
+  .feat-title{font-size:15px;font-weight:700;color:var(--text-primary);}
+  .feat-desc{font-size:14px;line-height:1.7;color:var(--text-secondary);}
+
+  /* Tutorial wrapper */
+  .tutorial-wrap{width:100%;max-width:800px;display:flex;
+    flex-direction:column;gap:14px;padding-bottom:56px;}
+  .section-eyebrow{font-size:20px;font-weight:800;text-transform:uppercase;
+    letter-spacing:2px;color:var(--text-primary);}
+
+  /* Tutorial card */
+  .tutorial-card{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);padding:40px 40px 36px;
+    box-shadow:0 2px 16px rgba(30,10,55,0.07);display:flex;flex-direction:column;gap:24px;}
+  .tut-counter{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;
+    color:var(--text-muted);}
+  .tut-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text-primary);}
+  .tut-model{display:flex;align-items:center;justify-content:center;
+    min-height:130px;padding:12px 0;}
+  .tut-text{font-size:16px;line-height:1.8;color:var(--text-secondary);}
+
+  /* Progress dots */
+  .tut-dots{display:flex;gap:6px;align-items:center;}
+  .tut-dot{width:8px;height:8px;border-radius:50%;background:var(--border);
+    transition:background 0.2s;}
+  .tut-dot.done{background:var(--accent);}
+  .tut-dot.active{background:var(--accent);width:10px;height:10px;}
+
+  /* Next button */
+  .tut-footer{display:flex;align-items:center;justify-content:space-between;}
+  .tut-next{padding:13px 32px;border-radius:var(--radius);border:none;
+    background:var(--accent);color:white;font-family:'DM Sans',sans-serif;
+    font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s,box-shadow 0.15s;}
+  .tut-next:hover{background:#512F8A;
+    box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+
+  /* Bar model helpers */
+  .bar-h{height:56px;border-radius:6px;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;}
+
+  /* Lesson flow pills */
+  .lesson-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .flow-pill{padding:8px 20px;border-radius:99px;font-size:14px;font-weight:600;
+    background:var(--accent-light);color:var(--accent);border:1px solid #C4ADEE;}
+  .flow-arrow{font-size:18px;color:var(--text-muted);}
+
+  /* Word bank mock */
+  .mock-wb{border:2px solid var(--text-primary);border-radius:var(--radius);
+    padding:7px;display:flex;flex-direction:column;gap:4px;background:var(--surface);
+    width:110px;}
+  .mock-wb-btn{padding:6px 8px;border-radius:7px;border:1px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;
+    font-weight:600;color:var(--text-primary);text-align:center;}
+
+  /* Section divider */
+  .section-divider{display:flex;align-items:center;gap:16px;margin:16px 0 18px 0;}
+  .section-divider hr{flex:1;border:none;border-top:1px solid var(--border);}
+  .section-divider span{font-size:18px;font-weight:800;text-transform:uppercase;
+    letter-spacing:1px;color:var(--text-primary);white-space:nowrap;}
+
+  /* ── Two-column main layout ─────────────────────────────────────────────── */
+  .main-layout{width:100%;max-width:1280px;display:flex;gap:56px;align-items:flex-start;
+    padding:0 40px 80px;}
+  .main-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:22px;}
+  .main-right{flex:0 0 440px;display:flex;flex-direction:column;padding-top:8px;}
+
+  /* Bigger tutorial in right column */
+  .main-right .section-eyebrow{font-size:22px;font-weight:800;margin-bottom:16px;}
+  .main-right .tutorial-card{padding:48px 44px 42px;}
+  .main-right .tut-title{font-size:30px;}
+  .main-right .tut-text{font-size:17px;line-height:1.8;}
+  .main-right .tut-model{min-height:170px;}
+  .main-right .tut-next{padding:15px 40px;font-size:16px;}
+
+  /* Bigger progress & tools */
+  .section-label{font-size:20px;font-weight:800;letter-spacing:1.5px;margin-bottom:16px;}
+  a.direct-leaf{padding:20px 24px;}
+  a.direct-leaf .item-text strong{font-size:17px;}
+  a.direct-leaf .item-text span{font-size:14px;}
+
+  /* Responsive */
+  @media(max-width:960px){
+    .main-layout{flex-direction:column-reverse;padding:0 24px 64px;gap:32px;}
+    .main-right{flex:none;width:100%;}
+  }
+  /* Mascots */
+  .mascot{image-rendering:pixelated;display:block;}
+
+  @media(max-width:760px){
+    .banner{padding:52px 28px 44px;justify-content:center;}
+    .banner-inner{flex-direction:column;gap:32px;}
+    .hero-visual{flex:none;width:100%;}
+    .banner-title{font-size:44px;letter-spacing:-1.5px;}
+    .features{grid-template-columns:1fr;max-width:100%;}
+    .corner-mascot{display:none;}
+  }
+</style>
+</head>
+<body>
+<div style="width:100%;display:flex;flex-direction:column;align-items:center;">
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 1 — BANNER
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="banner">
+  <div class="banner-inner">
+
+    <!-- Left: headline + CTA -->
+    <div class="banner-text">
+      <h1 class="banner-title" style="font-size:clamp(40px,5.5vw,96px);letter-spacing:-1px;white-space:nowrap;">Groundwork</h1>
+      <h2 style="font-size:20px;font-weight:600;color:rgba(255,255,255,0.85);margin:0;line-height:1.4;">Make learning make sense.</h2>
+      <h2 style="font-size:20px;font-weight:600;color:rgba(255,255,255,0.85);margin:0;line-height:1.4;">Practice the foundational skill of comprehension.</h2>
+      <p class="banner-sub">Comprehension in reading, conceptual understanding in math, these skills are often called higher-order thinking skills. They often aren't directly taught, but this leaves many students thinking they aren't smart, or aren't good at math. This program teaches the skill of comprehension in math and reading, by focusing on relational understanding.</p>
+      <div class="banner-actions">
+        <button class="btn-primary" onclick="document.getElementById('curriculum').scrollIntoView({behavior:'smooth'})">Start Learning</button>
+        <button class="btn-ghost" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">How it works ↓</button>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 2 — FEATURE CARDS
+════════════════════════════════════════════════════════════════════════════ -->
+
+<div class="main-layout">
+
+  <!-- ── Left: curriculum ─────────────────────────────────────────────────── -->
+  <div class="main-left">
+
+
+    <div id="curriculum">
+  <h1>Relation Naming</h1>
+
+  <!-- ═══ UNIT ONE ═══════════════════════════════════════════════════════════ -->
+  <div class="unit">
+    <button class="unit-btn" onclick="toggleUnit('u1')" id="u1-btn">
+      <div class="unit-icon"></div>
+      <div class="unit-text">
+        <strong>Unit One: Simple Relations</strong>
+        <span>Equal · Part-Whole · Comparison · Fractional · Multiplicative</span>
+      </div>
+      <span class="unit-chevron">▼</span>
+    </button>
+    <div class="unit-body" id="u1-body">
+
+      <!-- Lessons sub-section -->
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u1-lessons')" id="u1-lessons-btn">
+          <div class="sub-icon lesson"></div>
+          <div class="sub-text"><strong>Simple Relations Lessons</strong><span>Five lessons</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u1-lessons-body">
+          <a href="lesson-one.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Equal Relations</strong><span>Lesson 1.1</span></div></a>
+          <a href="lesson-two.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Part-Whole Relations</strong><span>Lesson 1.2</span></div></a>
+          <a href="lesson-three.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Comparisons &amp; Differences</strong><span>Lesson 1.3</span></div></a>
+          <a href="lesson-four.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Fractional Relations</strong><span>Lesson 1.4</span></div></a>
+          <a href="lesson-five.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Multiplicative Relations</strong><span>Lesson 1.5</span></div></a>
+        </div>
+      </div>
+
+      <!-- Simple Fluency sub-section -->
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u1-fluency')" id="u1-fluency-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Simple Relations Fluency</strong><span>Five practice sessions</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u1-fluency-body">
+          <a href="fluency-l1.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Equal</strong><span>Lesson 1.1 Fluency</span></div></a>
+          <a href="fluency-l2.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Part-Whole</strong><span>Lesson 1.2 Fluency</span></div></a>
+          <a href="fluency-l3.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Comparison</strong><span>Lesson 1.3 Fluency</span></div></a>
+          <a href="fluency-l4.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Fractional</strong><span>Lesson 1.4 Fluency</span></div></a>
+          <a href="fluency-l5.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Multiplicative</strong><span>Lesson 1.5 Fluency</span></div></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ UNIT TWO ════════════════════════════════════════════════════════════ -->
+  <div class="unit">
+    <button class="unit-btn" onclick="toggleUnit('u2')" id="u2-btn">
+      <div class="unit-icon"></div>
+      <div class="unit-text">
+        <strong>Unit Two: Compound Relations</strong>
+        <span>Two relations, two unknowns</span>
+      </div>
+      <span class="unit-chevron">▼</span>
+    </button>
+    <div class="unit-body" id="u2-body">
+
+      <!-- Compound Lessons sub-section -->
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u2-lessons')" id="u2-lessons-btn">
+          <div class="sub-icon lesson"></div>
+          <div class="sub-text"><strong>Compound Relations Lessons</strong><span>One lesson</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u2-lessons-body">
+          <a href="lesson-compound.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Compound Relations</strong><span>Lesson 2.1</span></div></a>
+        </div>
+      </div>
+
+      <!-- Compound Fluency sub-section -->
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u2-fluency')" id="u2-fluency-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Compound Relations Fluency</strong><span>One practice session</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u2-fluency-body">
+          <a href="fluency-compound.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Compound Relations</strong><span>Lesson 2.1 Fluency</span></div></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ UNIT THREE ══════════════════════════════════════════════════════════ -->
+  <div class="unit">
+    <button class="unit-btn" onclick="toggleUnit('u3')" id="u3-btn">
+      <div class="unit-icon"></div>
+      <div class="unit-text">
+        <strong>Unit Three: Complex Relations</strong>
+        <span>Two-step chained relations</span>
+      </div>
+      <span class="unit-chevron">▼</span>
+    </button>
+    <div class="unit-body" id="u3-body">
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u3-lessons')" id="u3-lessons-btn">
+          <div class="sub-icon lesson"></div>
+          <div class="sub-text"><strong>Complex Relations Lessons</strong><span>One lesson</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u3-lessons-body">
+          <a href="lesson-unit3.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Complex Relations</strong><span>Lesson 3.1</span></div></a>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u3-fluency')" id="u3-fluency-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Complex Relations Fluency</strong><span>One practice session</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u3-fluency-body">
+          <a href="fluency-unit3.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Complex Relations</strong><span>Lesson 3.1 Fluency</span></div></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ UNIT FOUR ═══════════════════════════════════════════════════════════ -->
+  <div class="unit">
+    <button class="unit-btn" onclick="toggleUnit('u4')" id="u4-btn">
+      <div class="unit-icon"></div>
+      <div class="unit-text">
+        <strong>Unit Four: Word Problems</strong>
+        <span>Draw models from word problems</span>
+      </div>
+      <span class="unit-chevron">▼</span>
+    </button>
+    <div class="unit-body" id="u4-body">
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u4-lessons')" id="u4-lessons-btn">
+          <div class="sub-icon lesson"></div>
+          <div class="sub-text"><strong>Word Problem Lessons</strong><span>Three lessons</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u4-lessons-body">
+          <a href="lesson-unit4.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Word Problems</strong><span>Lesson 4.1</span></div></a>
+          <a href="lesson-unit4b.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Word Problems with Unknowns</strong><span>Lesson 4.2</span></div></a>
+          <a href="lesson-unit5.html" class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Complex Word Problems</strong><span>Lesson 4.3</span></div></a>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('u4-fluency')" id="u4-fluency-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Word Problems Fluency</strong><span>Three practice sessions</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="u4-fluency-body">
+          <a href="fluency-unit4.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Word Problems</strong><span>Lesson 4.1 Fluency</span></div></a>
+          <a href="fluency-unit4b.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Word Problems with Unknowns</strong><span>Lesson 4.2 Fluency</span></div></a>
+          <a href="fluency-unit5.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>Complex Word Problems</strong><span>Lesson 4.3 Fluency</span></div></a>
+        </div>
+      </div>
+
+      <a href="bar_model_draw.html" class="direct-leaf" target="_blank">
+        <div class="item-icon" style="background:#E8EEFF;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+        <div class="item-text"><strong>Bar Model Drawing Tool</strong><span>Draw and label bar models</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ═══ MATH FLUENCY ════════════════════════════════════════════════════════ -->
+  <div class="unit">
+    <button class="unit-btn" onclick="toggleUnit('uf')" id="uf-btn">
+      <div class="unit-icon"></div>
+      <div class="unit-text">
+        <strong>Math Fluency</strong>
+        <span>Math Facts · Computation</span>
+      </div>
+      <span class="unit-chevron">▼</span>
+    </button>
+    <div class="unit-body" id="uf-body">
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('uf-add')" id="uf-add-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Additive Facts</strong><span>Part-whole families, sums 0–18</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="uf-add-body">
+          <a href="fact-lesson-add-1.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 1</strong><span>1 · 2 · 3  and  2 · 3 · 5</span></div></a>
+          <a href="fact-lesson-add-2.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 2</strong><span>3 · 3 · 6  and  2 · 4 · 6</span></div></a>
+          <a href="fact-lesson-add-numonly-1.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 1</strong><span>1+2, 2+3, 3+3, 2+4 — numbers only</span></div></a>
+          <a href="fact-lesson-add-3.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 3</strong><span>3 · 4 · 7  and  2 · 5 · 7</span></div></a>
+          <a href="fact-lesson-add-4.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 4</strong><span>4 · 4 · 8  and  3 · 5 · 8</span></div></a>
+          <a href="fact-lesson-add-numonly-2.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 2</strong><span>3+4, 2+5, 4+4, 3+5 — numbers only</span></div></a>
+          <a href="fact-lesson-add-5.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 5</strong><span>4 · 5 · 9  and  3 · 6 · 9</span></div></a>
+          <a href="fact-lesson-add-6.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 6</strong><span>5 · 5 · 10  and  4 · 6 · 10</span></div></a>
+          <a href="fact-lesson-add-numonly-3.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 3</strong><span>4+5, 3+6, 5+5, 4+6 — numbers only</span></div></a>
+          <a href="fact-lesson-add-7.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 7</strong><span>5 · 6 · 11  and  4 · 7 · 11</span></div></a>
+          <a href="fact-lesson-add-8.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 8</strong><span>5 · 7 · 12  and  6 · 6 · 12</span></div></a>
+          <a href="fact-lesson-add-numonly-4.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 4</strong><span>5+6, 4+7, 5+7, 6+6 — numbers only</span></div></a>
+          <a href="fact-lesson-add-9.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 9</strong><span>6 · 7 · 13  and  5 · 8 · 13</span></div></a>
+          <a href="fact-lesson-add-10.html"      class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 10</strong><span>7 · 7 · 14  and  6 · 8 · 14</span></div></a>
+          <a href="fact-lesson-add-numonly-5.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 5</strong><span>6+7, 5+8, 7+7, 6+8 — numbers only</span></div></a>
+          <a href="fact-fluency-add.html"         class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>General Practice</strong><span>All additive families — 60-second drill</span></div></a>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('uf-mult')" id="uf-mult-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Multiplicative Facts</strong><span>Equal-part families, 2×2 through 5×6</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="uf-mult-body">
+          <a href="fact-lesson-mult-1.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 1</strong><span>2×2=4  and  2×3=6</span></div></a>
+          <a href="fact-lesson-mult-2.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 2</strong><span>2×4=8  and  2×5=10</span></div></a>
+          <a href="fact-lesson-mult-numonly-1.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 1</strong><span>2×2, 2×3, 2×4, 2×5 — numbers only</span></div></a>
+          <a href="fact-lesson-mult-3.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 3</strong><span>2×6=12  and  3×3=9</span></div></a>
+          <a href="fact-lesson-mult-4.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 4</strong><span>3×4=12  and  3×5=15</span></div></a>
+          <a href="fact-lesson-mult-numonly-2.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 2</strong><span>2×6, 3×3, 3×4, 3×5 — numbers only</span></div></a>
+          <a href="fact-lesson-mult-5.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 5</strong><span>4×4=16  and  4×5=20</span></div></a>
+          <a href="fact-lesson-mult-6.html"       class="leaf"><div class="leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Lesson 6</strong><span>5×5=25  and  5×6=30</span></div></a>
+          <a href="fact-lesson-mult-numonly-3.html" class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Review"></div><div class="leaf-text"><strong>Number Review 3</strong><span>4×4, 4×5, 5×5, 5×6 — numbers only</span></div></a>
+          <a href="fact-fluency-mult.html"         class="leaf"><div class="leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Fluency"></div><div class="leaf-text"><strong>General Practice</strong><span>All multiplicative families — 60-second drill</span></div></a>
+        </div>
+      </div>
+
+      <!-- Computation sub-section -->
+      <div class="sub-section">
+        <button class="sub-btn" onclick="toggleSub('uf-comp')" id="uf-comp-btn">
+          <div class="sub-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Computation" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+          <div class="sub-text"><strong>Computation</strong><span>20 fluency practice sets</span></div>
+          <span class="sub-chevron">▼</span>
+        </button>
+        <div class="sub-body" id="uf-comp-body">
+
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-1')" id="uf-comp-1-btn"><div class="sub2-icon">1</div><div class="sub2-text"><strong>Computation 1</strong><span>Double-Digit Addition (No Regrouping)</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-1-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-1-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Double-digit addition, no regrouping — 60-second drill</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-2')" id="uf-comp-2-btn"><div class="sub2-icon">2</div><div class="sub2-text"><strong>Computation 2</strong><span>Double-Digit Subtraction (No Regrouping)</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-2-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-2-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Double-digit subtraction, no regrouping — 60-second drill</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-3')" id="uf-comp-3-btn"><div class="sub2-icon">3</div><div class="sub2-text"><strong>Computation 3</strong><span>Mixed: Add or Subtract?</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-3-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-3-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Bar model drill — decide add or subtract — 60 seconds</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-4')" id="uf-comp-4-btn"><div class="sub2-icon">4</div><div class="sub2-text"><strong>Computation 4</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-4-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-5')" id="uf-comp-5-btn"><div class="sub2-icon">5</div><div class="sub2-text"><strong>Computation 5</strong><span>Double-Digit Addition (With Regrouping)</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-5-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-5-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Double-digit addition, with carrying — 60-second drill</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-6')" id="uf-comp-6-btn"><div class="sub2-icon">6</div><div class="sub2-text"><strong>Computation 6</strong><span>Double-Digit Subtraction (With Regrouping)</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-6-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-6-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Double-digit subtraction, with borrowing — 60-second drill</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-7')" id="uf-comp-7-btn"><div class="sub2-icon">7</div><div class="sub2-text"><strong>Computation 7</strong><span>Mixed with Regrouping: Add or Subtract?</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-7-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="computation-7-fluency.html" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Bar model drill with regrouping — decide add or subtract — 60 seconds</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-8')" id="uf-comp-8-btn"><div class="sub2-icon">8</div><div class="sub2-text"><strong>Computation 8</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-8-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-9')" id="uf-comp-9-btn"><div class="sub2-icon">9</div><div class="sub2-text"><strong>Computation 9</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-9-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-10')" id="uf-comp-10-btn"><div class="sub2-icon">10</div><div class="sub2-text"><strong>Computation 10</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-10-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-11')" id="uf-comp-11-btn"><div class="sub2-icon">11</div><div class="sub2-text"><strong>Computation 11</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-11-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-12')" id="uf-comp-12-btn"><div class="sub2-icon">12</div><div class="sub2-text"><strong>Computation 12</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-12-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-13')" id="uf-comp-13-btn"><div class="sub2-icon">13</div><div class="sub2-text"><strong>Computation 13</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-13-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-14')" id="uf-comp-14-btn"><div class="sub2-icon">14</div><div class="sub2-text"><strong>Computation 14</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-14-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-15')" id="uf-comp-15-btn"><div class="sub2-icon">15</div><div class="sub2-text"><strong>Computation 15</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-15-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-16')" id="uf-comp-16-btn"><div class="sub2-icon">16</div><div class="sub2-text"><strong>Computation 16</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-16-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-17')" id="uf-comp-17-btn"><div class="sub2-icon">17</div><div class="sub2-text"><strong>Computation 17</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-17-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-18')" id="uf-comp-18-btn"><div class="sub2-icon">18</div><div class="sub2-text"><strong>Computation 18</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-18-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-19')" id="uf-comp-19-btn"><div class="sub2-icon">19</div><div class="sub2-text"><strong>Computation 19</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-19-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+          <div class="sub2-section">
+            <button class="sub2-btn" onclick="toggleSub2('uf-comp-20')" id="uf-comp-20-btn"><div class="sub2-icon">20</div><div class="sub2-text"><strong>Computation 20</strong><span>Instruction · Practice</span></div><span class="sub2-chevron">▼</span></button>
+            <div class="sub2-body" id="uf-comp-20-body">
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon lesson"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="leaf-text"><strong>Instruction</strong><span>Coming soon</span></div></a>
+              <a href="#" class="sub2-leaf"><div class="sub2-leaf-icon fluency"><img src="Icons/Retro pixel chart wi.png" alt="Practice"></div><div class="leaf-text"><strong>Computation Practice</strong><span>Coming soon</span></div></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ PROGRESS ════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="section-label">Progress</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="chart.html" class="direct-leaf" style="border:1px solid var(--border);border-radius:var(--radius-lg);border-top:1px solid var(--border);">
+        <div class="item-icon ic"><img src="Icons/Retro pixel chart wi.png" alt="Chart" style="width:100%;height:100%;object-fit:fill;image-rendering:pixelated;"></div>
+        <div class="item-text"><strong>Progress Chart</strong><span>All lessons</span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ TOOLS ═══════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="section-label">Tools</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="bar_model_draw.html" class="direct-leaf" style="border:1px solid var(--border);border-radius:var(--radius-lg);border-top:1px solid var(--border);">
+        <div class="item-icon" style="background:#E8EEFF;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+        <div class="item-text"><strong>Bar Model Drawing Tool</strong><span>Draw and label bar models</span></div>
+      </a>
+    </div>
+  </div>
+
+    </div><!-- /#curriculum -->
+
+  </div><!-- /.main-left -->
+
+  <!-- ── Right: tutorial slideshow ─────────────────────────────────────────── -->
+  <div class="main-right">
+
+    <div class="tutorial-wrap" id="how-it-works">
+
+      <!-- Slide 1: Equal Relation -->
+      <div class="tutorial-card" id="slide-1" style="display:none;">
+        <div class="tut-title">Equal Relations</div>
+        <div class="tut-model" style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;">
+          <div style="display:flex;gap:4px;align-items:center;"><div style="width:120px;height:28px;background:#6845A8;border-radius:4px;"></div><span style="font-size:12px;font-weight:600;">A</span></div>
+          <div style="display:flex;gap:4px;align-items:center;"><div style="width:120px;height:28px;background:#2B5DC7;border-radius:4px;"></div><span style="font-size:12px;font-weight:600;">B</span></div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Both bars are equal — same length means same value.</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Part-Whole Relation -->
+      <div class="tutorial-card" id="slide-2" style="display:none;">
+        <div class="tut-title">Part-Whole Relations</div>
+        <div class="tut-model" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+          <div style="width:140px;height:28px;background:#0E7E7E;border-radius:4px;"></div>
+          <div style="display:flex;gap:4px;"><div style="width:60px;height:24px;background:#2B5DC7;border-radius:3px;"></div><div style="width:80px;height:24px;background:#E08000;border-radius:3px;"></div></div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">The whole bar equals the sum of its parts.</p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Comparison Relation -->
+      <div class="tutorial-card" id="slide-3" style="display:none;">
+        <div class="tut-title">Comparison Relations</div>
+        <div class="tut-model" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+          <div style="display:flex;gap:4px;align-items:center;"><div style="width:100px;height:24px;background:#6845A8;border-radius:4px;"></div><span style="font-size:10px;font-weight:600;">Item A</span></div>
+          <div style="display:flex;gap:4px;align-items:center;"><div style="width:140px;height:24px;background:#2B5DC7;border-radius:4px;"></div><span style="font-size:10px;font-weight:600;">Item B</span></div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">The difference shows the comparison between values.</p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Bar Model without Numbers -->
+      <div class="tutorial-card" id="slide-4" style="display:none;">
+        <div class="tut-title">Model Without Numbers</div>
+        <div class="tut-model" style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;">
+          <div style="display:flex;gap:4px;"><div style="width:50px;height:20px;background:#E2DDD6;border:2px solid #6845A8;border-radius:3px;"></div><div style="width:50px;height:20px;background:#E2DDD6;border:2px solid #6845A8;border-radius:3px;"></div><div style="width:50px;height:20px;background:#6845A8;border-radius:3px;"></div></div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Build the model structure before adding numbers.</p>
+        </div>
+      </div>
+
+      <!-- Slide 5: Daily Chart -->
+      <div class="tutorial-card" id="slide-5" style="display:none;">
+        <div class="tut-title">Your Daily Progress</div>
+        <div class="tut-model" style="font-size:11px;color:var(--text-muted);padding:12px 0;">
+          <p>Your personalized chart tracks:</p>
+          <ul style="margin-left:16px;margin-top:8px;line-height:1.6;">
+            <li>Problems solved today</li>
+            <li>Accuracy rate</li>
+            <li>Fluency progress</li>
+            <li>Skill mastery</li>
+          </ul>
+          <p style="margin-top:12px;"><a href="chart.html" style="color:var(--accent);font-weight:600;text-decoration:none;">View your chart →</a></p>
+        </div>
+      </div>
+
+      <!-- Slide Navigation -->
+      <div class="tut-footer" style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+        <button onclick="prevSlide()" style="background:var(--surface);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;">← Back</button>
+        <div class="tut-dots" id="slide-dots"></div>
+        <button onclick="nextSlide()" style="background:var(--accent);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;">Next →</button>
+      </div>
+
+    </div>
+
+
+  </div><!-- /.main-right -->
+
+</div><!-- /.main-layout -->
+
+
+</div><!-- /outer wrapper -->
+
+<script>
+// ── Curriculum accordion ──────────────────────────────────────────────────────
+function toggleUnit(id) {
+  const btn = document.getElementById(`${id}-btn`);
+  const body = document.getElementById(`${id}-body`);
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+function toggleSub(id) {
+  const btn = document.getElementById(`${id}-btn`);
+  const body = document.getElementById(`${id}-body`);
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+function toggleSub2(id) {
+  const btn = document.getElementById(`${id}-btn`);
+  const body = document.getElementById(`${id}-body`);
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// ── Tutorial slideshow ────────────────────────────────────────────────────────
+const BH = 62;
+const BLUE = '#1B6CA8', GREEN = '#2D6A4F', ORANGE = '#D4600A', TEAL = '#0E7E7E';
+const PURPLE = '#6C3483';
+
+function bar(hex, label, width, isUnk) {
+  const lum = parseInt(hex.slice(1,3),16)*0.299 + parseInt(hex.slice(3,5),16)*0.587 + parseInt(hex.slice(5,7),16)*0.114;
+  const fg = lum > 140 ? '#1A1714' : '#FFFFFF';
+  const inner = isUnk
+    ? `<span style="font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:${fg}">?</span>`
+    : `<span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${fg}">${label}</span>`;
+  return `<div class="bar-h" style="width:${width}px;background:${hex}">${inner}</div>`;
+}
+
+
+/* ── Tutorial Slide Navigation ──────────────────────────────────────────── */
+let currentSlide = 1;
+const totalSlides = 5;
+
+function showSlide(n) {
+  for (let i = 1; i <= totalSlides; i++) {
+    document.getElementById(`slide-${i}`).style.display = 'none';
+  }
+  document.getElementById(`slide-${n}`).style.display = 'block';
+  updateDots();
+}
+
+function nextSlide() {
+  currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1;
+  showSlide(currentSlide);
+}
+
+function prevSlide() {
+  currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides;
+  showSlide(currentSlide);
+}
+
+function updateDots() {
+  const dots = document.getElementById('slide-dots');
+  dots.innerHTML = Array.from({length: totalSlides}, (_, i) =>
+    `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${i+1===currentSlide?'var(--accent)':'var(--border)'};margin:0 4px;cursor:pointer;" onclick="currentSlide=${i+1};showSlide(${i+1})"></span>`
+  ).join('');
+}
+
+showSlide(1);
+
+/* ── Leaf icon progress badges ───────────────────────────────────────────── */
+// Maps each leaf page href to its localStorage key and whether it's a lesson or fluency
+const LEAF_MAP = {
+  'lesson-one.html':      {key:'fluency_l1_sessions',       type:'lesson'},
+  'lesson-two.html':      {key:'fluency_l2_sessions',       type:'lesson'},
+  'lesson-three.html':    {key:'fluency_l3_sessions',       type:'lesson'},
+  'lesson-four.html':     {key:'fluency_l4_sessions',       type:'lesson'},
+  'lesson-five.html':     {key:'fluency_l5_sessions',       type:'lesson'},
+  'lesson-compound.html': {key:'fluency_compound_sessions', type:'lesson'},
+  'lesson-unit4.html':    {key:'fluency_unit4_sessions',    type:'lesson'},
+  'lesson-unit5.html':    {key:'fluency_unit5_sessions',    type:'lesson'},
+  'fluency-l1.html':      {key:'fluency_l1_sessions',       type:'fluency'},
+  'fluency-l2.html':      {key:'fluency_l2_sessions',       type:'fluency'},
+  'fluency-l3.html':      {key:'fluency_l3_sessions',       type:'fluency'},
+  'fluency-l4.html':      {key:'fluency_l4_sessions',       type:'fluency'},
+  'fluency-l5.html':      {key:'fluency_l5_sessions',       type:'fluency'},
+  'fluency-compound.html':{key:'fluency_compound_sessions', type:'fluency'},
+  'fluency-unit4.html':   {key:'fluency_unit4_sessions',    type:'fluency'},
+  'fluency-unit5.html':   {key:'fluency_unit5_sessions',    type:'fluency'},
+  'lesson-unit4b.html':   {key:'fluency_unit4b_sessions',   type:'lesson'},
+  'fluency-unit4b.html':  {key:'fluency_unit4b_sessions',   type:'fluency'},
+};
+const PASSOFF_AIM = 30;
+
+const ICON_DONE = '<svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
+const ICON_STARTED = '<svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
+
+function updateLeafIcons() {
+  document.querySelectorAll('a.leaf').forEach(a => {
+    const info = LEAF_MAP[a.getAttribute('href')];
+    if (!info) return;
+    const icon = a.querySelector('.leaf-icon');
+    if (!icon) return;
+    let sessions = [];
+    try { sessions = JSON.parse(localStorage.getItem(info.key)) || []; } catch(e) {}
+
+    if (info.type === 'lesson') {
+      if (sessions.some(s => s.phase === 'instruction')) {
+        icon.innerHTML = ICON_DONE;
+      } else if (sessions.length > 0) {
+        icon.innerHTML = ICON_STARTED;
+      }
+    } else {
+      const fs = sessions.filter(s => s.phase === 'fluency');
+      if (fs.some(s => (s.cpm || 0) >= PASSOFF_AIM)) {
+        icon.innerHTML = ICON_DONE;
+      } else if (fs.length > 0) {
+        icon.innerHTML = ICON_STARTED;
+      }
+    }
+  });
+}
+updateLeafIcons();
+</script>
+</body>
+</html>
+

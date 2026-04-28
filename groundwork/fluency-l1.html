@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluency — Equal Relations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;}
+  .app{width:100%;max-width:780px;display:flex;flex-direction:column;gap:14px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+  .drill-layout{display:flex;gap:12px;align-items:stretch;}
+  .model-area{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;display:flex;align-items:center;justify-content:center;min-height:170px;overflow:visible;}
+  .word-bank{width:132px;flex-shrink:0;border:2px solid var(--text-primary);border-radius:var(--radius);padding:8px 7px;display:flex;flex-direction:column;gap:5px;background:var(--surface);}
+  .wb-group{display:flex;flex-direction:column;gap:3px;}
+  .wb-row{display:flex;gap:3px;}
+  .wb-row .word-btn{flex:1;width:auto;}
+  .wb-div{height:1px;background:var(--border);margin:3px 0;}
+  .word-btn{width:100%;padding:6px 4px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:center;}
+  .word-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .word-btn:active{transform:scale(0.95);}
+  .word-btn-half{flex:1;padding:6px 2px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:center;}
+  .word-btn-half:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .word-btn-half:active{transform:scale(0.95);}
+  .relation-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px;}
+  .token{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:5px;padding:3px 9px;font-size:13px;font-weight:600;color:var(--accent);}
+  .token.unk{background:#EEE6FF;border-color:#C4ADEE;color:#6C3483;}
+  .strip-ph{font-size:13px;color:var(--text-muted);font-style:italic;}
+  .strip-row{display:flex;gap:8px;align-items:center;}
+  .btn-back{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .btn-back:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+  .btn-sub{padding:7px 16px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-sub:hover{background:#512F8A;
+    box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.52),0 0 26px 7px rgba(240,146,43,0.24);}
+  .btn-sub:disabled{opacity:0.35;pointer-events:none;}
+  .timer-ring{position:relative;width:56px;height:56px;flex-shrink:0;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .bg{fill:none;stroke:var(--border);stroke-width:5;}
+  .timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+  .timer-ring .fg.urgent{stroke:var(--error);}
+  .timer-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;}
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+  .results-card h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);margin-bottom:16px;}
+  .rate-row{display:flex;gap:20px;justify-content:center;margin-bottom:16px;}
+  .rate-stat{text-align:center;}
+  .rate-num{font-family:'DM Serif Display',serif;font-size:44px;}
+  .rate-num.c{color:var(--accent);}
+  .rate-num.e{color:var(--error);}
+  .rate-sub{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+  .feedback-card{background:var(--accent-warm-light);border:1px solid #E8C99A;border-radius:var(--radius);padding:14px 18px;font-size:14px;line-height:1.6;margin-bottom:10px;}
+  .feedback-card.ok{background:var(--accent-light);border-color:#C4ADEE;}
+  .btn-continue{width:100%;padding:13px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn-continue:hover{background:#512F8A;
+    box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+  .nav-links{display:flex;gap:8px;margin-top:8px;}
+  .nav-link{flex:1;padding:11px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);text-decoration:none;text-align:center;display:block;}
+  .nav-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .nav-link.primary{background:var(--accent);border-color:var(--accent);color:white;}
+  .intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;}
+  .intro-card h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:10px;}
+  .intro-card p{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;}
+  .start-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .start-btn:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+  .bar-h{height:58px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .fu{animation:fadeUp 0.2s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Equal Relations — Fluency</span>
+    <span class="phase-label" id="phaseLabel">Practice</span>
+  </div>
+  <div id="main"></div>
+</div>
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+const CFG={id:1,storageKey:'fluency_l1_sessions',lessonType:'equal',chartHref:'chart.html',lessonHref:'lesson-one.html'};
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function loadSessions(){try{const r=localStorage.getItem(CFG.storageKey);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveSession(s){try{const e=loadSessions();e.push(s);localStorage.setItem(CFG.storageKey,JSON.stringify(e));}catch(e){}}
+
+// ── Colors ────────────────────────────────────────────────────────────────────
+const COLORS=[{name:'blue',hex:'#1B6CA8'},{name:'orange',hex:'#D4600A'},{name:'green',hex:'#2D6A4F'},{name:'red',hex:'#C0392B'},{name:'purple',hex:'#6C3483'},{name:'teal',hex:'#0E7E7E'},{name:'pink',hex:'#B03A6E'},{name:'navy',hex:'#1A3A5C'}];
+const CF={blue:['blue','navy','teal'],navy:['navy','blue'],teal:['teal','blue','green'],green:['green','teal'],red:['red','pink'],pink:['pink','red'],orange:['orange'],purple:['purple']};
+function fam(n){const f=CF[n]||[n];return COLORS.filter(c=>f.includes(c.name)||(CF[c.name]||[c.name]).includes(n)).map(c=>c.name);}
+function randColor(ex=[]){const ef=ex.flatMap(n=>fam(n));const pool=COLORS.filter(c=>!ef.includes(c.name));return pool.length?pool[Math.floor(Math.random()*pool.length)]:COLORS.filter(c=>!ex.includes(c.name))[0];}
+function tc(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1A1714':'#FFFFFF';}
+const BH=58,BASE=280;
+function sbar(hex,name,w,isUnk=false){const col=tc(hex);const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:${col}">?</span>`:`<span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${col}">${name}</span>`;return`<div class="bar-h" style="width:${w}px;background:${hex}">${c}</div>`;}
+
+// ── Fractional / Multiplicative constants ─────────────────────────────────────
+const FRAC_NAMES=['half','third','fourth','fifth'];
+const FRAC_DENOMS=[2,3,4,5];
+function fracName(n){return FRAC_NAMES[n-2]||`${n}th`;}
+const NUM_WORDS=['two','three','four','five'];
+function numWord(n){return NUM_WORDS[n-2]||String(n);}
+
+// ── Bar renderers (all relation types) ────────────────────────────────────────
+function renderEqual(m){
+  if(m.layout==='dotted'){const w=m.w1;return`<div style="position:relative;display:inline-block;padding:0 16px"><div style="position:absolute;left:12px;top:0;bottom:0;border-left:2px dashed #9B9591"></div><div style="position:absolute;right:12px;top:0;bottom:0;border-right:2px dashed #9B9591"></div><div style="margin-bottom:7px">${sbar(m.c1.hex,m.c1.name,m.w1,m.unk===m.c1.name)}</div>${sbar(m.c2.hex,m.c2.name,m.w1,m.unk===m.c2.name)}</div>`;}
+  return`<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${sbar(m.c1.hex,m.c1.name,m.w1,m.unk===m.c1.name)}${sbar(m.c2.hex,m.c2.name,m.w2,m.unk===m.c2.name)}</div>`;
+}
+function renderPW(m){
+  const{whole,p1,p2}=m;
+  const wB=sbar(whole.color.hex,whole.color.name,whole.w,m.unknownRole==='whole');
+  const p1B=sbar(p1.color.hex,p1.color.name,p1.w,m.unknownRole==='p1');
+  const p2B=sbar(p2.color.hex,p2.color.name,p2.w,m.unknownRole==='p2');
+  const lines=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9B9591"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9B9591"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wB}<div style="display:flex">${p1B}${p2B}</div></div></div>`;
+}
+function renderComparison(m){
+  const{larger,smaller,diff}=m;
+  const lB=sbar(larger.color.hex,larger.color.name,larger.w,m.unknownRole==='larger');
+  const sB=sbar(smaller.color.hex,smaller.color.name,smaller.w,m.unknownRole==='smaller');
+  const dPale=`<div style="width:${diff.w}px;height:${BH}px;background:${diff.color.hex}44;border:2px dashed #9B9591;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.unknownRole==='diff'?`<span style="font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:#777">?</span>`:`<span style="font-size:11px;font-weight:600;color:#777;text-transform:capitalize">${diff.color.name}</span>`}</div>`;
+  const lines=`<div style="position:absolute;left:${smaller.w}px;top:0;bottom:0;border-left:2px dashed #6B6560"></div><div style="position:absolute;left:${larger.w}px;top:0;bottom:0;border-left:2px dashed #6B6560"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${lB}<div style="display:flex">${sB}${dPale}</div></div></div>`;
+}
+function renderFractional(m){
+  const{wholeColor,partColor,denominator,filledIndex,unknownRole,wholeW}=m;
+  const boxW=wholeW/denominator;
+  const wBar=sbar(wholeColor.hex,wholeColor.name,wholeW,unknownRole==='whole');
+  let boxes='',lines='';
+  for(let i=0;i<denominator;i++){
+    const iF=i===filledIndex,isUnk=iF&&unknownRole==='part';
+    const bg=iF?partColor.hex:partColor.hex+'33',bdr=iF?'none':'2px dashed #9B9591',col=iF?tc(partColor.hex):'#9B9591';
+    const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:${col}">?</span>`:iF?`<span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${col}">${partColor.name}</span>`:'';
+    boxes+=`<div style="width:${boxW}px;height:${BH}px;background:${bg};border:${bdr};${i===0?'border-radius:6px 0 0 6px;':''}${i===denominator-1?'border-radius:0 6px 6px 0;':''}display:flex;align-items:center;justify-content:center;flex-shrink:0">${c}</div>`;
+  }
+  for(let i=1;i<denominator;i++) lines+=`<div style="position:absolute;left:${i*boxW}px;top:0;bottom:0;border-left:2px dashed #9B9591;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9B9591;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:${wholeW}px;top:0;bottom:0;border-left:2px dashed #9B9591;pointer-events:none"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wBar}<div style="display:flex">${boxes}</div></div></div>`;
+}
+function renderItem(m){
+  const t=CFG.lessonType;
+  if(t==='partwhole') return renderPW(m);
+  if(t==='comparison') return renderComparison(m);
+  if(t==='fractional'||t==='multiplicative') return renderFractional(m);
+  return renderEqual(m);
+}
+
+// ── Type-specific generators ──────────────────────────────────────────────────
+function genItemEqual(){
+  const c1=randColor(),c2=randColor([c1.name]);
+  const w=BASE*(0.55+Math.random()*0.35);
+  const unk=Math.random()>0.5?c1.name:c2.name;
+  const kn=unk===c1.name?c2.name:c1.name;
+  const layout=Math.random()>0.5?'stacked':'dotted';
+  return{c1,c2,w1:w,w2:w,unk,kn,layout,colors:[c1,c2],relWords:['equals','unknown'],correct:[kn,'equals','unknown'],feedback:`${kn} equals unknown`};
+}
+function genItemPW(){
+  const wC=randColor(),p1C=randColor([wC.name]),p2C=randColor([wC.name,p1C.name]);
+  const tw=BASE*(0.6+Math.random()*0.3),sp=0.35+Math.random()*0.3;
+  const role=['whole','p1','p2'][Math.floor(Math.random()*3)];
+  const whole={color:wC,w:tw},p1={color:p1C,w:tw*sp},p2={color:p2C,w:tw*(1-sp)};
+  let correct,fb;
+  if(role==='whole'){correct=[p1C.name,'plus',p2C.name,'equals','unknown'];fb=`${p1C.name} plus ${p2C.name} equals unknown`;}
+  else if(role==='p1'){correct=[wC.name,'minus',p2C.name,'equals','unknown'];fb=`${wC.name} minus ${p2C.name} equals unknown`;}
+  else{correct=[wC.name,'minus',p1C.name,'equals','unknown'];fb=`${wC.name} minus ${p1C.name} equals unknown`;}
+  return{whole,p1,p2,unknownRole:role,colors:[wC,p1C,p2C],relWords:['plus','minus','equals','unknown'],correct,feedback:fb};
+}
+function genItemComp(){
+  const lC=randColor(),sC=randColor([lC.name]),dC=randColor([lC.name,sC.name]);
+  const lW=BASE*(0.55+Math.random()*0.3),dW=lW*(0.2+Math.random()*0.3),sW=lW-dW;
+  const role=['larger','smaller','diff'][Math.floor(Math.random()*3)];
+  const larger={color:lC,w:lW},smaller={color:sC,w:sW},diff={color:dC,w:dW};
+  let correct,fb;
+  if(role==='larger'){correct=[sC.name,'plus',dC.name,'equals','unknown'];fb=`${sC.name} plus ${dC.name} equals unknown`;}
+  else if(role==='smaller'){correct=[lC.name,'minus',dC.name,'equals','unknown'];fb=`${lC.name} minus ${dC.name} equals unknown`;}
+  else{correct=[lC.name,'minus',sC.name,'equals','unknown'];fb=`${lC.name} minus ${sC.name} equals unknown`;}
+  return{larger,smaller,diff,unknownRole:role,diffStyle:'bar',colors:[lC,sC,dC],relWords:['plus','minus','equals','unknown'],correct,feedback:fb};
+}
+function genItemFrac(){
+  const wC=randColor(),pC=randColor([wC.name]);
+  const d=FRAC_DENOMS[Math.floor(Math.random()*FRAC_DENOMS.length)];
+  const fi=Math.floor(Math.random()*d),wW=BASE*(0.7+Math.random()*0.2),fn=fracName(d);
+  // Always unknown = highlighted part; sentence: "unknown one [frac] of [whole]"
+  const phrase=`one ${fn} of`;
+  return{wholeColor:wC,partColor:pC,denominator:d,filledIndex:fi,unknownRole:'part',wholeW:wW,
+    colors:[wC,pC],relWords:[phrase,'unknown'],correct:['unknown',phrase,wC.name],feedback:`unknown is one ${fn} of ${wC.name}`};
+}
+function genItemMult(){
+  const wC=randColor(),pC=randColor([wC.name]);
+  const d=FRAC_DENOMS[Math.floor(Math.random()*FRAC_DENOMS.length)];
+  const fi=Math.floor(Math.random()*d),wW=BASE*(0.7+Math.random()*0.2),nw=numWord(d);
+  const role=Math.random()>0.5?'whole':'part';
+  const phrase=`${nw} times`;
+  let correct,fb;
+  if(role==='whole'){correct=['unknown',phrase,pC.name];fb=`unknown is ${nw} times ${pC.name}`;}
+  else{correct=[wC.name,phrase,'unknown'];fb=`${wC.name} is ${nw} times unknown`;}
+  return{wholeColor:wC,partColor:pC,denominator:d,filledIndex:fi,unknownRole:role,wholeW:wW,
+    colors:[wC,pC],relWords:[phrase,'unknown'],correct,feedback:fb};
+}
+function genItem(){
+  const t=CFG.lessonType;
+  if(t==='partwhole') return genItemPW();
+  if(t==='comparison') return genItemComp();
+  if(t==='fractional') return genItemFrac();
+  if(t==='multiplicative') return genItemMult();
+  return genItemEqual();
+}
+
+// ── Word bank ─────────────────────────────────────────────────────────────────
+// Colors stack vertically. Relation words:
+//   2 short words (≤8 chars each) → side-by-side row
+//   4 words (plus/minus/equals/unknown) → 2 rows of 2
+//   anything else → vertical stack
+function wb(item,onAdd){
+  const cb=item.colors.map(c=>`<button class="word-btn" onclick="${onAdd}('${c.name}')">${c.name}</button>`).join('');
+  const rw=item.relWords;
+  const btn=w=>`<button class="word-btn" onclick="${onAdd}('${w.replace(/'/g,"\\'")}')">${w}</button>`;
+  let rb;
+  if(rw.length===2 && rw.every(w=>w.length<=8)){
+    // equals/unknown or two times/unknown — side by side
+    rb=`<div class="wb-row">${rw.map(btn).join('')}</div>`;
+  }else if(rw.length===4){
+    // plus, minus, equals, unknown — 2×2 grid
+    rb=`<div class="wb-row">${btn(rw[0])}${btn(rw[1])}</div><div class="wb-row">${btn(rw[2])}${btn(rw[3])}</div>`;
+  }else{
+    // phrase buttons or any other count — vertical stack
+    rb=rw.map(btn).join('');
+  }
+  return`<div class="word-bank">
+    <div class="wb-group">${cb}</div>
+    <div class="wb-div"></div>
+    <div class="wb-group">${rb}</div>
+  </div>`;
+}
+
+// ── Strip ─────────────────────────────────────────────────────────────────────
+function strip(assembled,subFn,backFn){
+  const toks=assembled.length?assembled.map(t=>`<span class="token${t==='unknown'?' unk':''}">${t}</span>`).join(''):`<span class="strip-ph">Tap buttons to build the relation...</span>`;
+  return`<div class="relation-strip fu">${toks}</div><div class="strip-row"><button class="btn-back" onclick="${backFn}()">← Back</button><button class="btn-sub" onclick="${subFn}()" ${assembled.length<2?'disabled':''}>Submit</button></div>`;
+}
+
+// ── Check ─────────────────────────────────────────────────────────────────────
+function check(tokens,item){
+  const s=tokens.join(' '),cor=item.correct.join(' ');
+  if(s===cor)return{ok:true,fb:null};
+  return{ok:false,fb:`Name the relation: ${item.feedback||cor}`};
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+const DUR=30,CIRC=2*Math.PI*24;
+function tRing(t){const off=CIRC*(1-t/DUR);return`<div class="timer-ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg${t<=8?' urgent':''}" cx="28" cy="28" r="24" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><div class="timer-label">${t}</div></div>`;}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S={phase:'intro',t:DUR,timer:null,cor:0,err:0,item:null,asm:[],start:null,errors:[],ci:0,cItem:null,cAsm:[],cFb:null};
+function render(h){document.getElementById('main').innerHTML=h;}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+
+// ── Drill ─────────────────────────────────────────────────────────────────────
+function showIntro(){
+  S.phase='intro';setPhase('Practice');
+  render(`<div class="intro-card fu">
+    <h2>Equal Relations — Fluency</h2>
+    <p>You will see bar models for <strong>30 seconds</strong>.</p>
+    <p>Build the relation using the word buttons on the right. The unknown goes at the end.</p>
+    <p style="color:var(--accent);font-weight:600">Go as fast as you accurately can.</p>
+    <button class="start-btn" onclick="startDrill()">Start</button>
+  </div>`);
+}
+
+function startDrill(){S.phase='drill';S.cor=0;S.err=0;S.t=DUR;S.start=new Date().toISOString();S.errors=[];setPhase('Practice');nextItem();S.timer=setInterval(()=>{S.t--;updateT();if(S.t<=0)endDrill();},1000);}
+
+function nextItem(){S.item=genItem();S.asm=[];draw();}
+
+function draw(){
+  render(`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${tRing(S.t)}</div>
+    <div class="drill-layout fu"><div class="model-area">${renderItem(S.item)}</div>${wb(S.item,'addT')}</div>
+    ${strip(S.asm,'sub','back')}`);
+}
+
+function updateT(){const r=document.querySelector('.timer-ring');if(!r)return;const off=CIRC*(1-S.t/DUR);const fg=r.querySelector('.fg');const lb=r.querySelector('.timer-label');if(fg){fg.setAttribute('stroke-dashoffset',off.toFixed(1));if(S.t<=8)fg.classList.add('urgent');}if(lb)lb.textContent=S.t;}
+
+function addT(w){S.asm.push(w);draw();}
+function back(){S.asm.pop();draw();}
+
+function sub(){
+  if(S.phase!=='drill')return;
+  const{ok,fb}=check(S.asm,S.item);
+  if(ok){S.cor++;}else{S.err++;S.errors.push({item:S.item,fb});}
+  nextItem();
+}
+
+// ── Transition to chart ───────────────────────────────────────────────────────
+function showPigeonTransition(delayMs) {
+  setTimeout(() => {
+    try { localStorage.setItem('chart_new_lesson', String(CFG.id)); } catch(e) {}
+    window.location.href = CFG.chartHref;
+  }, delayMs || 0);
+}
+
+function endDrill(){
+  clearInterval(S.timer);S.phase='results';setPhase('Results');
+  const cpm=S.cor*2,epm=S.err*2;
+  saveSession({date:S.start,lesson:CFG.id,phase:'fluency',corrects:S.cor,errors:S.err,cpm,epm,duration:DUR});
+  render(`<div class="results-card fu"><h2>Session Complete</h2>
+    <div class="rate-row"><div class="rate-stat"><div class="rate-num c">${cpm}</div><div class="rate-sub">Correct / min</div></div><div style="font-size:26px;color:var(--text-muted);padding-top:10px">/</div><div class="rate-stat"><div class="rate-num e">${epm}</div><div class="rate-sub">Errors / min</div></div></div>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:${S.errors.length?'16px':'0'}">${S.cor} correct and ${S.err} error${S.err!==1?'s':''} in 30 seconds.</p>
+    ${S.errors.length?`<button class="btn-continue" onclick="startCorrections()">Review ${S.errors.length} missed item${S.errors.length!==1?'s':''} →</button>`:''}
+  </div>`);
+  if (!S.errors.length) showPigeonTransition(1500);
+}
+
+// ── Corrections ───────────────────────────────────────────────────────────────
+function startCorrections(){S.phase='correction';S.ci=0;setPhase('Review');showC();}
+
+function showC(){
+  if(S.ci>=S.errors.length){doneC();return;}
+  const e=S.errors[S.ci];S.cItem=e.item;S.cAsm=[];S.cFb=e.fb;drawC();
+}
+
+function drawC(){
+  render(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--text-secondary)">Missed item ${S.ci+1} of ${S.errors.length}</span><span style="font-size:12px;color:var(--text-muted)">${S.errors.length-S.ci} remaining</span></div>
+    <div class="feedback-card">${S.cFb}</div>
+    <div class="drill-layout fu"><div class="model-area">${renderItem(S.cItem)}</div>${wb(S.cItem,'addC')}</div>
+    ${strip(S.cAsm,'subC','backC')}`);
+}
+
+function addC(w){S.cAsm.push(w);drawC();}
+function backC(){S.cAsm.pop();drawC();}
+
+function subC(){
+  const{ok,fb}=check(S.cAsm,S.cItem);
+  if(ok){
+    const rem=S.errors.length-S.ci-1;
+    render(`<div class="feedback-card ok fu">✓ Correct — ${S.cItem.correct.join(' ')}</div>
+      <div class="drill-layout"><div class="model-area">${renderItem(S.cItem)}</div>${wb(S.cItem,'addC')}</div>
+      <button class="btn-continue" style="margin-top:10px" onclick="nextC()">${rem>0?'Next missed item →':'Finish review'}</button>`);
+  } else {
+    S.cFb=fb;S.cAsm=[];drawC();
+  }
+}
+
+function nextC(){S.ci++;showC();}
+function doneC(){
+  setPhase('Complete');
+  render(`<div class="results-card fu"><h2>Review Complete</h2>
+    <p style="color:var(--text-secondary);font-size:14px;">You worked through all ${S.errors.length} missed item${S.errors.length!==1?'s':''}.</p>
+  </div>`);
+  showPigeonTransition(1200);
+}
+
+showIntro();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     BAR MODEL DRAW TOOL — embedded drawer
+     • Toggle button: fountain pen icon, fixed bottom-right
+     • Drawer:        slides up from bottom, contains iframe
+     • Lazy-load:     iframe src set on first open (keeps page load fast)
+     • To adjust:     DRAW_TOOL_SRC path, drawer height (#draw-drawer height),
+                      button position (#draw-btn bottom/right)
+════════════════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ── Draw Tool: floating button ─────────────────────────────────────── */
+  #draw-btn {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    z-index: 900;
+  }
+  #draw-btn:hover {
+    background: #512F8A; transform: scale(1.08);
+    box-shadow: 0 0 0 2px #F0922B, 0 0 14px 4px rgba(240,146,43,0.55), 0 0 32px 10px rgba(240,146,43,0.28);
+  }
+  #draw-btn img { width: 32px; height: 32px; image-rendering: pixelated; }
+
+  /* ── Draw Tool: sliding drawer ──────────────────────────────────────── */
+  #draw-drawer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 70vh;                          /* ← adjust drawer height here */
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.18);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 899; display: flex; flex-direction: column;
+  }
+  #draw-drawer.open { transform: translateY(0); }
+
+  #draw-drawer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px 8px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #draw-drawer-bar span {
+    font-size: 14px; font-weight: 700; color: var(--text-primary);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  #draw-close {
+    background: none; border: none; font-size: 22px; cursor: pointer;
+    color: var(--text-muted); line-height: 1; padding: 2px 6px; border-radius: 6px;
+  }
+  #draw-close:hover { color: var(--accent); }
+  #draw-iframe { flex: 1; border: none; width: 100%; }
+
+</style>
+
+<button id="draw-btn" onclick="toggleDrawer()" title="Bar Model Drawing Tool">
+  <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+</button>
+
+<div id="draw-drawer">
+  <div id="draw-drawer-bar">
+    <span>Bar Model Drawing Tool</span>
+    <button id="draw-close" onclick="toggleDrawer()" title="Close">✕</button>
+  </div>
+  <iframe id="draw-iframe" src="" title="Bar Model Drawing Tool"></iframe>
+</div>
+
+<script>
+  /* ── Bar Model Draw Tool — toggle logic ─────────────────────────────── */
+  const DRAW_TOOL_SRC = 'bar_model_draw.html'; // ← update path if tool moves
+
+  let drawerOpen = false;
+  let iframeLoaded = false;
+
+  function toggleDrawer() {
+    drawerOpen = !drawerOpen;
+    document.getElementById('draw-drawer').classList.toggle('open', drawerOpen);
+    // Lazy-load: only fetch the iframe on first open
+    if (drawerOpen && !iframeLoaded) {
+      document.getElementById('draw-iframe').src = DRAW_TOOL_SRC;
+      iframeLoaded = true;
+    }
+  }
+</script>
+</body>
+</html>

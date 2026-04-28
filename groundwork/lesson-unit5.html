@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complex Word Problems — Lesson 4.3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+  .app{width:100%;max-width:700px;display:flex;flex-direction:column;gap:20px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+  .tts-toggle{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;flex-shrink:0;margin-left:auto;}
+  .tts-toggle svg{width:16px;height:16px;fill:var(--text-muted);transition:fill 0.15s;}
+  .tts-toggle.on{border-color:var(--accent);background:var(--accent-light);}
+  .tts-toggle.on svg{fill:var(--accent);}
+  .tts-toggle:hover{border-color:var(--accent);}
+  .tts-toggle:hover svg{fill:var(--accent);}
+  .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s ease;}
+
+  /* Instruction text */
+  .instruct-text{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius-lg);padding:18px 24px;font-size:16px;font-weight:400;color:var(--text-primary);line-height:1.7;animation:fadeUp 0.35s ease;display:flex;align-items:flex-start;gap:12px;}
+  .instruct-text.correction{background:var(--accent-warm-light);border-color:#E8C99A;}
+  .instruct-text.neutral{background:var(--surface);border-color:var(--border);}
+  .typed-text .char{opacity:0;animation:charFade 0.04s forwards;}
+  @keyframes charFade{to{opacity:1;}}
+  .audio-indicator{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all 0.15s;border:none;margin-top:2px;}
+  .audio-indicator:hover{background:#512F8A;transform:scale(1.05);}
+  .audio-indicator.speaking{background:var(--accent-warm);animation:pulse 1s infinite;}
+  .audio-indicator svg{width:16px;height:16px;fill:white;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+  /* Problem card */
+  .problem-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;font-size:15px;line-height:1.7;color:var(--text-primary);animation:fadeUp 0.3s ease;}
+  .problem-card .problem-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .problem-card .problem-text{font-size:15px;line-height:1.7;color:var(--text-primary);}
+
+  /* Model area */
+  .model-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;animation:fadeUp 0.35s ease;overflow:visible;}
+  .model-card .step-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+
+  /* Canvas */
+  .canvas{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:44px 40px;display:flex;align-items:center;justify-content:center;min-height:200px;box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.35s ease;overflow:visible;}
+
+  /* DC canvas section */
+  .dc-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;overflow:visible;}
+  .dc-section .dc-step-label{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;}
+  .dc-toolbar{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  .dc-tool-btn{padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .dc-tool-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+
+  /* Word bank */
+  .instruct-word-bank{width:100%;border:2px solid var(--text-primary);border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;gap:5px;background:var(--surface);}
+  .wb-group{display:flex;flex-direction:column;gap:6px;}
+  .wb-row{display:flex;gap:3px;}
+  .wb-div{height:1px;background:var(--border);margin:3px 0;}
+  .wb-btn{width:100%;padding:10px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:left;line-height:1.4;}
+  .wb-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn:active{transform:scale(0.96);}
+  .wb-btn.correct{border-color:var(--accent);background:var(--accent);color:white;}
+  .wb-btn.incorrect{border-color:#C0392B;background:#FDF0F0;color:#C0392B;}
+
+  /* Relation strip */
+  .relation-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px;}
+  .token{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:5px;padding:3px 9px;font-size:13px;font-weight:600;color:var(--accent);}
+  .token.unk{background:#F0EAF8;border-color:#C9B8E8;color:#6C3483;}
+  .strip-ph{font-size:13px;color:var(--text-muted);font-style:italic;}
+  .strip-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+
+  /* Buttons */
+  .btn-continue{width:100%;padding:15px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .btn-continue:hover{background:#512F8A;transform:translateY(-1px);}
+  .btn-continue:disabled{opacity:0.35;pointer-events:none;}
+  .response-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{flex:1;padding:14px 16px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all 0.15s;text-align:left;line-height:1.4;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-back{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .btn-back:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+
+  /* Completion */
+  .completion{text-align:center;padding:44px 32px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.5s ease;}
+  .completion h2{font-family:'DM Serif Display',serif;font-size:26px;margin:12px 0 10px;color:var(--accent);}
+  .completion p{color:var(--text-secondary);font-size:15px;line-height:1.6;max-width:380px;margin:0 auto;}
+  .nav-links{display:flex;gap:8px;margin-top:16px;}
+  .nav-link{flex:1;padding:11px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);text-decoration:none;text-align:center;display:block;}
+  .nav-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .nav-link.primary{background:var(--accent);border-color:var(--accent);color:white;}
+
+  /* Feedback */
+  .feedback-card{border-radius:var(--radius);padding:12px 16px;font-size:14px;line-height:1.6;margin-top:8px;}
+  .feedback-card.error{background:var(--accent-warm-light);border:1px solid #E8C99A;}
+  .feedback-card.ok{background:var(--accent-light);border:1px solid #C4ADEE;color:var(--accent);}
+
+  /* Progress bar */
+  .progress-bar-row{display:flex;align-items:center;gap:10px;}
+  .progress-num{font-size:12px;font-weight:600;color:var(--text-muted);}
+
+  /* Step divider */
+  .step-divider{display:flex;align-items:center;gap:8px;padding-left:4px;margin:10px 0;}
+  .step-divider div{width:20px;height:2px;background:#9B9591;border-radius:1px;}
+  .step-divider span{font-size:11px;font-weight:600;color:#9B9591;text-transform:uppercase;letter-spacing:0.8px;}
+
+  /* Summary */
+  .model-summary{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius);padding:12px 16px;font-size:13px;color:var(--accent);font-weight:500;margin-bottom:10px;line-height:1.8;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── Drawing Tool Drawer (Word Problem Mode) ──────────────────────── */
+  #draw-btn {
+    position: fixed; top: 28px; right: 28px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    z-index: 900;
+  }
+  #draw-btn:hover {
+    background: #512F8A; transform: scale(1.08);
+  }
+  #draw-btn img { width: 32px; height: 32px; image-rendering: pixelated; }
+
+  #draw-drawer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 70vh;
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.18);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 899; display: flex; flex-direction: column;
+  }
+  #draw-drawer.open { transform: translateY(0); }
+  #draw-drawer.wp-mode {
+    top: 0; bottom: 0; left: auto; right: 0;
+    width: 55vw; height: 100vh;
+    border-top: none;
+    border-left: 2px solid var(--accent);
+    border-radius: 20px 0 0 20px;
+    transform: translateX(100%);
+  }
+  #draw-drawer.wp-mode.open { transform: translateX(0); }
+
+  #draw-drawer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px 8px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #draw-drawer-bar span {
+    font-size: 14px; font-weight: 700; color: var(--text-primary);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  #draw-close {
+    background: none; border: none; font-size: 22px; cursor: pointer;
+    color: var(--text-muted); line-height: 1; padding: 2px 6px; border-radius: 6px;
+  }
+  #draw-close:hover { color: var(--accent); }
+  #draw-iframe { flex: 1; border: none; width: 100%; }
+
+  #mainContent.wp-panel-open { max-width: 420px; margin-right: 55vw; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Complex Word Problems</span>
+    <span class="phase-label" id="phaseLabel">Introduction</span>
+    <button class="tts-toggle on" id="ttsToggle" onclick="toggleTTS()" title="Toggle audio">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </button>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div id="mainContent"></div>
+  <div id="responseArea"></div>
+</div>
+
+<!-- Bar Model Drawing Tool Drawer -->
+<button id="draw-btn" onclick="toggleDrawer()" title="Bar Model Drawing Tool">
+  <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+</button>
+
+<div id="draw-drawer">
+  <div id="draw-drawer-bar">
+    <span>Bar Model Drawing Tool</span>
+    <button id="draw-close" onclick="toggleDrawer()" title="Close">✕</button>
+  </div>
+  <iframe id="draw-iframe" src="" title="Bar Model Drawing Tool"></iframe>
+</div>
+
+<script src="word-problems.js"></script>
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+const CFG = {
+  id: 9,
+  storageKey: 'fluency_unit5_sessions',
+  fluencyHref: 'fluency-unit5.html',
+  nextHref: 'index.html',
+  nextLabel: 'Home',
+  lessonNum: 9,
+};
+
+// ── TTS ───────────────────────────────────────────────────────────────────────
+let ttsEnabled = true;
+let currentUtteranceText = '';
+let isSpeaking = false;
+
+function toggleTTS() {
+  ttsEnabled = !ttsEnabled;
+  const btn = document.getElementById('ttsToggle');
+  if (btn) btn.classList.toggle('on', ttsEnabled);
+  if (!ttsEnabled) window.speechSynthesis.cancel();
+}
+
+function speak(text, onEnd) {
+  if (!ttsEnabled) { if (onEnd) onEnd(); return; }
+  const clean = text.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  currentUtteranceText = clean;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.rate = 0.92; utt.pitch = 1.0; utt.volume = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const pref = voices.find(v => v.name.includes('Samantha')||v.name.includes('Karen')||v.name.includes('Daniel')||v.name.includes('Google')||v.lang==='en-US');
+  if (pref) utt.voice = pref;
+  utt.onstart = () => { isSpeaking=true; const b=document.getElementById('audioBtn'); if(b)b.classList.add('speaking'); };
+  utt.onend = () => { isSpeaking=false; const b=document.getElementById('audioBtn'); if(b)b.classList.remove('speaking'); if(onEnd)onEnd(); };
+  utt.onerror = () => { isSpeaking=false; if(onEnd)onEnd(); };
+  window.speechSynthesis.speak(utt);
+}
+
+function replayAudio() { if (currentUtteranceText && ttsEnabled) speak(currentUtteranceText); }
+function audioBtn() {
+  return `<button class="audio-indicator" id="audioBtn" onclick="replayAudio()">
+    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+  </button>`;
+}
+
+// ── Text animation ────────────────────────────────────────────────────────────
+const CHAR_DELAY_MS = 30;
+function animateText(text, containerId, onDone) {
+  const el = document.getElementById(containerId);
+  if (!el) { if (onDone) onDone(); return; }
+  el.innerHTML = '';
+  const plain = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+  const chars = plain.split('');
+  chars.forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch === '\n' ? '' : ch;
+    if (ch === '\n') span.appendChild(document.createElement('br'));
+    span.style.animationDelay = `${i * CHAR_DELAY_MS}ms`;
+    el.appendChild(span);
+  });
+  if (onDone) setTimeout(onDone, chars.length * CHAR_DELAY_MS + 80);
+}
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+const FRAC_NAMES=['half','third','fourth','fifth'];
+function fracName(n){return FRAC_NAMES[n-2]||`${n}th`;}
+const BH=60;
+
+// ── Static model renderers (B&W outlined bars) ─────────────────────────────────
+const BAR_S = 'box-sizing:border-box;display:flex;align-items:center;justify-content:center;';
+const LBL_S = 'font-size:10px;font-weight:600;color:#1A1714;text-align:center;padding:0 5px;line-height:1.3;';
+
+function renderStaticStep1(p, w=340) {
+  const p1w=Math.round(w*(p.step1Proportions?p.step1Proportions[0]:0.5));
+  const p2w=w-p1w;
+  const whole=`<div style="${BAR_S}width:${w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-radius:6px"><span style="${LBL_S}">${p.step1Labels[0]}</span></div>`;
+  const pt1=`<div style="${BAR_S}width:${p1w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-right:1px solid #1A1714;border-radius:6px 0 0 6px"><span style="${LBL_S}">${p.step1Labels[1]}</span></div>`;
+  const pt2=`<div style="${BAR_S}width:${p2w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-left:none;border-radius:0 6px 6px 0"><span style="${LBL_S}">${p.step1Labels[2]}</span></div>`;
+  return `<div style="display:flex;flex-direction:column;gap:6px">${whole}<div style="display:flex">${pt1}${pt2}</div></div>`;
+}
+
+function renderStaticStep2(p, w=340) {
+  const whole=`<div style="${BAR_S}width:${w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-radius:6px"><span style="${LBL_S}">${p.step2Labels[0]}</span></div>`;
+  let parts='';
+  const d=p.denominator;
+  if(d>0){
+    // Fractional — equal boxes, first is the unknown
+    const bw=Math.round(w/d);
+    for(let i=0;i<d;i++){
+      const isFirst=i===0,isLast=i===d-1;
+      const bg=isFirst?'#F3F4F6':'#fff';
+      const br=isFirst?'border-radius:6px 0 0 6px;':isLast?'border-radius:0 6px 6px 0;':'';
+      const bl=i>0?'border-left:none;':'';
+      const content=isFirst?`<span style="font-family:'DM Serif Display',serif;font-size:18px;font-style:italic;color:#6B6560">?</span>`:'';
+      parts+=`<div style="${BAR_S}${br}${bl}width:${bw}px;height:${BH}px;background:${bg};border:2px solid #1A1714;flex-shrink:0">${content}</div>`;
+    }
+  } else {
+    // Part-whole step 2 — two parts making up bridge
+    const l1=p.step2Labels[1]||'part 1',l2=p.step2Labels[2]||'part 2';
+    const p1w=Math.round(w*0.5),p2w=w-p1w;
+    parts+=`<div style="${BAR_S}width:${p1w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-right:1px solid #1A1714;border-radius:6px 0 0 6px"><span style="${LBL_S}">${l1}</span></div>`;
+    parts+=`<div style="${BAR_S}width:${p2w}px;height:${BH}px;background:#fff;border:2px solid #1A1714;border-left:none;border-radius:0 6px 6px 0"><span style="${LBL_S}">${l2}</span></div>`;
+  }
+  return `<div style="display:flex;flex-direction:column;gap:6px">${whole}<div style="display:flex">${parts}</div></div>`;
+}
+
+function renderStaticComplex(p) {
+  const s1=renderStaticStep1(p);
+  const s2=renderStaticStep2(p);
+  const divider=`<div class="step-divider"><div></div><span>then</span><div></div></div>`;
+  return `<div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">${s1}${divider}${s2}</div>`;
+}
+
+
+// ── Problems ───────────────────────────────────────────────────────────────────
+const PROBLEMS5_INSTRUCT = [
+  {
+    id:0,phase:'instruct',
+    text:`Sam collects red and blue tokens. His whole collection is then split equally into two groups to share with friends. One group is unknown.`,
+    step1Labels:['whole collection','red tokens','blue tokens'],
+    step2Labels:['whole collection','one share'],
+    bridge:'whole collection',
+    denominator:2,
+    unknownStep:2,
+    step1Proportions:[0.45,0.55],
+    correct:['one','half','of','whole collection','equals','unknown'],
+    audio:`Listen. Sam has red and blue tokens — that is a part-whole relation. His whole collection is then split into two equal groups. The whole collection is the bridge — it appears in both steps. The unknown is one of the groups. The relation is: one half of whole collection equals unknown.`,
+    explanation:`Step one: red tokens plus blue tokens equals whole collection. Step two: the whole collection is divided equally — one half of whole collection equals the unknown share.`,
+  },
+  {
+    id:1,phase:'instruct',
+    text:`A garden has a vegetable section and a flower section. The whole garden is divided into three equal parts for different families. One part goes to the unknown family.`,
+    step1Labels:['whole garden','vegetable section','flower section'],
+    step2Labels:['whole garden','family share'],
+    bridge:'whole garden',
+    denominator:3,
+    unknownStep:2,
+    step1Proportions:[0.4,0.6],
+    correct:['one','third','of','whole garden','equals','unknown'],
+    audio:`The whole garden is made of two sections — vegetable and flower. That is step one, a part-whole relation. Then the whole garden is divided into three equal parts. Step two is fractional. The bridge is the whole garden. The relation is: one third of whole garden equals unknown.`,
+    explanation:`Two steps: part-whole (step 1), then fractional (step 2). The bridge connects them.`,
+  },
+  {
+    id:2,phase:'instruct',
+    text:`There are small and large stones in a pile. The whole pile is split into four equal portions. One portion is the unknown.`,
+    step1Labels:['whole pile','small stones','large stones'],
+    step2Labels:['whole pile','one portion'],
+    bridge:'whole pile',
+    denominator:4,
+    unknownStep:2,
+    step1Proportions:[0.45,0.55],
+    correct:['one','fourth','of','whole pile','equals','unknown'],
+    audio:`Small stones and large stones make the whole pile — part-whole, step one. Then the pile is split into four equal portions — fractional, step two. One fourth of whole pile equals unknown.`,
+    explanation:`The bridge (whole pile) is the output of step one and the input for step two.`,
+  },
+];
+
+const INSTRUCT_ITEMS = PROBLEMS5_INSTRUCT;
+const PRACTICE_ITEMS = WP2;
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S = {
+  phase:'intro',
+  instructStep:0,
+  practiceStep:0,
+  practicePhase:'draw',
+  totalInstruct:3,
+  totalPractice:WP2.length,
+  responses:[],
+  assembled:[],
+  drawFeedback:null,
+  wpIframeReady:false,
+  wpPendingLoad:null,
+  wpErrors:0,
+};
+
+// ── Render helpers ────────────────────────────────────────────────────────────
+function render(main, response='') {
+  document.getElementById('mainContent').innerHTML = main;
+  document.getElementById('responseArea').innerHTML = response;
+}
+
+function setPhase(l) { document.getElementById('phaseLabel').textContent = l; }
+function setProgress(pct) { document.getElementById('progressFill').style.width = pct + '%'; }
+
+
+// ── INTRO ─────────────────────────────────────────────────────────────────────
+function showIntro() {
+  S.phase='intro';
+  setPhase('Introduction');
+  setProgress(2);
+  const text = `Now you will apply all your knowledge to word problems with no numbers. Each problem has two steps. You will build two-step bar models and name the relation for the unknown.`;
+  render(
+    `<div class="instruct-text neutral" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="startInstruct()">Let\'s begin</button></div>`
+  );
+  speak(text);
+  animateText(text, 'instructAnim', () => {
+    const b = document.getElementById('instructBtns');
+    if (b) b.style.display = 'block';
+  });
+}
+
+// ── INSTRUCTION PHASE ─────────────────────────────────────────────────────────
+function startInstruct() {
+  S.phase='instruct';
+  S.instructStep=0;
+  setPhase('Instruction');
+  showInstructItem();
+}
+
+function showInstructItem() {
+  const p = INSTRUCT_ITEMS[S.instructStep];
+  if (!p) { startPractice(); return; }
+  setProgress(5 + (S.instructStep / S.totalInstruct) * 30);
+
+  const modelHtml = renderStaticComplex(p);
+
+  const correctStr = p.correct.join(' ');
+  const wrongFrac = p.denominator === 2 ? 'third' : (p.denominator === 3 ? 'half' : 'third');
+  const wrongFracStr = `one ${wrongFrac} of ${p.bridge} equals unknown`;
+  const wrongStep = `${p.step1Labels[1]} plus ${p.step1Labels[2]} equals unknown`;
+  const opts = shuffle([correctStr, wrongFracStr, wrongStep]);
+
+  const btnHtml = opts.map(o =>
+    `<button class="btn" onclick="handleInstructAnswer5('${o.replace(/'/g,"\\'")}')">${o}</button>`
+  ).join('');
+
+  render(
+    `<div class="problem-card"><div class="problem-label">Problem ${S.instructStep+1} of ${S.totalInstruct} — Study</div><div class="problem-text">${p.text}</div></div>
+     <div class="model-card">${audioBtn()}${modelHtml}</div>`,
+    `<div>
+       <div style="font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">What is the relation for the unknown?</div>
+       <div class="response-buttons" style="flex-direction:column">${btnHtml}</div>
+     </div>`
+  );
+  speak(p.audio);
+}
+
+function handleInstructAnswer5(chosen) {
+  const p = INSTRUCT_ITEMS[S.instructStep];
+  const correctStr = p.correct.join(' ');
+  if (chosen === correctStr) {
+    S.instructStep++;
+    const modelHtml = renderStaticComplex(p);
+    render(
+      `<div class="problem-card"><div class="problem-label">Correct!</div><div class="problem-text">${p.text}</div></div>
+       <div class="model-card">${modelHtml}</div>
+       <div class="feedback-card ok">${p.explanation}</div>`,
+      `<button class="btn-continue" onclick="${S.instructStep < S.totalInstruct ? 'showInstructItem()' : 'startPractice()'}">${S.instructStep < S.totalInstruct ? 'Next problem' : 'Start practice'}</button>`
+    );
+    speak(p.explanation);
+  } else {
+    const modelHtml = renderStaticComplex(p);
+    const wrongFrac = p.denominator === 2 ? 'third' : (p.denominator === 3 ? 'half' : 'third');
+    const wrongFracStr = `one ${wrongFrac} of ${p.bridge} equals unknown`;
+    const wrongStep = `${p.step1Labels[1]} plus ${p.step1Labels[2]} equals unknown`;
+    const opts = shuffle([correctStr, wrongFracStr, wrongStep]);
+    const btnHtml = opts.map(o =>
+      `<button class="btn${o===chosen?' incorrect':''}" onclick="handleInstructAnswer5('${o.replace(/'/g,"\\'")}')">${o}</button>`
+    ).join('');
+    const fb = `The relation describes step two — the fractional step. The bridge is "${p.bridge}". Count the equal parts: there are ${p.denominator}. The relation is: ${correctStr}.`;
+    render(
+      `<div class="problem-card"><div class="problem-label">Problem ${S.instructStep+1} of ${S.totalInstruct} — Study</div><div class="problem-text">${p.text}</div></div>
+       <div class="model-card">${audioBtn()}${modelHtml}</div>
+       <div class="feedback-card error">${fb}</div>`,
+      `<div>
+         <div style="font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">Try again — what is the relation for the unknown?</div>
+         <div class="response-buttons" style="flex-direction:column">${btnHtml}</div>
+       </div>`
+    );
+    speak(fb);
+  }
+}
+
+// ── PRACTICE PHASE ────────────────────────────────────────────────────────────
+function startPractice() {
+  S.phase='practice';
+  S.practiceStep=0;
+  S.practicePhase='draw';
+  setPhase('Practice');
+  S.assembled=[];
+  S.drawFeedback=null;
+  showPracticeItem();
+}
+
+function showPracticeItem() {
+  const p = PRACTICE_ITEMS[S.practiceStep];
+  if (!p) { showComplete(); return; }
+  if (S.practicePhase === 'draw') {
+    showDrawPhase(p);
+  } else {
+    showNamePhase(p);
+  }
+}
+
+function renderCurrent() {
+  const p = PRACTICE_ITEMS[S.practiceStep];
+  if (!p) return;
+  if (S.practicePhase === 'draw') {
+    showDrawPhase(p);
+  } else {
+    showNamePhase(p);
+  }
+}
+
+function showDrawPhase(p) {
+  setProgress(38 + (S.practiceStep / S.totalPractice) * 32);
+
+  render(
+    `<div class="problem-card">
+       <div class="problem-label">Practice ${S.practiceStep+1} of ${S.totalPractice}</div>
+       <div class="problem-text">${p.text}</div>
+       ${p.question ? `<div style="background:#F0EAF8;border:1px solid #C9B8E8;border-radius:var(--radius);padding:10px 14px;font-size:14px;font-weight:600;color:#6C3483;margin-top:10px">? ${p.question}</div>` : ''}
+     </div>
+     <div style="padding:20px;text-align:center;color:#9B9591;font-size:14px;">Open the drawing tool on the right →</div>`,
+    ``
+  );
+  openDrawerForProblem(p);
+  S.wpErrors = 0;
+}
+
+function submitDraw() {
+  const p = PRACTICE_ITEMS[S.practiceStep];
+  S.practicePhase='name';
+  S.assembled=[];
+  S.drawFeedback=null;
+  showNamePhase(p);
+}
+
+function showNamePhase(p) {
+  setProgress(38 + (S.practiceStep / S.totalPractice) * 32 + 16 / S.totalPractice);
+
+  const step1Summary = `${p.step1Labels[1]} + ${p.step1Labels[2]} = ${p.bridge}`;
+  const step2Summary = p.denominator > 0
+    ? `${p.bridge} ÷ ${p.denominator} equal parts`
+    : `${p.step2Labels[1]} + ${p.step2Labels[2] || '…'} = ${p.bridge}`;
+
+  const labels = p.step1Labels.concat(p.step2Labels.filter(l=>!p.step1Labels.includes(l)));
+  const ops = p.ops || ['one','half','third','fourth','of','plus','minus','equals','unknown'];
+
+  const tokens = S.assembled.length
+    ? S.assembled.map(t=>`<span class="token${t==='unknown'?' unk':''}">${t}</span>`).join('')
+    : `<span class="strip-ph">Build the relation...</span>`;
+
+  const labelBtns = p.step1Labels.concat(p.step2Labels.filter(l=>!p.step1Labels.includes(l)))
+    .map(l=>`<button class="wb-btn" style="padding:7px 12px;font-size:13px" onclick="addToken5('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('');
+  const opBtns = ops.map(o=>`<button class="wb-btn" style="padding:7px 12px;font-size:13px" onclick="addToken5('${o}')">${o}</button>`).join('');
+
+  render(
+    `<div class="problem-card">
+       <div class="problem-label">Practice ${S.practiceStep+1} of ${S.totalPractice} — Name the Relation</div>
+       <div class="problem-text">${p.text}</div>
+     </div>
+     <div class="model-summary">
+       <strong>Your model:</strong><br>
+       Step 1 (Part-Whole): ${step1Summary}<br>
+       Step 2 (Fractional): ${step2Summary}
+     </div>`,
+    `<div>
+       <div class="instruct-word-bank">
+         <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Labels</div>
+         <div class="wb-group" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:4px">${labelBtns}</div>
+         <div class="wb-div"></div>
+         <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Words</div>
+         <div class="wb-group" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:4px">${opBtns}</div>
+       </div>
+       <div class="relation-strip" style="margin-top:8px">${tokens}</div>
+       <div class="strip-row" style="margin-top:8px">
+         <button class="btn-back" onclick="undoToken5()">← Back</button>
+         <button class="btn-continue" style="flex:1;padding:10px;font-size:14px" onclick="submitRelation5()">Check Relation</button>
+       </div>
+     </div>`
+  );
+}
+
+function addToken5(t){S.assembled.push(t);renderCurrent();}
+function undoToken5(){S.assembled.pop();renderCurrent();}
+
+function submitRelation5() {
+  const p = PRACTICE_ITEMS[S.practiceStep];
+  const s = S.assembled.join(' ');
+  const cor = p.correct.join(' ');
+  if (s === cor) {
+    S.assembled=[];
+    S.practiceStep++;
+    S.practicePhase='draw';
+    S.drawFeedback=null;
+    if (S.practiceStep >= S.totalPractice) {
+      showComplete();
+    } else {
+      const next = PRACTICE_ITEMS[S.practiceStep];
+      const modelHtml = renderStaticComplex(p);
+      render(
+        `<div class="feedback-card ok" style="margin-bottom:4px">Correct! ${cor}</div>
+         <div class="problem-card"><div class="problem-label">Next up</div><div class="problem-text">${next.text}</div></div>`,
+        `<button class="btn-continue" onclick="showPracticeItem()">Draw the model</button>`
+      );
+    }
+  } else {
+    let fb;
+    if (p.denominator > 0) {
+      const spokenFrac = FRAC_NAMES.find(f=>S.assembled.includes(f));
+      if (spokenFrac && spokenFrac !== fracName(p.denominator)) {
+        fb = `Count the equal parts in step two — there are ${p.denominator}. Use "${fracName(p.denominator)}".`;
+      } else if (!S.assembled.includes('of')) {
+        fb = `The fractional relation uses "of": one ${fracName(p.denominator)} of ${p.bridge} equals unknown.`;
+      } else {
+        fb = `Try again. The correct relation is: ${cor}`;
+      }
+    } else {
+      fb = `Try again. The correct relation is: ${cor}`;
+    }
+    S.assembled=[];
+    const step1Summary = `${p.step1Labels[1]} + ${p.step1Labels[2]} = ${p.bridge}`;
+    const step2Summary = p.denominator > 0
+      ? `${p.bridge} ÷ ${p.denominator} equal parts`
+      : `${p.step2Labels[1]} + ${p.step2Labels[2] || '…'} = ${p.bridge}`;
+    const ops = p.ops || ['one','half','third','fourth','of','plus','minus','equals','unknown'];
+    const labelBtns = p.step1Labels.concat(p.step2Labels.filter(l=>!p.step1Labels.includes(l)))
+      .map(l=>`<button class="wb-btn" style="padding:7px 12px;font-size:13px" onclick="addToken5('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('');
+    const opBtns = ops.map(o=>`<button class="wb-btn" style="padding:7px 12px;font-size:13px" onclick="addToken5('${o}')">${o}</button>`).join('');
+    const tokens = `<span class="strip-ph">Build the relation...</span>`;
+    render(
+      `<div class="problem-card">
+         <div class="problem-label">Practice ${S.practiceStep+1} of ${S.totalPractice} — Try Again</div>
+         <div class="problem-text">${p.text}</div>
+       </div>
+       <div class="model-summary">
+         <strong>Your model:</strong><br>
+         Step 1: ${step1Summary}<br>
+         Step 2: ${step2Summary}
+       </div>
+       <div class="feedback-card error">${fb}</div>`,
+      `<div>
+         <div class="instruct-word-bank">
+           <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Labels</div>
+           <div class="wb-group" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:4px">${labelBtns}</div>
+           <div class="wb-div"></div>
+           <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Words</div>
+           <div class="wb-group" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:4px">${opBtns}</div>
+         </div>
+         <div class="relation-strip" style="margin-top:8px">${tokens}</div>
+         <div class="strip-row" style="margin-top:8px">
+           <button class="btn-back" onclick="undoToken5()">← Back</button>
+           <button class="btn-continue" style="flex:1;padding:10px;font-size:14px" onclick="submitRelation5()">Check Relation</button>
+         </div>
+       </div>`
+    );
+    speak(fb);
+  }
+}
+
+// ── COMPLETE ──────────────────────────────────────────────────────────────────
+function showComplete() {
+  S.phase='complete';
+  setPhase('Complete');
+  setProgress(100);
+  render(
+    `<div class="completion">
+       <div style="font-size:48px">✓</div>
+       <h2>Compound Relations Complete</h2>
+       <p>You built two-step bar models for compound and complex word problems and named the relations. That is the full skill — from words to model to relation.</p>
+       <div class="nav-links">
+         <a class="nav-link" href="${CFG.fluencyHref}">Fluency drill</a>
+         <a class="nav-link primary" href="${CFG.nextHref}">${CFG.nextLabel}</a>
+       </div>
+     </div>`,
+    ''
+  );
+}
+
+// ── Drawing Tool Integration (Word Problems) ──────────────────────────────────
+const DRAW_TOOL_SRC = 'bar_model_draw.html';
+let drawerOpen = false;
+let iframeLoaded = false;
+
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  const drawer = document.getElementById('draw-drawer');
+  drawer.classList.toggle('open', drawerOpen);
+  if (drawerOpen && !iframeLoaded) {
+    document.getElementById('draw-iframe').src = DRAW_TOOL_SRC;
+    iframeLoaded = true;
+  }
+}
+
+function openDrawerForProblem(problem) {
+  const drawer = document.getElementById('draw-drawer');
+  const mainContent = document.getElementById('mainContent');
+  const btn = document.getElementById('draw-btn');
+
+  drawer.classList.add('wp-mode');
+  mainContent.classList.add('wp-panel-open');
+
+  drawerOpen = false;
+  toggleDrawer();
+
+  // Merge labels for two-step problems
+  const mergedLabels = problem.step1Labels ?
+    [...problem.step1Labels, ...problem.step2Labels] :
+    problem.labels;
+
+  const ctx = {
+    type: 'wp:load',
+    problem: Object.assign({}, problem, { labels: mergedLabels })
+  };
+
+  if (S.wpIframeReady) {
+    document.getElementById('draw-iframe').contentWindow.postMessage(ctx, '*');
+  } else {
+    S.wpPendingLoad = ctx;
+  }
+}
+
+function evaluateWordProblem(bars, equation) {
+  const problem = PRACTICE_ITEMS[S.practiceStep];
+
+  // Model evaluation: check bar count, labels, proportions
+  const modelCheck = checkModel(bars, problem);
+  const modelOk = modelCheck.ok;
+
+  // Equation check
+  const equationStr = equation.join(' ').toLowerCase();
+  const correctStr = problem.correct.join(' ').toLowerCase();
+  const equationOk = equationStr === correctStr;
+
+  if (modelOk && equationOk) {
+    S.responses.push({ok: true});
+    showWordProbFeedback(true, true, null, problem);
+  } else if (!modelOk) {
+    S.responses.push({ok: false});
+    showWordProbFeedback(false, false, modelCheck.reason, problem);
+  } else {
+    S.wpErrors++;
+    if (S.wpErrors >= 2) {
+      showWordProbFeedback(false, true, `Correct equation: ${problem.correct.join(' ')}`, problem);
+      S.responses.push({ok: false});
+    } else {
+      showWordProbFeedback(false, true, null, problem);
+    }
+  }
+}
+
+function checkModel(bars, problem) {
+  // Pass 1: Bar count
+  const nonFadedBars = bars.filter(b => !b.faded);
+  const expectedBars = 2; // WP2 problems have whole + parts
+  if (nonFadedBars.length !== expectedBars) {
+    return {ok: false, reason: `Draw ${expectedBars} bars for the two steps.`};
+  }
+
+  // Pass 2: Proportions (adapted from fluency-unit4.html checkModelFluency)
+  // For WP2, just check basic proportions
+  const sorted = [...nonFadedBars].sort((a, b) => b.w - a.w);
+  const totalW = sorted[0].w;
+  const partBars = sorted.slice(1);
+  const partWidths = partBars.map(b => b.w / totalW);
+  const sortedParts = [...partWidths].sort((a, b) => b - a);
+  const sortedExp = [...problem.step1Proportions].sort((a, b) => b - a);
+
+  for (let i = 0; i < Math.min(sortedParts.length, sortedExp.length); i++) {
+    if (Math.abs(sortedParts[i] - sortedExp[i]) > 0.35) {
+      return {ok: false, reason: `Bar sizes don't match the problem. Adjust proportions.`};
+    }
+  }
+
+  const partSum = partWidths.reduce((a, b) => a + b, 0);
+  if (Math.abs(partSum - 1.0) > 0.30) {
+    return {ok: false, reason: `Parts should together match the whole bar width.`};
+  }
+
+  return {ok: true, reason: null};
+}
+
+function showWordProbFeedback(modelOk, equationOk, hint, problem) {
+  const mainEl = document.getElementById('mainContent');
+  let feedbackHtml = '';
+  let buttonHtml = '';
+
+  if (modelOk && equationOk) {
+    feedbackHtml = `<div class="feedback-card ok" style="margin-top:10px">✓ Correct — ${problem.correct.join(' ')}</div>`;
+    buttonHtml = `<button class="btn-continue" style="margin-top:10px;width:100%" onclick="nextPracticeStep()">${S.practiceStep < S.totalPractice - 1 ? 'Next problem →' : 'Finish →'}</button>`;
+  } else if (!modelOk) {
+    feedbackHtml = `<div class="feedback-card error" style="margin-top:10px">${hint || 'Check your bar model.'}</div>`;
+    buttonHtml = `<button class="btn-continue" style="margin-top:10px;width:100%" onclick="retryDraw()">Try again</button>`;
+  } else {
+    feedbackHtml = `<div class="feedback-card error" style="margin-top:10px">Model looks right — check your equation.${hint ? ` ${hint}` : ''}</div>`;
+    buttonHtml = `<button class="btn-continue" style="margin-top:10px;width:100%" onclick="retryEquation()">Try again</button>`;
+  }
+
+  mainEl.innerHTML += feedbackHtml;
+  const responseArea = document.getElementById('responseArea');
+  responseArea.innerHTML = buttonHtml;
+}
+
+function retryDraw() {
+  S.wpErrors = 0;
+  const drawer = document.getElementById('draw-drawer');
+  drawer.contentWindow.postMessage({type: 'wp:reset'}, '*');
+}
+
+function retryEquation() {
+  // Keep canvas, let them try equation again
+}
+
+function nextPracticeStep() {
+  // Close the drawer
+  drawerOpen = false;
+  const drawer = document.getElementById('draw-drawer');
+  drawer.classList.remove('open', 'wp-mode');
+  const mainContent = document.getElementById('mainContent');
+  mainContent.classList.remove('wp-panel-open');
+
+  S.practiceStep++;
+  if (S.practiceStep >= S.totalPractice) {
+    showComplete();
+  } else {
+    S.practicePhase = 'draw';
+    S.assembled = [];
+    showPracticeItem();
+  }
+}
+
+// postMessage listener for iframe
+window.addEventListener('message', e => {
+  const iframe = document.getElementById('draw-iframe');
+  if (e.source !== iframe.contentWindow) return;
+
+  if (e.data.type === 'wp:ready') {
+    S.wpIframeReady = true;
+    if (S.wpPendingLoad) {
+      iframe.contentWindow.postMessage(S.wpPendingLoad, '*');
+      S.wpPendingLoad = null;
+    }
+  } else if (e.data.type === 'wp:submit') {
+    evaluateWordProblem(e.data.bars, e.data.equation);
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+window.speechSynthesis.onvoiceschanged = () => {};
+showIntro();
+</script>
+</body>
+</html>

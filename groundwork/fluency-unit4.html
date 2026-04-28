@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Problems — Fluency</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  .app{width:100%;max-width:820px;display:flex;flex-direction:column;gap:14px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+
+  /* Model / drill layout */
+  .drill-layout{display:flex;gap:12px;align-items:flex-start;}
+  .model-area{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px;overflow:visible;min-height:180px;}
+  .right-col{display:flex;flex-direction:column;gap:10px;width:148px;flex-shrink:0;}
+
+  /* Word bank */
+  .word-bank{border:2px solid var(--text-primary);border-radius:var(--radius);padding:8px 7px;display:flex;flex-direction:column;gap:5px;background:var(--surface);}
+  .wb-group{display:flex;flex-direction:column;gap:3px;}
+  .wb-row{display:flex;gap:3px;}
+  .wb-div{height:1px;background:var(--border);margin:3px 0;}
+  .word-btn{width:100%;padding:6px 4px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:center;}
+  .word-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .word-btn:active{transform:scale(0.95);}
+  .word-btn-half{flex:1;padding:6px 2px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:center;}
+  .word-btn-half:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+
+  /* Instruct word bank (used inside lesson-style wb-btn) */
+  .instruct-word-bank{width:100%;border:2px solid var(--text-primary);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--surface);}
+  .wb-btn{padding:9px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:left;line-height:1.3;}
+  .wb-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn:active{transform:scale(0.96);}
+
+  /* Relation strip */
+  .relation-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px;}
+  .token{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:5px;padding:3px 9px;font-size:13px;font-weight:600;color:var(--accent);}
+  .token.unk{background:#EEE6FF;border-color:#C4ADEE;color:#6845A8;}
+  .strip-ph{font-size:13px;color:var(--text-muted);font-style:italic;}
+  .strip-row{display:flex;gap:8px;margin-top:6px;}
+  .btn-back{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .btn-back:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+  .btn-sub{padding:7px 16px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-sub:hover{background:#512F8A;}
+  .btn-sub:disabled{opacity:0.35;pointer-events:none;}
+  .btn-continue{width:100%;padding:13px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn-continue:hover{background:#512F8A;}
+
+  /* Timer */
+  .timer-ring{position:relative;width:56px;height:56px;flex-shrink:0;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .bg{fill:none;stroke:var(--border);stroke-width:5;}
+  .timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+  .timer-ring .fg.urgent{stroke:var(--error);}
+  .timer-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;}
+
+  /* Results */
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;}
+  .results-card h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);margin-bottom:16px;}
+  .rate-row{display:flex;gap:20px;justify-content:center;margin-bottom:16px;}
+  .rate-stat{text-align:center;}
+  .rate-num{font-family:'DM Serif Display',serif;font-size:44px;}
+  .rate-num.c{color:var(--accent);}
+  .rate-num.e{color:var(--error);}
+  .rate-sub{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+  .feedback-card{background:var(--accent-warm-light);border:1px solid #E8C99A;border-radius:var(--radius);padding:14px 18px;font-size:14px;line-height:1.6;margin-bottom:10px;}
+  .feedback-card.ok{background:var(--accent-light);border-color:#C4ADEE;}
+  .nav-links{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .nav-link{flex:1;padding:11px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);text-decoration:none;text-align:center;display:block;}
+  .nav-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .nav-link.primary{background:var(--accent);border-color:var(--accent);color:white;}
+
+  /* Intro card */
+  .intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;}
+  .intro-card h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:10px;}
+  .intro-card p{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;}
+  .start-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .start-btn:hover{background:#512F8A;}
+
+  /* Toolbar */
+  .toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+  .btn-secondary{padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .btn-secondary:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+
+  /* Problem text */
+  .problem-text{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius);padding:10px 14px;font-size:13px;line-height:1.6;color:var(--text-primary);margin-bottom:10px;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .fu{animation:fadeUp 0.2s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Simple Relations — Fluency</span>
+    <span class="phase-label" id="phaseLabel">Practice</span>
+  </div>
+  <div id="main"></div>
+</div>
+<script src="word-problems.js"></script>
+<script>
+// ── Config ───────────────────────────────────────────────────────────────────
+const CFG={id:8,storageKey:'fluency_unit4_sessions',chartHref:'chart.html',lessonHref:'lesson-unit4.html'};
+
+// ── Storage ──────────────────────────────────────────────────────────────────
+function loadSessions(){try{const r=localStorage.getItem(CFG.storageKey);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveSession(s){try{const e=loadSessions();e.push(s);localStorage.setItem(CFG.storageKey,JSON.stringify(e));}catch(e){}}
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+const FRAC_NAMES=['half','third','fourth','fifth'];
+function fracName(n){return FRAC_NAMES[n-2]||`${n}th`;}
+const DUR=60,CIRC=2*Math.PI*24;
+
+// ── Fluency problem pool ─────────────────────────────────────────────────────
+const POOL=WP1;
+
+// ── Model check (3-pass: bar count, labels, proportions) ─────────────────────
+function checkModel(bars,problem){
+  const nf=bars.filter(b=>!b.faded);
+  if(nf.length!==problem.expectedBars)return{ok:false,fb:`Need ${problem.expectedBars} bars.`};
+  const lbls=nf.map(b=>(b.label||'').toLowerCase());
+  for(const exp of problem.labels.map(l=>l.toLowerCase())){
+    if(!lbls.some(l=>l.includes(exp)))return{ok:false,fb:`Label each bar. Missing: ${exp}`};
+  }
+  if(problem.type==='pw'||problem.type==='cmp'){
+    const s=[...nf].sort((a,b)=>b.w-a.w);
+    const pw=s.slice(1).map(b=>b.w/s[0].w);
+    const sp=[...pw].sort((a,b)=>b-a);
+    const se=[...problem.proportions].sort((a,b)=>b-a);
+    for(let i=0;i<Math.min(sp.length,se.length);i++)
+      if(Math.abs(sp[i]-se[i])>0.35)return{ok:false,fb:`Bar sizes don't match. Adjust proportions.`};
+    if(Math.abs(pw.reduce((a,b)=>a+b,0)-1.0)>0.30)return{ok:false,fb:`Parts should match the whole bar.`};
+  }
+  if(problem.type==='eq'){
+    const s=[...nf].sort((a,b)=>b.w-a.w);
+    if(s.length>=2){
+      const ratio=s[s.length-1].w/s[0].w;
+      if(ratio<0.75)return{ok:false,fb:`Bars should be equal length.`};
+    }
+  }
+  if(problem.type==='frac'){
+    const s=[...nf].sort((a,b)=>b.w-a.w);
+    if(s.length>=2){
+      const ratio=s[1].w/s[0].w,exp=problem.proportions[0];
+      if(Math.abs(ratio-exp)>exp*0.35)return{ok:false,fb:`The part should be about 1/${problem.denominator} of the whole.`};
+    }
+  }
+  if(problem.type==='mul'){
+    const s=[...nf].sort((a,b)=>b.w-a.w);
+    if(s.length>=2){
+      const ratio=s[0].w/s[1].w,exp=problem.proportions[0];
+      if(Math.abs(ratio-exp)>exp*0.35)return{ok:false,fb:`Adjust bar sizes — one should be about ${exp}× the other.`};
+    }
+  }
+  return{ok:true,fb:null};
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+function tRing(t){
+  const off=CIRC*(1-t/DUR);
+  return`<div class="timer-ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg${t<=12?' urgent':''}" cx="28" cy="28" r="24" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><div class="timer-label">${t}</div></div>`;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S={phase:'intro',t:DUR,timer:null,cor:0,err:0,item:null,start:null,errors:[],ci:0,cItem:null,cAsm:[],cFb:null,iframeReady:false,pendingLoad:null};
+function render(h){document.getElementById('main').innerHTML=h;}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+
+// ── Generate item ─────────────────────────────────────────────────────────────
+function genItem(){return POOL[Math.floor(Math.random()*POOL.length)];}
+
+// ── postMessage listener ───────────────────────────────────────────────────────
+window.addEventListener('message',e=>{
+  const iframe=document.getElementById('draw-iframe');
+  if(!iframe||e.source!==iframe.contentWindow)return;
+  if(e.data.type==='wp:ready'){
+    S.iframeReady=true;
+    if(S.pendingLoad){iframe.contentWindow.postMessage(S.pendingLoad,'*');S.pendingLoad=null;}
+  } else if(e.data.type==='wp:submit'){
+    if(S.phase!=='drill')return;
+    const mc=checkModel(e.data.bars||[],S.item);
+    if(!mc.ok){S.err++;S.errors.push({item:S.item,fb:mc.fb});}
+    else{S.cor++;}
+    nextItem();
+  }
+});
+
+// ── Drill ─────────────────────────────────────────────────────────────────────
+function showIntro(){
+  S.phase='intro';setPhase('Practice');
+  render(`<div class="intro-card fu">
+    <h2>Simple Relations — Fluency</h2>
+    <p>You will see word problems for <strong>60 seconds</strong>.</p>
+    <p>For each problem: read the relation, then draw a bar model. All five simple relation types may appear.</p>
+    <p style="color:var(--accent);font-weight:600">Go as fast as you accurately can.</p>
+    <button class="start-btn" onclick="startDrill()">Start</button>
+  </div>`);
+}
+
+function startDrill(){
+  S.phase='drill';S.cor=0;S.err=0;S.t=DUR;S.start=new Date().toISOString();S.errors=[];
+  setPhase('Practice');
+  nextItem();
+  S.timer=setInterval(()=>{S.t--;updateT();if(S.t<=0)endDrill();},1000);
+}
+
+function nextItem(){
+  S.item=genItem();
+  S.iframeReady=false;
+  S.pendingLoad={type:'wp:load',problem:S.item};
+  drawDrawPhase();
+}
+
+function drawDrawPhase(){
+  const p=S.item;
+  render(`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${tRing(S.t)}</div>
+    <div class="fu">
+      <div class="problem-text">${p.text}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Labels: ${p.labels.join(', ')}</div>
+      <iframe id="draw-iframe" src="bar_model_draw.html" title="Bar Model Drawing Tool"
+        style="width:100%;height:340px;border:1px solid var(--border);border-radius:var(--radius-lg)"></iframe>
+    </div>`);
+}
+
+function updateT(){
+  const r=document.querySelector('.timer-ring');
+  if(!r)return;
+  const off=CIRC*(1-S.t/DUR);
+  const fg=r.querySelector('.fg');
+  const lb=r.querySelector('.timer-label');
+  if(fg){fg.setAttribute('stroke-dashoffset',off.toFixed(1));if(S.t<=12)fg.classList.add('urgent');}
+  if(lb)lb.textContent=S.t;
+}
+
+function endDrill(){
+  clearInterval(S.timer);S.phase='results';setPhase('Results');
+  const cpm=Math.round(S.cor*(60/DUR)*2)/2;
+  const epm=Math.round(S.err*(60/DUR)*2)/2;
+  saveSession({date:S.start,lesson:CFG.id,phase:'fluency',corrects:S.cor,errors:S.err,cpm,epm,duration:DUR});
+  render(`<div class="results-card fu"><h2>Session Complete</h2>
+    <div class="rate-row">
+      <div class="rate-stat"><div class="rate-num c">${S.cor}</div><div class="rate-sub">Correct</div></div>
+      <div style="font-size:26px;color:var(--text-muted);padding-top:10px">/</div>
+      <div class="rate-stat"><div class="rate-num e">${S.err}</div><div class="rate-sub">Errors</div></div>
+    </div>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:${S.errors.length?'16px':'0'}">${S.cor} correct and ${S.err} error${S.err!==1?'s':''} in 60 seconds.</p>
+    ${S.errors.length
+      ?`<button class="btn-continue" onclick="startCorrections()">Review ${S.errors.length} missed item${S.errors.length!==1?'s':''} →</button>`
+      :`<div class="nav-links"><a class="nav-link" href="${CFG.lessonHref}">Back to Lesson</a><a class="nav-link primary" href="${CFG.chartHref}">View Chart</a><a class="nav-link" onclick="location.reload()">Again</a></div>`}
+  </div>`);
+}
+
+// ── Corrections ──────────────────────────────────────────────────────────────
+function startCorrections(){S.phase='correction';S.ci=0;setPhase('Review');showC();}
+
+function showC(){
+  if(S.ci>=S.errors.length){doneC();return;}
+  const e=S.errors[S.ci];S.cItem=e.item;S.cAsm=[];S.cFb=e.fb;
+  drawC();
+}
+
+function drawC(){
+  const rem=S.errors.length-S.ci-1;
+  render(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:13px;font-weight:600;color:var(--text-secondary)">Missed item ${S.ci+1} of ${S.errors.length}</span>
+    <span style="font-size:12px;color:var(--text-muted)">${S.errors.length-S.ci} remaining</span>
+  </div>
+  <div class="feedback-card">${S.cFb}</div>
+  <div class="problem-text fu">${S.cItem.text}</div>
+  <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">Labels: ${S.cItem.labels.join(', ')}</div>
+  <button class="btn-continue" style="margin-top:12px" onclick="nextC()">${rem>0?'Next missed item →':'Finish review'}</button>`);
+}
+
+function nextC(){S.ci++;showC();}
+function doneC(){
+  setPhase('Complete');
+  render(`<div class="results-card fu"><h2>Review Complete</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">You worked through all ${S.errors.length} missed item${S.errors.length!==1?'s':''}.</p>
+    <div class="nav-links">
+      <a class="nav-link" onclick="location.reload()">Practice Again</a>
+      <a class="nav-link primary" href="${CFG.chartHref}">View Chart</a>
+      <a class="nav-link" href="${CFG.lessonHref}">Back to Lesson</a>
+    </div>
+  </div>`);
+}
+
+showIntro();
+</script>
+</body>
+</html>

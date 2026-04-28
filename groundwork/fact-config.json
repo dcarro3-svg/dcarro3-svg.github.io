@@ -1,0 +1,20 @@
+[
+  {
+    "id": 6,
+    "label": "Additive Facts",
+    "factType": "add",
+    "storageKey": "fluency_fact_add_sessions",
+    "lessonHref": "index.html",
+    "chartHref": "chart.html",
+    "output": "fact-fluency-add.html"
+  },
+  {
+    "id": 7,
+    "label": "Multiplicative Facts",
+    "factType": "mult",
+    "storageKey": "fluency_fact_mult_sessions",
+    "lessonHref": "index.html",
+    "chartHref": "chart.html",
+    "output": "fact-fluency-mult.html"
+  }
+]

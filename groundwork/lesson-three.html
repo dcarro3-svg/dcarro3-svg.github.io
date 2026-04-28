@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparisons and Differences — Lesson 1.3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{
+    --bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;
+    --text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;
+    --accent:#6845A8;--accent-light:#EEE6FF;
+    --accent-warm:#D4600A;--accent-warm-light:#FBF0E4;
+    --radius:12px;--radius-lg:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background-color:var(--bg);color:var(--text-primary);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+    background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");
+    background-size:128px 128px;}
+  .app{width:100%;max-width:680px;display:flex;flex-direction:column;gap:20px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+  .tts-toggle{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);
+    background:var(--surface);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all 0.15s;flex-shrink:0;margin-left:auto;}
+  .tts-toggle svg{width:16px;height:16px;fill:var(--text-muted);transition:fill 0.15s;}
+  .tts-toggle.on{border-color:var(--accent);background:var(--accent-light);}
+  .tts-toggle.on svg{fill:var(--accent);}
+  .tts-toggle:hover{border-color:var(--accent);}
+  .tts-toggle:hover svg{fill:var(--accent);}
+  .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s ease;}
+
+  /* Canvas */
+  .canvas{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:44px 40px;display:flex;align-items:center;justify-content:center;
+    min-height:200px;box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.35s ease;overflow:visible;}
+
+  /* Instruction text — always visible, letter-by-letter animation */
+  .instruct-text{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:var(--radius-lg);
+    padding:18px 24px;font-size:16px;font-weight:400;color:var(--text-primary);
+    line-height:1.7;animation:fadeUp 0.35s ease;display:flex;align-items:flex-start;gap:12px;}
+  .instruct-text.correction{background:var(--accent-warm-light);border-color:#E8C99A;}
+  .instruct-text.neutral{background:var(--surface);border-color:var(--border);}
+  .instruct-text.bridge{background:#EEE6FF;border-color:#C4ADEE;}
+  .instruct-text.positive{background:var(--accent-light);border-color:#C4ADEE;}
+
+  /* Letter-by-letter animation */
+  .typed-text .char{opacity:0;animation:charFade 0.04s forwards;}
+  @keyframes charFade{to{opacity:1;}}
+
+  /* Audio replay button */
+  .audio-indicator{width:48px;height:48px;border-radius:50%;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;
+    transition:all 0.15s;border:none;margin-top:2px;overflow:visible;padding:0;}
+  .audio-indicator:hover{background:#512F8A;transform:scale(1.05);
+    box-shadow:0 0 0 2px #F0922B,0 0 10px 3px rgba(240,146,43,0.50),0 0 22px 6px rgba(240,146,43,0.22);}
+  .audio-indicator.speaking{background:var(--accent-warm);animation:pulse 1s infinite;}
+  .audio-indicator svg{width:16px;height:16px;fill:white;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+  /* Question prompt */
+  .question-prompt{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 18px;font-size:15px;font-weight:500;color:var(--text-primary);animation:fadeUp 0.2s ease;}
+
+  /* Word bank — full-width below question for instruction phase */
+  .instruct-layout{display:flex;gap:12px;align-items:flex-start;}
+  .instruct-model{flex:1;}
+  .instruct-word-bank{width:100%;border:2px solid var(--text-primary);
+    border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;
+    gap:5px;background:var(--surface);}
+  .wb-group{display:flex;flex-direction:column;gap:6px;}
+  .wb-row{display:flex;gap:3px;}
+  .wb-div{height:1px;background:var(--border);margin:3px 0;}
+  .wb-btn{width:100%;padding:10px 14px;border-radius:7px;border:1px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+    color:var(--text-primary);cursor:pointer;transition:all 0.1s;text-align:left;line-height:1.4;}
+  .wb-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn:active{transform:scale(0.96);}
+  .wb-btn.selected{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .wb-btn.correct{border-color:var(--accent);background:var(--accent);color:white;}
+  .wb-btn.incorrect{border-color:#C0392B;background:#FDF0F0;color:#C0392B;}
+
+  /* Assembled relation strip */
+  .relation-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px;}
+  .r-token{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:5px;
+    padding:3px 9px;font-size:13px;font-weight:600;color:var(--accent);}
+  .r-token.unk{background:#EEE6FF;border-color:#C4ADEE;color:#6845A8;}
+  .strip-ph{font-size:13px;color:var(--text-muted);font-style:italic;}
+  .strip-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+  .btn-back{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;}
+  .btn-back:hover{border-color:var(--accent-warm);color:var(--accent-warm);}
+  .btn-submit{padding:7px 16px;border-radius:var(--radius);border:none;background:var(--accent);
+    color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-submit:hover{background:#512F8A;
+    box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.52),0 0 26px 7px rgba(240,146,43,0.24);}
+  .btn-submit:disabled{opacity:0.35;pointer-events:none;}
+
+  /* Response buttons (for review/ident phases) */
+  .response-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{flex:1;padding:15px 20px;border-radius:var(--radius);border:2px solid var(--border);
+    background:var(--surface);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;
+    color:var(--text-primary);cursor:pointer;transition:all 0.15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-continue{width:100%;padding:15px;border-radius:var(--radius);border:none;
+    background:var(--accent);color:white;font-family:'DM Sans',sans-serif;
+    font-size:16px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .btn-continue:hover{background:#512F8A;transform:translateY(-1px);
+    box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+
+  /* Relations found tags */
+  .relations-found{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .relation-tag{background:var(--accent-light);border:1px solid #C4ADEE;border-radius:20px;
+    padding:4px 12px;font-size:13px;font-weight:500;color:var(--accent);}
+
+  /* Bar styles */
+  .bar-h{height:62px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .bar-label{font-size:12px;font-weight:600;text-transform:capitalize;letter-spacing:0.3px;}
+
+  /* Completion */
+  .completion{text-align:center;padding:44px 32px;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);box-shadow:0 2px 12px rgba(0,0,0,0.04);animation:fadeUp 0.5s ease;}
+  .completion h2{font-family:'DM Serif Display',serif;font-size:26px;margin:12px 0 10px;color:var(--accent);}
+  .completion p{color:var(--text-secondary);font-size:15px;line-height:1.6;max-width:380px;margin:0 auto;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Comparisons & Differences</span>
+    <span class="phase-label" id="phaseLabel">Introduction</span>
+    <button class="tts-toggle" id="ttsToggle" onclick="toggleTTS()" title="Toggle audio">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </button>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div id="mainContent"></div>
+  <div id="responseArea"></div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIG — injected per lesson
+// ═══════════════════════════════════════════════════════════════════════════════
+const CFG = {
+  id: 1.3,
+  storageKey: 'fluency_l3_sessions',
+  fluencyHref: 'fluency-l3.html',
+  nextLessonHref: 'lesson-four.html',
+  nextLessonLabel: 'Lesson 1.4 →',
+  completionTitle: 'Comparisons & Differences',
+  completionSummary: 'A comparison is a part-whole relation. Smaller plus difference equals larger.<br><br><em>larger minus smaller equals difference</em>',
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TTS
+// ═══════════════════════════════════════════════════════════════════════════════
+let ttsEnabled = true;
+let currentUtterance = null;
+let isSpeaking = false;
+
+function toggleTTS() {
+  ttsEnabled = !ttsEnabled;
+  const btn = document.getElementById('ttsToggle');
+  if (btn) btn.classList.toggle('on', ttsEnabled);
+  if (!ttsEnabled) window.speechSynthesis.cancel();
+}
+
+function speak(text, onEnd) {
+  if (!ttsEnabled) { if (onEnd) onEnd(); return; }
+  const clean = text.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.rate = 0.92; utt.pitch = 1.0; utt.volume = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const pref = voices.find(v => v.name.includes('Samantha')||v.name.includes('Karen')||v.name.includes('Daniel')||v.name.includes('Google')||v.lang==='en-US');
+  if (pref) utt.voice = pref;
+  utt.onstart = () => { isSpeaking=true; const b=document.getElementById('audioBtn'); if(b)b.classList.add('speaking'); };
+  utt.onend = () => { isSpeaking=false; const b=document.getElementById('audioBtn'); if(b)b.classList.remove('speaking'); if(onEnd)onEnd(); };
+  utt.onerror = () => { isSpeaking=false; if(onEnd)onEnd(); };
+  currentUtterance = utt;
+  window.speechSynthesis.speak(utt);
+}
+
+function replayAudio() { if (currentUtterance && ttsEnabled) speak(currentUtterance.text); }
+function audioBtn() {
+  return `<button class="audio-indicator" id="audioBtn" onclick="replayAudio()">
+    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+  </button>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LETTER-BY-LETTER TEXT ANIMATION
+// ~33 chars/sec — fast enough to feel responsive, slow enough to feel intentional
+// ═══════════════════════════════════════════════════════════════════════════════
+const CHAR_DELAY_MS = 30; // 33 chars/sec
+
+function animateText(text, containerId, onDone) {
+  const el = document.getElementById(containerId);
+  if (!el) { if (onDone) onDone(); return; }
+  el.innerHTML = '';
+  // Strip any HTML tags for animation, then show plain text char by char
+  const plain = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+  const chars = plain.split('');
+  chars.forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch === '\n' ? '' : ch;
+    if (ch === '\n') span.appendChild(document.createElement('br'));
+    span.style.animationDelay = `${i * CHAR_DELAY_MS}ms`;
+    el.appendChild(span);
+  });
+  if (onDone) setTimeout(onDone, chars.length * CHAR_DELAY_MS + 80);
+}
+
+// Wrap text content for animation — always shown regardless of TTS state
+function typedText(text) {
+  const safe = text.replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+  return `<span class="typed-text" id="animText_${Date.now()}" data-text="${safe}"></span>`;
+}
+
+// Show text with animation
+function showAnimText(text, containerId, onDone) {
+  animateText(text, containerId, onDone);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COLORS & UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════════
+const COLORS=[{name:'blue',hex:'#1B6CA8'},{name:'orange',hex:'#D4600A'},{name:'green',hex:'#2D6A4F'},
+  {name:'red',hex:'#C0392B'},{name:'purple',hex:'#6C3483'},{name:'teal',hex:'#0E7E7E'},
+  {name:'pink',hex:'#B03A6E'},{name:'navy',hex:'#1A3A5C'}];
+const CF={blue:['blue','navy','teal'],navy:['navy','blue'],teal:['teal','blue','green'],
+  green:['green','teal'],red:['red','pink'],pink:['pink','red'],orange:['orange'],purple:['purple']};
+function fam(n){const f=CF[n]||[n];return COLORS.filter(c=>f.includes(c.name)||(CF[c.name]||[c.name]).includes(n)).map(c=>c.name);}
+function randColor(ex=[]){const ef=ex.flatMap(n=>fam(n));const pool=COLORS.filter(c=>!ef.includes(c.name));return pool.length?pool[Math.floor(Math.random()*pool.length)]:COLORS.filter(c=>!ex.includes(c.name))[0];}
+function cmatch(r,n){return[...(CF[n]||[n]),n].some(f=>r.toLowerCase().includes(f));}
+function tc(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1A1714':'#FFFFFF';}
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+const FRAC_NAMES=['half','third','fourth','fifth'];
+const FRAC_DENOMS=[2,3,4,5];
+function fracName(n){return FRAC_NAMES[n-2]||`${n}th`;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BAR RENDERERS — shared across all lessons
+// ═══════════════════════════════════════════════════════════════════════════════
+const BH=62, BASE=320;
+
+function sbar(hex,name,w,isUnk=false){
+  const col=tc(hex);
+  const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:24px;font-style:italic;color:${col}">?</span>`
+    :`<span class="bar-label" style="color:${col}">${name}</span>`;
+  return `<div class="bar-h" style="width:${w}px;background:${hex}">${c}</div>`;
+}
+
+function renderEqual(m){
+  if(m.layout==='dotted'){const w=m.w1;return`<div style="position:relative;display:inline-block;padding:0 20px"><div style="position:absolute;left:16px;top:0;bottom:0;border-left:2px dashed #9589B8"></div><div style="position:absolute;right:16px;top:0;bottom:0;border-right:2px dashed #9589B8"></div><div style="margin-bottom:8px">${sbar(m.c1.hex,m.c1.name,w,m.unk===m.c1.name)}</div>${sbar(m.c2.hex,m.c2.name,w,m.unk===m.c2.name)}</div>`;}
+  return`<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${sbar(m.c1.hex,m.c1.name,m.w1,m.unk===m.c1.name)}${sbar(m.c2.hex,m.c2.name,m.w2,m.unk===m.c2.name)}</div>`;
+}
+
+function renderPW(m){
+  const{whole,p1,p2}=m;
+  const wB=sbar(whole.color.hex,whole.color.name,whole.w,m.unknownRole==='whole');
+  const p1Raw=sbar(p1.color.hex,p1.color.name,p1.w,m.unknownRole==='p1');
+  const p2Raw=sbar(p2.color.hex,p2.color.name,p2.w,m.unknownRole==='p2');
+  const p1B=m.fadedPart==='p1'?`<div style="opacity:0.35">${p1Raw}</div>`:p1Raw;
+  const p2B=m.fadedPart==='p2'?`<div style="opacity:0.35">${p2Raw}</div>`:p2Raw;
+  const lines=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9589B8"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9589B8"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${wB}<div style="display:flex">${p1B}${p2B}</div></div></div>`;
+}
+
+function renderComparison(m){
+  const{larger,smaller,diff}=m;
+  const lB=sbar(larger.color.hex,larger.color.name,larger.w,m.unknownRole==='larger');
+  const sB=sbar(smaller.color.hex,smaller.color.name,smaller.w,m.unknownRole==='smaller');
+  const dPale=diff?`<div style="width:${diff.w}px;height:${BH}px;background:${diff.color.hex}44;border:2px dashed #9589B8;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;flex-shrink:0">${m.unknownRole==='diff'?`<span style="font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:#777">?</span>`:`<span style="font-size:11px;font-weight:600;color:#777;text-transform:capitalize">${diff.color.name}</span>`}</div>`:'';
+  const lines=diff?`<div style="position:absolute;left:${smaller.w}px;top:0;bottom:0;border-left:2px dashed #584C72"></div><div style="position:absolute;left:${larger.w}px;top:0;bottom:0;border-left:2px dashed #584C72"></div>`:'';
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${lB}<div style="display:flex">${sB}${dPale}</div></div></div>`;
+}
+
+function renderFractional(m){
+  const{wholeColor,partColor,denominator,filledIndex,unknownRole,wholeW}=m;
+  const boxW=wholeW/denominator;
+  const wBar=sbar(wholeColor.hex,wholeColor.name,wholeW,unknownRole==='whole');
+  let boxes='';
+  for(let i=0;i<denominator;i++){
+    const iF=i===filledIndex,isUnk=iF&&unknownRole==='part';
+    const bg=iF?partColor.hex:partColor.hex+'33',bdr=iF?'none':'2px dashed #9589B8',col=iF?tc(partColor.hex):'#9589B8';
+    const c=isUnk?`<span style="font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:${col}">?</span>`:iF?`<span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${col}">${partColor.name}</span>`:' ';
+    boxes+=`<div style="width:${boxW}px;height:${BH}px;background:${bg};border:${bdr};${i===0?'border-radius:6px 0 0 6px;':''}${i===denominator-1?'border-radius:0 6px 6px 0;':''}display:flex;align-items:center;justify-content:center;flex-shrink:0">${c}</div>`;
+  }
+  let lines='';
+  for(let i=1;i<denominator;i++) lines+=`<div style="position:absolute;left:${i*boxW}px;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  lines+=`<div style="position:absolute;left:${wholeW}px;top:0;bottom:0;border-left:2px dashed #9589B8;pointer-events:none"></div>`;
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">${wBar}<div style="display:flex">${boxes}</div></div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WORD BANK BUILDER — for instruction phase button responses
+// Always exactly 3 options, shuffled.
+// Pass distractors=null with a 3-item [correct, close, far] array as first arg,
+// or pass acc + distractors array to use the legacy auto-build path.
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildInstructWB(accOrOpts, distractors, onSelect) {
+  let opts;
+  if (distractors === null) {
+    // Pre-built [correct, close, far] — shuffle and use directly
+    opts = shuffle([...accOrOpts]);
+  } else {
+    const correct = accOrOpts[0];
+    const pool = shuffle([correct, ...distractors.filter(d=>d!==correct)]).slice(0, 3);
+    if (!pool.includes(correct)) { pool[pool.length-1] = correct; shuffle(pool); }
+    opts = pool;
+  }
+  const btns = opts.map(o =>
+    `<button class="wb-btn" onclick="${onSelect}('${o.replace(/'/g,"\\'")}')">${o}</button>`
+  ).join('');
+  return `<div class="instruct-word-bank"><div class="wb-group">${btns}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RELATION STRIP — for naming phases
+// ═══════════════════════════════════════════════════════════════════════════════
+function strip(asm, subFn, backFn) {
+  const toks = asm.length
+    ? asm.map(t=>`<span class="r-token${t==='unknown'?' unk':''}">${t}</span>`).join('')
+    : `<span class="strip-ph">Tap buttons to build the relation...</span>`;
+  return `<div class="relation-strip">${toks}</div>
+    <div class="strip-row">
+      <button class="btn-back" onclick="${backFn}()">← Back</button>
+      <button class="btn-submit" onclick="${subFn}()" ${asm.length<2?'disabled':''}>Submit</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+const S = {
+  phase:'intro',
+  reviewStep:0, instructStep:0, identStep:0, namingStep:0, freeStep:0,
+  instructFU:false, instructM:null,
+  currentOpts:null, currentFuOpts:null,
+  instructMastery:[], instructCurrentMode:'D', instructItemErrors:0,
+  reviewItemErrors:0, identItemErrors:0, namingItemErrors:0,
+  currentModel:null, currentAnswer:null, currentNaming:null,
+  scaffoldColorActive:true, scaffoldColorStreak:0, scaffoldColorLocked:false,
+  scaffoldRoleActive:true, scaffoldRoleStreak:0, scaffoldRoleLocked:false,
+  freeModel:null, freeRelationsFound:[], freeTarget:4,
+  totalReview:4, totalIdent:12, totalNaming:8, totalFree:3,
+  sessionData:[], itemStartTime:null,
+  assembled:[], correctionAsm:[],
+};
+
+function startTimer(){S.itemStartTime=Date.now();}
+function recordResp(phase,correct){S.sessionData.push({phase,correct,responseTimeMs:S.itemStartTime?Date.now()-S.itemStartTime:null,timestamp:new Date().toISOString()});}
+function updateColorScaffold(ok){if(S.scaffoldColorLocked)return;if(ok){S.scaffoldColorStreak++;if(S.scaffoldColorStreak>=3){S.scaffoldColorActive=false;S.scaffoldColorLocked=true;}}else{S.scaffoldColorActive=true;S.scaffoldColorStreak=0;}}
+function updateRoleScaffold(ok){if(S.scaffoldRoleLocked)return;if(ok){S.scaffoldRoleStreak++;if(S.scaffoldRoleStreak>=3){S.scaffoldRoleActive=false;S.scaffoldRoleLocked=true;}}else{S.scaffoldRoleActive=true;S.scaffoldRoleStreak=0;}}
+function setProgress(p){document.getElementById('progressFill').style.width=p+'%';}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+function render(m,r){document.getElementById('mainContent').innerHTML=m;document.getElementById('responseArea').innerHTML=r;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INSTRUCTION PHASE ENGINE
+// Shared across all lessons. Per-lesson INSTRUCT array and renderModel injected below.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INSTRUCTION ENGINE — D / G / T mode
+// D = Demonstrate: full instruction text shown, learner picks the given answer
+// G = Guide: short hint shown, learner infers
+// T = Test: no text, learner works alone
+// Error correction goes backwards: T → G → D
+// initialMode per INSTRUCT step encodes cross-lesson prior knowledge
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const POSITIVE_MSGS = ['Yes!','Right!','Good!','That\'s it!','Nice work.','Exactly.'];
+function randPos() { return POSITIVE_MSGS[Math.floor(Math.random()*POSITIVE_MSGS.length)]; }
+
+
+function showInstruct(step) {
+  if (step >= INSTRUCT.length) { afterInstruct(); return; }
+  S.instructStep = step;
+  S.instructFU = false;
+  S.instructItemErrors = 0;
+  // Lazy-init mastery array from each step's initialMode
+  if (!S.instructMastery.length) {
+    S.instructMastery = INSTRUCT.map(d => d.initialMode || 'D');
+  }
+  S.instructCurrentMode = S.instructMastery[step];
+  const def = INSTRUCT[step];
+  S.instructM = def.build ? def.build() : null;
+  S.currentOpts = typeof def.opts === 'function' ? def.opts(S.instructM) : def.opts;
+  setProgress(22 + (step / INSTRUCT.length) * 20);
+  showInstructItem();
+}
+
+function showInstructItem() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const mode = S.instructCurrentMode;
+  const question = typeof def.question === 'function' ? def.question(m) : def.question;
+  const opts = S.currentOpts;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+  const crowHtml = '';
+
+  if (mode === 'T') {
+    // Test: model + question + buttons immediately, no instruction text
+    render(
+      `${crowHtml}${modelHtml}<div class="question-prompt">${question}</div>`,
+      `<div id="instructBtns">${buildInstructWB(opts, null, 'submitInstruct')}</div>`
+    );
+    speak(question);
+    return;
+  }
+
+  // D or G: show text, animate, then reveal question + buttons
+  const audioText = mode === 'D'
+    ? (typeof def.audio === 'function' ? def.audio(m) : def.audio)
+    : (typeof def.guide === 'function' ? def.guide(m) : def.guide);
+  const cls = mode === 'D' ? 'instruct-text' : 'instruct-text neutral';
+
+  render(
+    `${crowHtml}${modelHtml}
+     <div class="${cls}" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${question}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(audioText);
+  animateText(audioText, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(opts, null, 'submitInstruct'); }
+  });
+}
+
+function submitInstruct(chosen) {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+
+  if (!S.instructFU) {
+    const ok = chosen === S.currentOpts[0];
+    if (ok) {
+      recordResp('instruct', true);
+      // Upgrade mastery for this step
+      if (S.instructCurrentMode === 'D') S.instructMastery[S.instructStep] = 'G';
+      else if (S.instructCurrentMode === 'G') S.instructMastery[S.instructStep] = 'T';
+      showInstructFU();
+    } else {
+      recordResp('instruct', false);
+      S.instructItemErrors++;
+      // Drop mode backwards
+      if (S.instructCurrentMode === 'T') S.instructCurrentMode = 'G';
+      else if (S.instructCurrentMode === 'G' && S.instructItemErrors >= 2) S.instructCurrentMode = 'D';
+      showInstructItem();
+    }
+  } else {
+    const ok = chosen === S.currentFuOpts[0];
+    if (ok) {
+      recordResp('instruct_fu', true);
+      showInstruct(S.instructStep + 1);
+    } else {
+      recordResp('instruct_fu', false);
+      S.instructItemErrors++;
+      showInstructFUError();
+    }
+  }
+}
+
+function showInstructFU() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const mode = S.instructCurrentMode;
+  S.instructFU = true;
+  const fuQ = typeof def.fuQ === 'function' ? def.fuQ(m) : def.fuQ;
+  S.currentFuOpts = typeof def.fuOpts === 'function' ? def.fuOpts(m) : def.fuOpts;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+  const pos = randPos();
+
+  if (mode === 'T') {
+    // Test follow-up: brief positive then question + buttons immediately
+    render(
+      `${modelHtml}
+       <div class="instruct-text positive"><strong>${pos}</strong></div>
+       <div class="question-prompt">${fuQ}</div>`,
+      `<div id="instructBtns">${buildInstructWB(S.currentFuOpts, null, 'submitInstruct')}</div>`
+    );
+    speak(pos);
+    return;
+  }
+
+  // D or G follow-up: play fu() text then show fuQ + buttons
+  const fuText = typeof def.fu === 'function' ? def.fu(m) : def.fu;
+  const fullAudio = `${pos} ${fuText}`;
+  render(
+    `${modelHtml}
+     <div class="instruct-text bridge" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${fuQ}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(fullAudio);
+  animateText(fullAudio, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(S.currentFuOpts, null, 'submitInstruct'); }
+  });
+}
+
+function showInstructFUError() {
+  const def = INSTRUCT[S.instructStep];
+  const m = S.instructM;
+  const fuQ = typeof def.fuQ === 'function' ? def.fuQ(m) : def.fuQ;
+  const modelHtml = m ? `<div class="canvas">${renderModel(m)}</div>` : '';
+
+  // Drop mode, pick guidance text
+  let guideText;
+  if (S.instructCurrentMode === 'T') {
+    S.instructCurrentMode = 'G';
+    guideText = typeof def.fuGuide === 'function' ? def.fuGuide(m) : def.fuGuide;
+  } else {
+    guideText = typeof def.fu === 'function' ? def.fu(m) : def.fu;
+  }
+
+  render(
+    `${modelHtml}
+     <div class="instruct-text correction" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>
+     <div class="question-prompt" id="questionBox" style="display:none">${fuQ}</div>`,
+    `<div id="instructBtns" style="display:none"></div>`
+  );
+  speak(guideText);
+  animateText(guideText, 'instructAnim', () => {
+    const qb = document.getElementById('questionBox');
+    const bb = document.getElementById('instructBtns');
+    if (qb) qb.style.display = 'block';
+    if (bb) { bb.style.display = 'block'; bb.innerHTML = buildInstructWB(S.currentFuOpts, null, 'submitInstruct'); }
+  });
+}
+
+
+// Build plausible distractors from the same conceptual pool
+function buildDistractors(acc, m, def, isFU=false) {
+  const correct = acc[0];
+  const pool = [];
+
+  // Color distractors — pick wrong colors from COLORS
+  const colorNames = COLORS.map(c=>c.name);
+  if (colorNames.some(c => acc.some(a => a.includes(c)))) {
+    const usedColors = colorNames.filter(c => acc.some(a => a.includes(c)));
+    const otherColors = colorNames.filter(c => !usedColors.includes(c));
+    shuffle(otherColors).slice(0,2).forEach(c => pool.push(c));
+  }
+
+  // Relation word distractors
+  const relWords = ['equal','not equal','plus','minus','part-whole','comparison','difference','halves','thirds','fourths','fifths','times','fraction'];
+  relWords.filter(w => !acc.some(a=>a.includes(w))).slice(0,3).forEach(w=>pool.push(w));
+
+  // Yes/no if acc includes yes/no
+  if (acc.some(a=>a==='yes')) pool.push('no');
+  if (acc.some(a=>a==='no')) pool.push('yes');
+
+  // Fraction distractors
+  if (acc.some(a=>FRAC_NAMES.includes(a))) {
+    FRAC_NAMES.filter(f=>!acc.includes(f)).forEach(f=>pool.push(f));
+  }
+
+  // Number distractors
+  ['two','three','four','five'].filter(n=>!acc.some(a=>a.includes(n))).slice(0,2).forEach(n=>pool.push(n));
+
+  return shuffle(pool.filter(d=>d&&d!==correct)).slice(0,2);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════════════════════════
+function saveSession() {
+  try {
+    const corrects = S.sessionData.filter(d=>d.correct).length;
+    const errors   = S.sessionData.filter(d=>!d.correct).length;
+    const record = { date:new Date().toISOString(), lesson:CFG.id, phase:'instruction', corrects, errors, cpm:0, epm:0, duration:null };
+    const raw = localStorage.getItem(CFG.storageKey);
+    const existing = raw ? JSON.parse(raw) : [];
+    existing.push(record);
+    localStorage.setItem(CFG.storageKey, JSON.stringify(existing));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPLETION
+// ═══════════════════════════════════════════════════════════════════════════════
+function showComplete() {
+  setProgress(100); setPhase('Complete');
+  saveSession();
+  render(`<div class="completion">
+    <div style="font-size:44px;margin-bottom:12px">◈</div>
+    <h2>${CFG.completionTitle}</h2>
+    <p>${CFG.completionSummary}</p>
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+      <a href="${CFG.fluencyHref}" style="display:block;padding:14px 24px;background:var(--accent);color:white;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">Practice for Fluency →</a>
+      <a href="${CFG.nextLessonHref}" style="display:block;padding:14px 24px;background:var(--surface);color:var(--accent);border:2px solid var(--accent);border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">${CFG.nextLessonLabel}</a>
+      <a href="chart.html" style="display:block;padding:14px 24px;background:var(--surface);color:var(--text-secondary);border:2px solid var(--border);border-radius:12px;text-decoration:none;font-weight:600;font-size:16px">View Progress Chart</a>
+    </div>
+  </div>`,``);
+  speak(`Well done. ${CFG.completionTitle} complete.`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LESSON-SPECIFIC CODE
+// Injected by build script:
+//   - INSTRUCT array
+//   - renderModel(m) function
+//   - Generator functions
+//   - Review phase block (showIntro, startReview, nextReview, submitReview, showInstructIntro)
+//   - afterInstruct() — what happens after instruction phase completes
+//   - Identification phase
+//   - Naming phase
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LESSON THREE — COMPARISONS & DIFFERENCES
+// Part-whole is mastered (L2) → review starts at T.
+// Comparison is new → INSTRUCT steps start at D.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function genPWReview(){
+  const wC=randColor(),p1C=randColor([wC.name]),p2C=randColor([wC.name,p1C.name]);
+  const tw=BASE*(0.6+Math.random()*0.3),sp=0.35+Math.random()*0.3;
+  return{whole:{color:wC,w:tw},p1:{color:p1C,w:tw*sp},p2:{color:p2C,w:tw*(1-sp)},confirmed:true};
+}
+function genComparison(diffStyle=null,unknownRole=null){
+  const lC=randColor(),sC=randColor([lC.name]),dC=randColor([lC.name,sC.name]);
+  const lW=BASE*(0.55+Math.random()*0.3),dW=lW*(0.2+Math.random()*0.3),sW=lW-dW;
+  const role=unknownRole||['larger','smaller','diff'][Math.floor(Math.random()*3)];
+  return{larger:{color:lC,w:lW},smaller:{color:sC,w:sW},diff:{color:dC,w:dW},
+    diffStyle:diffStyle||'bar',unknownRole:role};
+}
+
+function renderModel(m){
+  if(m.whole&&m.p1&&m.p2) return renderPW(m);
+  if(m.larger) return renderComparison(m);
+  return renderEqual(m);
+}
+
+const INSTRUCT=[
+  {
+    // New: more and less — starts at D
+    initialMode:'D',
+    build(){return genComparison(null,null);},
+    audio(m){return`Look at these two bars. They are different sizes — not equal. The ${m.larger.color.name} bar is more than the ${m.smaller.color.name} bar. The ${m.smaller.color.name} bar is less than the ${m.larger.color.name} bar.`;},
+    guide(m){return`Look at both bars. Which one is smaller?`;},
+    question(m){return`Which bar is less?`;},
+    opts(m){return[`The ${m.smaller.color.name} bar is less.`,`The ${m.larger.color.name} bar is less.`,`Neither — both bars are the same size.`];},
+    fu(m){return`${m.smaller.color.name} is less, so ${m.larger.color.name} is more. Naming one gives you the other for free.`;},
+    fuQ(m){return`If ${m.smaller.color.name} is less — what is ${m.larger.color.name}?`;},
+    fuOpts(m){return[`${m.larger.color.name} is more.`,`${m.larger.color.name} is equal.`,`${m.larger.color.name} is less.`];},
+    fuGuide(m){return`If one bar is less, the other must be more. What is the ${m.larger.color.name} bar?`;},
+  },
+  {
+    // New: the difference bar — starts at D
+    initialMode:'D',
+    build(){return genComparison('pale',null);},
+    audio(m){return`The faded gap between the bars shows the difference. It shows how much more the ${m.larger.color.name} bar is than the ${m.smaller.color.name} bar.`;},
+    guide(m){return`Look at the faded gap. What does it show?`;},
+    question:`What do we call the faded gap?`,
+    opts:['The faded gap is called the difference.','The faded gap is called the part.','The faded gap is called the whole.'],
+    fu(m){return`Right — the difference. Smaller plus difference equals larger. That is a part-whole relation inside the comparison.`;},
+    fuQ:`What relation does smaller plus difference equals larger show?`,
+    fuOpts:['It shows a part-whole relation.','It shows an equal relation.','It shows a comparison that has no parts.'],
+    fuGuide(){return`Smaller and difference add up to larger — just like parts add up to a whole. What kind of relation is that?`;},
+  },
+  {
+    // New: all three relations in one picture — starts at D
+    initialMode:'D',
+    build(){return genComparison('bar',null);},
+    audio(m){return`Here are three bars: ${m.smaller.color.name}, ${m.diff.color.name}, and ${m.larger.color.name}. They show three relations. To find the larger, add smaller plus difference. To find the difference, take the larger minus the smaller. To find the smaller, take the larger minus the difference.`;},
+    guide(m){return`Look at the three bars. How do you find the ${m.diff.color.name} difference?`;},
+    question(m){return`What equals the ${m.diff.color.name} difference?`;},
+    opts(m){return[`${m.larger.color.name} minus ${m.smaller.color.name} equals the difference.`,`${m.smaller.color.name} minus ${m.larger.color.name} equals the difference.`,`${m.larger.color.name} plus ${m.smaller.color.name} equals the difference.`];},
+    fu(m){return`${m.larger.color.name} minus ${m.smaller.color.name} equals the difference. You can find any of the three bars if you know the other two.`;},
+    fuQ(m){return`What equals the ${m.smaller.color.name} smaller bar?`;},
+    fuOpts(m){return[`${m.larger.color.name} minus ${m.diff.color.name} equals ${m.smaller.color.name}.`,`${m.larger.color.name} plus ${m.diff.color.name} equals ${m.smaller.color.name}.`,`${m.diff.color.name} minus ${m.larger.color.name} equals ${m.smaller.color.name}.`];},
+    fuGuide(m){return`Larger minus difference gives you the smaller. What is that relation?`;},
+  },
+];
+
+function showIntro(){
+  S.phase='intro';setPhase('Introduction');setProgress(2);
+  const audio=`Last time you learned part-whole. Today you will learn about comparisons. A comparison shows which bar is more and which is less. First, a quick review of part-whole.`;
+  render(`<div class="instruct-text neutral" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="startReview()">Let's review</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+function startReview(){S.phase='review';setPhase('Review — Part-Whole');S.reviewStep=0;nextReview();}
+function nextReview(){
+  if(S.reviewStep>=S.totalReview){showInstructIntro();return;}
+  setProgress(4+(S.reviewStep/S.totalReview)*12);
+  S.reviewItemErrors=0;
+  S.currentModel=genPWReview();startTimer();
+  render(`<div class="canvas">${renderPW(S.currentModel)}</div><div class="question-prompt">Part-Whole or Not?</div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitReview('yes')">Part-Whole</button><button class="btn" onclick="submitReview('no')">Not</button></div>`);
+  speak('Part-Whole or Not?');
+}
+function submitReview(r){
+  // Review always shows valid PW models — answer is always 'yes'
+  recordResp('review',r==='yes');
+  if(r==='yes'){
+    document.getElementById('responseArea').innerHTML=`<div class="instruct-text positive" style="text-align:center;font-weight:700">${randPos()}</div>`;
+    setTimeout(()=>{S.reviewStep++;nextReview();},400);
+    return;
+  }
+  S.reviewItemErrors++;
+  let audio;
+  if(S.reviewItemErrors>=2){
+    audio=`This is a part-whole. The two small bars together equal the top bar.`;
+  } else {
+    audio=`Look for a top bar that equals the two smaller bars below it.`;
+  }
+  render(`<div class="canvas">${renderPW(S.currentModel)}</div>
+    <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitReview('yes')">Part-Whole</button><button class="btn" onclick="submitReview('no')">Not</button></div>`);
+  speak(audio);animateText(audio,'instructAnim');
+}
+
+function showInstructIntro(){
+  S.phase='instruction';setPhase('Instruction');setProgress(18);
+  const audio=`You know part-whole. Now look at comparisons — when one bar is more than another.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="showInstruct(0)">Show me</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+function afterInstruct(){showIdentIntro();}
+
+function showIdentIntro(){
+  S.phase='ident';S.identStep=0;setPhase('Identification');setProgress(44);
+  const audio=`Tell me if each picture shows a comparison or not.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="nextIdent()">Ready</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+function nextIdent(){
+  if(S.identStep>=S.totalIdent){showNamingIntro();return;}
+  setProgress(46+(S.identStep/S.totalIdent)*20);
+  S.identItemErrors=0;
+  const isComp=Math.random()>0.4;
+  S.currentModel=isComp?genComparison('bar',null):genPWReview();
+  S.currentAnswer=isComp?'comparison':'not';
+  startTimer();
+  const html=isComp?renderComparison(S.currentModel):renderPW(S.currentModel);
+  render(`<div class="canvas">${html}</div><div class="question-prompt">Comparison or Not?</div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitIdent('comparison')">Comparison</button><button class="btn" onclick="submitIdent('not')">Not</button></div>`);
+  speak('Comparison or Not?');
+}
+function submitIdent(r){
+  const ok=r===S.currentAnswer;
+  recordResp('ident',ok);
+  if(ok){
+    document.getElementById('responseArea').innerHTML=`<div class="instruct-text positive" style="text-align:center;font-weight:700">${randPos()}</div>`;
+    setTimeout(()=>{S.identStep++;nextIdent();},400);
+    return;
+  }
+  S.identItemErrors++;
+  let audio;
+  if(S.identItemErrors>=2){
+    audio=S.currentAnswer==='comparison'
+      ?`This is a comparison. One bar is more than the other. Look for the difference bar between them.`
+      :`This is not a comparison. It shows a part-whole — two bars that add up to one bigger bar.`;
+  } else {
+    audio=r==='comparison'
+      ?`Look — is one bar more than another? Is there a difference bar?`
+      :`Look again. Is there a larger bar with a smaller bar and a gap between them?`;
+  }
+  const html=S.currentAnswer==='comparison'?renderComparison(S.currentModel):renderPW(S.currentModel);
+  render(`<div class="canvas">${html}</div>
+    <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitIdent('comparison')">Comparison</button><button class="btn" onclick="submitIdent('not')">Not</button></div>`);
+  speak(audio);animateText(audio,'instructAnim');
+}
+
+function showNamingIntro(){
+  S.phase='naming';S.namingStep=0;setPhase('Relation Naming');setProgress(68);
+  const audio=`Now name the relation to find the unknown. Use the buttons below.`;
+  render(`<div class="instruct-text" id="instructBox">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div id="instructBtns" style="display:none"><button class="btn-continue" onclick="nextNaming()">Ready</button></div>`);
+  speak(audio);
+  animateText(audio,'instructAnim',()=>{const b=document.getElementById('instructBtns');if(b)b.style.display='block';});
+}
+function nextNaming(){
+  if(S.namingStep>=S.totalNaming){showComplete();return;}
+  setProgress(70+(S.namingStep/S.totalNaming)*26);
+  S.namingItemErrors=0;
+  const roles=['larger','smaller','diff'];
+  const role=roles[S.namingStep%3];
+  const m=genComparison('bar',role);
+  S.currentModel=m;
+  S.currentNaming={
+    larger:m.larger.color.name,
+    smaller:m.smaller.color.name,
+    diff:m.diff.color.name,
+    unknownRole:role
+  };
+  startTimer();
+  if(!S.scaffoldColorLocked&&S.scaffoldColorActive) showColorScaffold();
+  else if(!S.scaffoldRoleLocked&&S.scaffoldRoleActive) showRoleScaffold();
+  else showNamingItem();
+}
+function showColorScaffold(){
+  const n=S.currentNaming;
+  const unk=n.unknownRole==='larger'?n.larger:n.unknownRole==='smaller'?n.smaller:n.diff;
+  const opts=shuffle([...COLORS.map(c=>c.name).filter(c=>c!==unk).slice(0,3),unk]);
+  render(`<div class="canvas">${renderComparison(S.currentModel)}</div><div class="question-prompt">What color is the unknown?</div>`,
+    `<div class="response-buttons">${opts.map(o=>`<button class="btn" onclick="submitColorScaffold('${o}')">${o}</button>`).join('')}</div>`);
+  speak('What color is the unknown?');
+}
+function submitColorScaffold(r){
+  const n=S.currentNaming;
+  const unk=n.unknownRole==='larger'?n.larger:n.unknownRole==='smaller'?n.smaller:n.diff;
+  const ok=cmatch(r,unk);
+  updateColorScaffold(ok);recordResp('scaffold_color',ok);
+  if(ok){if(!S.scaffoldRoleLocked&&S.scaffoldRoleActive)showRoleScaffold();else showNamingItem();}
+  else{
+    const audio=`Find the bar with the question mark. What color is it?`;
+    render(`<div class="canvas">${renderComparison(S.currentModel)}</div>
+      <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+      `<div class="response-buttons">${shuffle([...COLORS.map(c=>c.name).filter(c=>c!==unk).slice(0,3),unk]).map(o=>`<button class="btn" onclick="submitColorScaffold('${o}')">${o}</button>`).join('')}</div>`);
+    speak(audio);animateText(audio,'instructAnim');
+  }
+}
+function showRoleScaffold(){
+  const n=S.currentNaming;
+  const unk=n.unknownRole==='larger'?n.larger:n.unknownRole==='smaller'?n.smaller:n.diff;
+  render(`<div class="canvas">${renderComparison(S.currentModel)}</div><div class="question-prompt">Is ${unk} the larger bar, the smaller bar, or the difference?</div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitRoleScaffold('larger')">Larger</button><button class="btn" onclick="submitRoleScaffold('smaller')">Smaller</button><button class="btn" onclick="submitRoleScaffold('diff')">Difference</button></div>`);
+  speak(`Is ${unk} the larger, smaller, or difference?`);
+}
+function submitRoleScaffold(r){
+  const n=S.currentNaming;
+  const ok=r===n.unknownRole;
+  updateRoleScaffold(ok);recordResp('scaffold_role',ok);
+  if(ok){showNamingItem();return;}
+  const unk=n.unknownRole==='larger'?n.larger:n.unknownRole==='smaller'?n.smaller:n.diff;
+  const msg={larger:`${unk} is the longest bar — that is the larger.`,smaller:`${unk} is the shorter full bar — that is the smaller.`,diff:`${unk} is the gap bar — that is the difference.`}[n.unknownRole];
+  render(`<div class="canvas">${renderComparison(S.currentModel)}</div>
+    <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div class="response-buttons"><button class="btn" onclick="submitRoleScaffold('larger')">Larger</button><button class="btn" onclick="submitRoleScaffold('smaller')">Smaller</button><button class="btn" onclick="submitRoleScaffold('diff')">Difference</button></div>`);
+  speak(msg);animateText(msg,'instructAnim');
+}
+function showNamingItem(){
+  const n=S.currentNaming;
+  const{larger,smaller,diff,unknownRole}=n;
+  let correct,opts;
+  if(unknownRole==='larger'){
+    correct=`${smaller} plus ${diff} equals unknown`;
+    opts=shuffle([correct,`${larger} minus ${diff} equals unknown`,`${smaller} minus ${diff} equals unknown`]);
+  } else if(unknownRole==='smaller'){
+    correct=`${larger} minus ${diff} equals unknown`;
+    opts=shuffle([correct,`${smaller} plus ${diff} equals unknown`,`${diff} minus ${larger} equals unknown`]);
+  } else {
+    correct=`${larger} minus ${smaller} equals unknown`;
+    opts=shuffle([correct,`${smaller} minus ${larger} equals unknown`,`${larger} plus ${smaller} equals unknown`]);
+  }
+  if(!opts.includes(correct))opts[opts.length-1]=correct;
+  render(`<div class="canvas">${renderComparison(S.currentModel)}</div><div class="question-prompt">What equals the unknown?</div>`,
+    `<div class="response-buttons">${shuffle(opts).map(o=>`<button class="btn" onclick="submitNaming('${o.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>`);
+  speak('What equals the unknown?');
+}
+function submitNaming(r){
+  const n=S.currentNaming;
+  const{larger,smaller,diff,unknownRole}=n;
+  let isCorrect;
+  if(unknownRole==='larger') isCorrect=cmatch(r,smaller)&&cmatch(r,diff)&&r.includes('plus');
+  else if(unknownRole==='smaller') isCorrect=cmatch(r,larger)&&cmatch(r,diff)&&r.includes('minus');
+  else isCorrect=cmatch(r,larger)&&cmatch(r,smaller)&&r.includes('minus');
+  recordResp('naming',isCorrect);updateColorScaffold(isCorrect);updateRoleScaffold(isCorrect);
+  if(isCorrect){
+    document.getElementById('responseArea').innerHTML=`<div class="instruct-text positive" style="text-align:center;font-weight:700">${randPos()}</div>`;
+    setTimeout(()=>{S.namingStep++;nextNaming();},500);
+    return;
+  }
+  S.namingItemErrors++;
+  const correct=unknownRole==='larger'?`${smaller} plus ${diff} equals unknown`:unknownRole==='smaller'?`${larger} minus ${diff} equals unknown`:`${larger} minus ${smaller} equals unknown`;
+  let audio;
+  if(S.namingItemErrors>=2){
+    audio=`The relation is: ${correct}.`;
+  } else {
+    if(unknownRole==='larger') audio=`The unknown is the larger bar. To find the larger, add smaller plus difference.`;
+    else if(unknownRole==='smaller') audio=`The unknown is the smaller bar. To find the smaller, take larger minus difference.`;
+    else audio=`The unknown is the difference. To find the difference, take larger minus smaller.`;
+  }
+  render(`<div class="canvas">${renderComparison(S.currentModel)}</div>
+    <div class="instruct-text correction">${audioBtn()}<span id="instructAnim" class="typed-text"></span></div>`,
+    `<div class="response-buttons">${shuffle([correct,unknownRole==='larger'?`${larger} minus ${diff} equals unknown`:unknownRole==='smaller'?`${smaller} plus ${diff} equals unknown`:`${larger} plus ${smaller} equals unknown`,`${diff} minus ${larger} equals unknown`]).slice(0,3).map(o=>`<button class="btn" onclick="submitNaming('${o.replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div>`);
+  speak(audio);animateText(audio,'instructAnim');
+}
+
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+if (window.speechSynthesis) { window.speechSynthesis.onvoiceschanged=()=>{}; window.speechSynthesis.getVoices(); }
+document.getElementById('ttsToggle').classList.add('on');
+showIntro();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     BAR MODEL DRAW TOOL — embedded drawer
+     • Toggle button: fountain pen icon, fixed bottom-right
+     • Drawer:        slides up from bottom, contains iframe
+     • Lazy-load:     iframe src set on first open (keeps page load fast)
+     • To adjust:     DRAW_TOOL_SRC path, drawer height (#draw-drawer height),
+                      button position (#draw-btn bottom/right)
+════════════════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ── Draw Tool: floating button ─────────────────────────────────────── */
+  #draw-btn {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    z-index: 900;
+  }
+  #draw-btn:hover {
+    background: #512F8A; transform: scale(1.08);
+    box-shadow: 0 0 0 2px #F0922B, 0 0 14px 4px rgba(240,146,43,0.55), 0 0 32px 10px rgba(240,146,43,0.28);
+  }
+  #draw-btn img { width: 32px; height: 32px; image-rendering: pixelated; }
+
+  /* ── Draw Tool: sliding drawer ──────────────────────────────────────── */
+  #draw-drawer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 70vh;                          /* ← adjust drawer height here */
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.18);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 899; display: flex; flex-direction: column;
+  }
+  #draw-drawer.open { transform: translateY(0); }
+
+  #draw-drawer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px 8px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #draw-drawer-bar span {
+    font-size: 14px; font-weight: 700; color: var(--text-primary);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  #draw-close {
+    background: none; border: none; font-size: 22px; cursor: pointer;
+    color: var(--text-muted); line-height: 1; padding: 2px 6px; border-radius: 6px;
+  }
+  #draw-close:hover { color: var(--accent); }
+  #draw-iframe { flex: 1; border: none; width: 100%; }
+</style>
+
+<button id="draw-btn" onclick="toggleDrawer()" title="Bar Model Drawing Tool">
+  <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+</button>
+
+<div id="draw-drawer">
+  <div id="draw-drawer-bar">
+    <span>Bar Model Drawing Tool</span>
+    <button id="draw-close" onclick="toggleDrawer()" title="Close">✕</button>
+  </div>
+  <iframe id="draw-iframe" src="" title="Bar Model Drawing Tool"></iframe>
+</div>
+
+<script>
+  /* ── Bar Model Draw Tool — toggle logic ─────────────────────────────── */
+  const DRAW_TOOL_SRC = 'bar_model_draw.html'; // ← update path if tool moves
+
+  let drawerOpen = false;
+  let iframeLoaded = false;
+
+  function toggleDrawer() {
+    drawerOpen = !drawerOpen;
+    document.getElementById('draw-drawer').classList.toggle('open', drawerOpen);
+    // Lazy-load: only fetch the iframe on first open
+    if (drawerOpen && !iframeLoaded) {
+      document.getElementById('draw-iframe').src = DRAW_TOOL_SRC;
+      iframeLoaded = true;
+    }
+  }
+</script>
+</body>
+</html>

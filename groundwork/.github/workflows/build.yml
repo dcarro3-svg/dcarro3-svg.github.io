@@ -1,0 +1,32 @@
+name: Build Fluency Files
+
+on:
+  push:
+    paths:
+      - 'fluency-template.html'
+      - 'fluency-config.json'
+      - 'build-fluency.js'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate fluency files
+        run: node build-fluency.js
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fluency-l1.html fluency-l2.html fluency-l3.html fluency-l4.html fluency-l5.html
+          git diff --staged --quiet || git commit -m "chore: regenerate fluency files from template"
+          git push

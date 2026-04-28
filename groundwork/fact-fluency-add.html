@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Facts — Additive Facts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{--bg:#DDD0F5;--surface:#EDE5FF;--border:#C4ADEE;--text-primary:#1E1530;--text-secondary:#584C72;--text-muted:#9589B8;--accent:#6845A8;--accent-light:#EEE6FF;--accent-warm:#D4600A;--accent-warm-light:#FBF0E4;--error:#C0392B;--radius:12px;--radius-lg:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='14' height='5' fill='%236845A8' fill-opacity='0.28'/%3E%3Crect x='2' y='9' width='7' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='40' y='4' width='10' height='5' fill='%232B5DC7' fill-opacity='0.34'/%3E%3Crect x='40' y='11' width='6' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='48' y='11' width='4' height='5' fill='%236845A8' fill-opacity='0.20'/%3E%3Crect x='4' y='48' width='12' height='5' fill='%236845A8' fill-opacity='0.24'/%3E%3Crect x='4' y='55' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3Crect x='12' y='55' width='4' height='5' fill='%236845A8' fill-opacity='0.18'/%3E%3Crect x='44' y='32' width='8' height='5' fill='%232B5DC7' fill-opacity='0.30'/%3E%3Crect x='28' y='22' width='5' height='5' fill='%232B5DC7' fill-opacity='0.24'/%3E%3Crect x='18' y='44' width='10' height='5' fill='%236845A8' fill-opacity='0.22'/%3E%3Crect x='52' y='44' width='6' height='5' fill='%232B5DC7' fill-opacity='0.28'/%3E%3C/svg%3E");background-size:128px 128px;}
+
+  .app{width:100%;max-width:640px;display:flex;flex-direction:column;gap:14px;}
+  .header{display:flex;align-items:center;gap:12px;}
+  .lesson-label{font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-0.5px;}
+  .phase-label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;flex:1;}
+
+  /* Model area */
+  .model-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;display:flex;align-items:center;justify-content:center;min-height:190px;overflow:visible;}
+
+  /* Answer row */
+  .answer-row{display:flex;align-items:center;gap:12px;}
+  .answer-prompt{font-size:14px;font-weight:600;color:var(--text-secondary);flex:1;}
+  .num-input{width:88px;height:50px;border:2px solid var(--border);border-radius:var(--radius);background:var(--surface);font-family:'DM Serif Display',serif;font-size:28px;text-align:center;color:var(--text-primary);outline:none;transition:border-color 0.15s,background 0.15s;-moz-appearance:textfield;}
+  .num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .num-input:focus{border-color:var(--accent);}
+  .num-input.correct{border-color:#2D6A4F;background:#E8F5EE;}
+  .num-input.wrong{border-color:var(--error);background:#FDE8E8;}
+  .btn-check{padding:11px 22px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s,box-shadow 0.15s;flex-shrink:0;}
+  .btn-check:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 12px 3px rgba(240,146,43,0.52),0 0 26px 7px rgba(240,146,43,0.24);}
+
+  /* Feedback flash */
+  .feedback-flash{font-size:15px;font-weight:700;min-height:22px;text-align:center;}
+  .flash-ok{color:#2D6A4F;}
+  .flash-err{color:var(--error);}
+
+  /* Drill header */
+  .drill-header{display:flex;align-items:center;gap:14px;}
+  .score-block{flex:1;display:flex;gap:16px;align-items:baseline;}
+  .score-c{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);}
+  .score-e{font-family:'DM Serif Display',serif;font-size:20px;color:var(--error);}
+  .score-sub{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+  /* Timer ring */
+  .timer-ring{position:relative;width:56px;height:56px;flex-shrink:0;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring .bg{fill:none;stroke:var(--border);stroke-width:5;}
+  .timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+  .timer-ring .fg.urgent{stroke:var(--error);}
+  .timer-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:17px;}
+
+  /* Cards */
+  .intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;}
+  .intro-card h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:12px;}
+  .intro-card p{font-size:14px;line-height:1.6;color:var(--text-secondary);margin-bottom:8px;}
+  .start-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:14px;transition:background 0.15s,box-shadow 0.15s;}
+  .start-btn:hover{background:#512F8A;box-shadow:0 0 0 2px #F0922B,0 0 14px 4px rgba(240,146,43,0.55),0 0 32px 10px rgba(240,146,43,0.28);}
+
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+  .results-card h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);margin-bottom:18px;}
+  .rate-row{display:flex;gap:20px;justify-content:center;margin-bottom:16px;}
+  .rate-stat{text-align:center;}
+  .rate-num{font-family:'DM Serif Display',serif;font-size:44px;}
+  .rate-num.c{color:var(--accent);}
+  .rate-num.e{color:var(--error);}
+  .rate-sub{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+  /* Nav */
+  .nav-links{display:flex;gap:8px;margin-top:8px;}
+  .nav-link{flex:1;padding:11px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);text-decoration:none;text-align:center;display:block;}
+  .nav-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .nav-link.primary{background:var(--accent);border-color:var(--accent);color:white;}
+
+  /* Bar base */
+  .fb{height:58px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .fu{animation:fadeUp 0.18s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <span class="lesson-label">Math Facts — Additive Facts</span>
+    <span class="phase-label" id="phaseLabel">Practice</span>
+  </div>
+  <div id="main"></div>
+</div>
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────────
+const CFG={id:6,label:'Additive Facts',factType:'add',storageKey:'fluency_fact_add_sessions',chartHref:'chart.html',lessonHref:'index.html'};
+
+// ── Storage ────────────────────────────────────────────────────────────────────
+function loadSessions(){try{const r=localStorage.getItem(CFG.storageKey);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveSession(s){try{const a=loadSessions();a.push(s);localStorage.setItem(CFG.storageKey,JSON.stringify(a));}catch(e){}}
+
+// ── Bar colors ─────────────────────────────────────────────────────────────────
+const C_WHOLE='#6845A8', C_P1='#2B5DC7', C_P2='#D4600A', C_UNK_BG='#EDE5FF';
+const BAR_H=58, MAX_W=320;
+
+// ── Bar renderer ───────────────────────────────────────────────────────────────
+function numFs(n){return n>=100?'15px':n>=10?'21px':'26px';}
+
+function numBar(w,label,color,isUnk){
+  const bg=isUnk?C_UNK_BG:color;
+  const col=isUnk?'#584C72':'#fff';
+  const bdr=isUnk?'2px dashed #9B9591':'none';
+  const fs=isUnk?'28px':numFs(label);
+  const fi=isUnk?'italic':'normal';
+  return`<div class="fb" style="width:${w}px;background:${bg};border:${bdr};border-radius:6px"><span style="font-family:'DM Serif Display',serif;font-size:${fs};color:${col};font-style:${fi}">${isUnk?'?':label}</span></div>`;
+}
+
+// ── Additive model ─────────────────────────────────────────────────────────────
+// Shows whole bar on top, two parts below, proportional to values.
+function renderFactAdd(item){
+  const{a,b,whole,unknownRole}=item;
+  const ZERO_W=28;
+  let aW,bW;
+  if(a===0){aW=ZERO_W;bW=MAX_W-ZERO_W;}
+  else if(b===0){aW=MAX_W-ZERO_W;bW=ZERO_W;}
+  else{aW=Math.round(a/whole*MAX_W);bW=MAX_W-aW;}
+
+  const lines=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9B9591"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9B9591"></div>`;
+  const wBar=numBar(MAX_W,whole,C_WHOLE,unknownRole==='whole');
+  const aBar=numBar(aW,a,C_P1,unknownRole==='p1');
+  const bBar=numBar(bW,b,C_P2,unknownRole==='p2');
+  return`<div style="position:relative;display:inline-block">${lines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wBar}<div style="display:flex">${aBar}${bBar}</div></div></div>`;
+}
+
+// ── Multiplicative model ───────────────────────────────────────────────────────
+// Shows whole bar on top, equal parts below.
+// count unknown: shows one labeled part + dashed remainder.
+function renderFactMult(item){
+  const{partSize,numParts,whole,unknownRole}=item;
+  const totalW=Math.max(200,Math.min(380,numParts*48));
+  const boxW=totalW/numParts;
+  const partFs=numParts>9?'15px':numParts>6?'18px':'22px';
+
+  const lns=`<div style="position:absolute;left:0;top:0;bottom:0;border-left:2px dashed #9B9591"></div><div style="position:absolute;right:0;top:0;bottom:0;border-right:2px dashed #9B9591"></div>`;
+  const wBar=numBar(totalW,whole,C_WHOLE,unknownRole==='whole');
+
+  if(unknownRole==='count'){
+    // One labeled part + dashed unknown remainder
+    const restW=totalW-boxW;
+    const pBar=numBar(boxW,partSize,C_P1,false);
+    const dotBar=`<div class="fb" style="width:${restW}px;background:${C_UNK_BG};border:2px dashed #9B9591;border-left:none;border-radius:0 6px 6px 0"><span style="font-family:'DM Serif Display',serif;font-size:28px;color:#584C72;font-style:italic">?</span></div>`;
+    return`<div style="position:relative;display:inline-block">${lns}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wBar}<div style="display:flex">${pBar}${dotBar}</div></div></div>`;
+  }
+
+  // All equal parts, with dashed divider lines
+  const isPartUnk=unknownRole==='part';
+  let divLines='';
+  for(let i=1;i<numParts;i++) divLines+=`<div style="position:absolute;left:${(i*boxW).toFixed(1)}px;top:0;bottom:0;border-left:2px dashed #9B9591;pointer-events:none"></div>`;
+
+  const parts=Array.from({length:numParts},(_,i)=>{
+    const bg=isPartUnk?C_UNK_BG:C_P1;
+    const col=isPartUnk?'#584C72':'#fff';
+    const bdr=isPartUnk?'2px dashed #9B9591':'none';
+    const r=i===0?'border-radius:6px 0 0 6px;':i===numParts-1?'border-radius:0 6px 6px 0;':'';
+    const lbl=isPartUnk?'?':partSize;
+    const fs=isPartUnk?'28px':partFs;
+    const fi=isPartUnk?'italic':'normal';
+    return`<div style="width:${boxW.toFixed(1)}px;height:${BAR_H}px;background:${bg};border:${bdr};${r}display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-family:'DM Serif Display',serif;font-size:${fs};color:${col};font-style:${fi}">${lbl}</span></div>`;
+  }).join('');
+
+  return`<div style="position:relative;display:inline-block">${lns}${divLines}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:7px">${wBar}<div style="display:flex">${parts}</div></div></div>`;
+}
+
+function renderItem(item){return CFG.factType==='add'?renderFactAdd(item):renderFactMult(item);}
+
+// ── Item generation ────────────────────────────────────────────────────────────
+function genAddItem(){
+  const a=Math.floor(Math.random()*10); // 0–9
+  const b=Math.floor(Math.random()*10); // 0–9
+  if(a+b===0) return genAddItem();      // skip 0+0
+  const whole=a+b;
+  const roles=['whole','p1','p2'];
+  const unknownRole=roles[Math.floor(Math.random()*3)];
+  const answer=unknownRole==='whole'?whole:unknownRole==='p1'?a:b;
+  return{a,b,whole,unknownRole,answer};
+}
+
+const MULT_FAMILIES=[[2,2,4],[2,3,6],[2,4,8],[2,5,10],[2,6,12],[2,7,14],[2,8,16],[2,9,18],[2,10,20],[3,3,9],[3,4,12],[3,5,15],[3,6,18],[3,7,21],[3,8,24],[3,9,27],[3,10,30],[4,4,16],[4,5,20],[4,6,24],[4,7,28],[4,8,32],[4,9,36],[4,10,40],[5,5,25],[5,6,30],[5,7,35],[5,8,40],[5,9,45],[5,10,50],[6,6,36],[6,7,42],[6,8,48],[6,9,54],[6,10,60],[7,7,49],[7,8,56],[7,9,63],[7,10,70],[8,8,64],[8,9,72],[8,10,80],[9,9,81],[9,10,90],[10,10,100]];
+function genMultItem(){
+  const[p,n,w]=MULT_FAMILIES[Math.floor(Math.random()*MULT_FAMILIES.length)];
+  const unknownRole=Math.random()<0.5?'whole':'part';
+  const answer=unknownRole==='whole'?w:p;
+  return{partSize:p,numParts:n,whole:w,unknownRole,answer};
+}
+
+function genItem(){return CFG.factType==='add'?genAddItem():genMultItem();}
+
+// ── Timer ──────────────────────────────────────────────────────────────────────
+const DUR=60,CIRC=2*Math.PI*24;
+function tRing(t){const off=CIRC*(1-t/DUR);return`<div class="timer-ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg${t<=10?' urgent':''}" cx="28" cy="28" r="24" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><div class="timer-label">${t}</div></div>`;}
+
+// ── State ──────────────────────────────────────────────────────────────────────
+const S={phase:'intro',t:DUR,timer:null,cor:0,err:0,item:null,start:null};
+function render(h){document.getElementById('main').innerHTML=h;}
+function setPhase(l){document.getElementById('phaseLabel').textContent=l;}
+
+// ── Intro (instruction placeholder) ───────────────────────────────────────────
+function showIntro(){
+  S.phase='intro';setPhase('Intro');
+  render(`<div class="intro-card fu">
+    <h2>Math Facts — ${CFG.label}</h2>
+    <p><strong>Instruction coming soon.</strong> This section will walk through the fact family relationships using bar models.</p>
+    <p>For now: you will see a bar model with one number missing. Type the missing number and press <strong>Enter</strong>.</p>
+    <p style="color:var(--accent);font-weight:600">You have 60 seconds — go as fast as you accurately can.</p>
+    <button class="start-btn" onclick="startDrill()">Start</button>
+  </div>`);
+}
+
+// ── Drill ──────────────────────────────────────────────────────────────────────
+function startDrill(){
+  S.phase='drill';S.cor=0;S.err=0;S.t=DUR;S.start=new Date().toISOString();
+  setPhase('Practice');
+  nextItem();
+  S.timer=setInterval(()=>{S.t--;updateT();if(S.t<=0)endDrill();},1000);
+}
+
+function nextItem(){
+  S.item=genItem();
+  drawDrill();
+  setTimeout(()=>{const el=document.getElementById('answerInput');if(el){el.value='';el.focus();}},40);
+}
+
+function drawDrill(){
+  render(`<div class="drill-header fu">
+    ${tRing(S.t)}
+    <div class="score-block">
+      <div><div class="score-c">${S.cor}</div><div class="score-sub">correct</div></div>
+      ${S.err?`<div><div class="score-e">${S.err}</div><div class="score-sub">errors</div></div>`:''}
+    </div>
+  </div>
+  <div class="model-area fu">${renderItem(S.item)}</div>
+  <div class="answer-row">
+    <span class="answer-prompt">Choose the missing number</span>
+    <input type="text" inputmode="numeric" id="answerInput" class="num-input" autocomplete="off" onkeydown="if(event.key==='Enter')submitAnswer()">
+    <button class="btn-check" onclick="submitAnswer()">✓</button>
+  </div>
+  <div class="feedback-flash" id="flashMsg"></div>`);
+}
+
+function updateT(){
+  const r=document.querySelector('.timer-ring');
+  if(!r)return;
+  const off=CIRC*(1-S.t/DUR);
+  const fg=r.querySelector('.fg'),lb=r.querySelector('.timer-label');
+  if(fg){fg.setAttribute('stroke-dashoffset',off.toFixed(1));if(S.t<=10)fg.classList.add('urgent');}
+  if(lb)lb.textContent=S.t;
+}
+
+function submitAnswer(){
+  if(S.phase!=='drill')return;
+  const el=document.getElementById('answerInput');
+  if(!el)return;
+  const val=parseInt(el.value,10);
+  if(isNaN(val)){el.focus();return;}
+
+  const fm=document.getElementById('flashMsg');
+  if(val===S.item.answer){
+    S.cor++;
+    el.classList.add('correct');
+    if(fm){fm.className='feedback-flash flash-ok';fm.textContent='✓';}
+    setTimeout(nextItem,220);
+  }else{
+    S.err++;
+    el.classList.add('wrong');
+    if(fm){fm.className='feedback-flash flash-err';fm.textContent=`Answer: ${S.item.answer}`;}
+    setTimeout(()=>{
+      if(S.phase!=='drill')return;
+      el.classList.remove('wrong');
+      el.value='';
+      if(fm)fm.textContent='';
+      el.focus();
+    },1300);
+  }
+}
+
+// ── End drill ─────────────────────────────────────────────────────────────────
+function endDrill(){
+  clearInterval(S.timer);S.phase='results';setPhase('Results');
+  const cpm=S.cor; // 60-second drill — corrects already per minute
+  const epm=S.err;
+  saveSession({date:S.start,lesson:CFG.id,phase:'fluency',corrects:S.cor,errors:S.err,cpm,epm,duration:DUR});
+  render(`<div class="results-card fu">
+    <h2>Session Complete</h2>
+    <div class="rate-row">
+      <div class="rate-stat"><div class="rate-num c">${cpm}</div><div class="rate-sub">Correct / min</div></div>
+      <div style="font-size:26px;color:var(--text-muted);padding-top:10px">/</div>
+      <div class="rate-stat"><div class="rate-num e">${epm}</div><div class="rate-sub">Errors / min</div></div>
+    </div>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">${S.cor} correct and ${S.err} error${S.err!==1?'s':''} in 60 seconds.</p>
+  </div>`);
+  showPigeonTransition(1500);
+}
+
+// ── Transition to chart ───────────────────────────────────────────────────────
+function showPigeonTransition(delayMs){
+  setTimeout(()=>{
+    try{localStorage.setItem('chart_new_lesson',String(CFG.id));}catch(e){}
+    window.location.href=CFG.chartHref;
+  },delayMs||0);
+}
+
+showIntro();
+</script>
+</body>
+</html>

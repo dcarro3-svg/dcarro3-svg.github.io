@@ -1,0 +1,38 @@
+name: Build Lesson Files
+
+on:
+  push:
+    paths:
+      - 'lesson-template.html'
+      - 'lesson-config.json'
+      - 'build-lessons.js'
+      - 'lesson-one-specific.js'
+      - 'lesson-two-specific.js'
+      - 'lesson-three-specific.js'
+      - 'lesson-four-specific.js'
+      - 'lesson-five-specific.js'
+      - 'lesson-compound-specific.js'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate lesson files
+        run: node build-lessons.js
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lesson-one.html lesson-two.html lesson-three.html lesson-four.html lesson-five.html lesson-compound.html
+          git diff --staged --quiet || git commit -m "chore: regenerate lesson files from template"
+          git push

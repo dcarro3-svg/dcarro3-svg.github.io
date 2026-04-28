@@ -1,0 +1,74 @@
+[
+  {
+    "label": "Equal Relations",
+    "title": "Equal Relations — Lesson 1.1",
+    "storageKey": "fluency_l1_sessions",
+    "lessonNum": "1.1",
+    "fluencyHref": "fluency-l1.html",
+    "nextLessonHref": "lesson-two.html",
+    "nextLessonLabel": "Lesson 1.2 →",
+    "output": "lesson-one.html",
+    "completionSummary": "Two things are equal when the picture confirms it — stacking or dotted lines.<br><br><em>known equals unknown</em>",
+    "completionTitle": "Equal Relations"
+  },
+  {
+    "label": "Part-Whole Relations",
+    "title": "Part-Whole Relations — Lesson 1.2",
+    "storageKey": "fluency_l2_sessions",
+    "lessonNum": "1.2",
+    "fluencyHref": "fluency-l2.html",
+    "nextLessonHref": "lesson-three.html",
+    "nextLessonLabel": "Lesson 1.3 →",
+    "output": "lesson-two.html",
+    "completionSummary": "A part-whole relation: two parts together equal the whole.<br><br><em>p1 plus p2 equals whole &nbsp;·&nbsp; whole minus p1 equals p2</em>",
+    "completionTitle": "Part-Whole Relations"
+  },
+  {
+    "label": "Comparisons & Differences",
+    "title": "Comparisons and Differences — Lesson 1.3",
+    "storageKey": "fluency_l3_sessions",
+    "lessonNum": "1.3",
+    "fluencyHref": "fluency-l3.html",
+    "nextLessonHref": "lesson-four.html",
+    "nextLessonLabel": "Lesson 1.4 →",
+    "output": "lesson-three.html",
+    "completionSummary": "A comparison is a part-whole relation. Smaller plus difference equals larger.<br><br><em>larger minus smaller equals difference</em>",
+    "completionTitle": "Comparisons & Differences"
+  },
+  {
+    "label": "Fractional Relations",
+    "title": "Fractional Relations — Lesson 1.4",
+    "storageKey": "fluency_l4_sessions",
+    "lessonNum": "1.4",
+    "fluencyHref": "fluency-l4.html",
+    "nextLessonHref": "lesson-five.html",
+    "nextLessonLabel": "Lesson 1.5 →",
+    "output": "lesson-four.html",
+    "completionSummary": "A fractional relation shows one equal part of a whole.<br><br><em>the part is one fraction of the whole</em>",
+    "completionTitle": "Fractional Relations"
+  },
+  {
+    "label": "Multiplicative Relations",
+    "title": "Multiplicative Relations — Lesson 1.5",
+    "storageKey": "fluency_l5_sessions",
+    "lessonNum": "1.5",
+    "fluencyHref": "fluency-l5.html",
+    "nextLessonHref": "lesson-compound.html",
+    "nextLessonLabel": "Lesson 2.1 →",
+    "output": "lesson-five.html",
+    "completionSummary": "Same picture, two directions — fractional and multiplicative.<br><br><em>the part is one fraction of the whole &nbsp;·&nbsp; the whole is N times the part</em>",
+    "completionTitle": "Multiplicative Relations"
+  },
+  {
+    "label": "Compound Relations",
+    "title": "Compound Relations — Lesson 2.1",
+    "storageKey": "fluency_compound_sessions",
+    "lessonNum": "2.1",
+    "fluencyHref": "fluency-compound.html",
+    "nextLessonHref": "lesson-unit3.html",
+    "nextLessonLabel": "Lesson 3.1 →",
+    "output": "lesson-compound.html",
+    "completionSummary": "Two unknowns, two relations, solved one at a time.<br><br><em>find the solvable relation first — its solution unlocks the second</em>",
+    "completionTitle": "Compound Relations"
+  }
+]
