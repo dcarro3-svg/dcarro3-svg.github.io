@@ -231,204 +231,6 @@
       background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
 
-    /* ── OVERVIEW ── */
-    .overview {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 4rem;
-      padding: 7rem 6rem;
-      background: var(--parchment);
-    }
-
-    .overview-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--amber);
-      padding-top: 0.4rem;
-    }
-
-    .overview-content h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
-      font-weight: 300;
-      line-height: 1.2;
-      margin-bottom: 1.5rem;
-      color: var(--ink);
-    }
-
-    .overview-content h2 em { font-style: italic; color: var(--moss); }
-
-    .overview-content p {
-      font-size: 1rem;
-      color: #3a3630;
-      margin-bottom: 1.2rem;
-      max-width: 58ch;
-    }
-
-    /* ── TOOL SECTIONS ── */
-    .tool-section {
-      padding: 7rem 6rem;
-      background: var(--cream);
-    }
-
-    .tool-section.alt { background: var(--parchment); }
-
-    .tool-header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: baseline;
-      gap: 1.5rem;
-    }
-
-    .tool-header h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
-      font-weight: 300;
-      color: var(--ink);
-    }
-
-    .section-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--amber);
-    }
-
-    .tool-intro {
-      font-size: 0.95rem;
-      color: #3a3630;
-      max-width: 60ch;
-      margin-bottom: 3rem;
-      line-height: 1.75;
-    }
-
-    /* ── PATHWAY CARDS (fact lesson sequences) ── */
-    .pathway-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    .pathway-card {
-      border: 1px solid var(--border);
-      padding: 2.5rem;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .pathway-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(61,92,58,0.1);
-    }
-
-    .pathway-op {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 0.75rem;
-    }
-
-    .pathway-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 0.75rem;
-      line-height: 1.2;
-    }
-
-    .pathway-desc {
-      font-size: 0.92rem;
-      color: #3a3630;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-      flex: 1;
-    }
-
-    .pathway-meta {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-
-    .pathway-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--moss);
-      text-decoration: none;
-      transition: gap 0.2s;
-    }
-
-    .pathway-link:hover { gap: 0.9rem; }
-    .pathway-link::after { content: '→'; }
-
-    /* ── LESSON PICKER ── */
-    .lesson-picker {
-      margin-top: 0.5rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .picker-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .picker-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.56rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      min-width: 3.5rem;
-    }
-
-    .picker-chips {
-      display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.9rem;
-      height: 1.9rem;
-      padding: 0 0.3rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      text-decoration: none;
-      border: 1px solid;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .chip-lesson { border-color: var(--moss); color: var(--moss); }
-    .chip-lesson:hover { background: var(--moss); color: var(--cream); }
-
-    .chip-review { border-color: var(--amber); color: var(--amber); }
-    .chip-review:hover { background: var(--amber); color: var(--cream); }
-
     /* ── DEMO STRIP ── */
     .demo-strip { background: var(--ink); padding: 6rem 6rem; }
 
@@ -477,35 +279,284 @@
 
     .demo-link:hover { background: var(--cream); transform: translateY(-2px); }
 
-    /* ── FEATURE CARDS (fluency drills) ── */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+    /* ── PROGRAM SECTION ── */
+    .program-section { background: var(--cream); }
+
+    .program-intro {
+      padding: 7rem 6rem 4rem;
     }
 
-    .feature-card {
-      border: 1px solid var(--border);
-      padding: 2rem;
-      background: white;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(61,92,58,0.09);
-    }
-
-    .feature-type {
+    .program-eyebrow {
       font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+
+    .program-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .program-heading em { font-style: italic; color: var(--moss); }
+
+    .program-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+
+    /* ── SCROLL OUTER ── */
+    .program-outer {
+      height: 500vh;
+      position: relative;
+    }
+
+    .program-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── TOP BAR ── */
+    .program-topbar {
+      margin-top: 84px;
+      flex-shrink: 0;
+      height: 50px;
+      padding: 0 6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-stage {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      min-width: 9rem;
+      transition: color 0.3s;
+    }
+
+    .topbar-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--ink);
+      transition: opacity 0.3s;
+    }
+
+    .topbar-hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+      min-width: 9rem;
+      text-align: right;
+    }
+
+    /* ── SIDE DOTS ── */
+    .program-dots {
+      position: absolute;
+      right: 2.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      z-index: 10;
+    }
+
+    .prog-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .prog-dot.active {
+      background: var(--amber);
+      transform: scale(1.65);
+    }
+
+    .prog-dot:hover:not(.active) { background: var(--muted); }
+
+    /* ── SLIDES ── */
+    .program-slides {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .program-slide {
+      position: absolute;
+      inset: 0;
+      padding: 2.25rem 6rem 1.5rem;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      pointer-events: none;
+    }
+
+    .program-slide.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── SLIDE HEADER ── */
+    .slide-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--amber);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.35rem;
     }
 
-    .feature-title {
+    .slide-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-desc {
+      font-size: 0.88rem;
+      color: #3a3630;
+      max-width: 72ch;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── SLIDE 0: FACT LESSONS ── */
+    .slide-pathway-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .slide-pathway-card {
+      border: 1px solid var(--border);
+      padding: 1.5rem 1.75rem;
+      background: white;
+    }
+
+    .slide-pathway-card .pathway-op {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-pathway-card .pathway-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    .slide-pathway-card .pathway-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* ── LESSON PICKER (shared) ── */
+    .lesson-picker {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .picker-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .picker-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.54rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      min-width: 3.5rem;
+    }
+
+    .picker-chips {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.85rem;
+      height: 1.85rem;
+      padding: 0 0.25rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      text-decoration: none;
+      border: 1px solid;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .chip-lesson { border-color: var(--moss); color: var(--moss); }
+    .chip-lesson:hover { background: var(--moss); color: var(--cream); }
+
+    .chip-review { border-color: var(--amber); color: var(--amber); }
+    .chip-review:hover { background: var(--amber); color: var(--cream); }
+
+    /* ── SLIDE 1: FLUENCY DRILLS ── */
+    .slide-feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .slide-feature-card {
+      border: 1px solid var(--border);
+      padding: 1.75rem 2rem;
+      background: white;
+    }
+
+    .slide-feature-card .feature-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-feature-card .feature-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.5rem;
       font-weight: 600;
@@ -513,7 +564,7 @@
       margin-bottom: 0.65rem;
     }
 
-    .feature-desc {
+    .slide-feature-card .feature-desc {
       font-size: 0.9rem;
       color: #3a3630;
       line-height: 1.7;
@@ -536,46 +587,40 @@
     .feature-link:hover { gap: 0.9rem; }
     .feature-link::after { content: '→'; }
 
-    /* ── COMPUTATION CARDS ── */
-    .comp-grid {
+    /* ── SLIDE 2: COMPUTATION ── */
+    .slide-comp-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
     }
 
-    .comp-card {
+    .slide-comp-card {
       border: 1px solid var(--border);
-      padding: 1.75rem;
+      padding: 1.1rem 1.25rem;
       background: white;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .comp-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(61,92,58,0.09);
     }
 
     .comp-num {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3rem;
+      font-size: 2.2rem;
       font-weight: 300;
       color: var(--border);
       line-height: 1;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.4rem;
     }
 
     .comp-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 600;
       color: var(--ink);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
       line-height: 1.3;
     }
 
     .comp-sub {
       font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
+      font-size: 0.56rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
@@ -584,87 +629,50 @@
     .comp-link {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--moss);
       text-decoration: none;
-      margin-top: 1.25rem;
+      margin-top: 0.75rem;
       transition: gap 0.2s;
     }
 
-    .comp-link:hover { gap: 0.9rem; }
+    .comp-link:hover { gap: 0.75rem; }
     .comp-link::after { content: '→'; }
 
-    /* ── PROGRESS CTA BAND ── */
-    .progress-band {
-      background: var(--moss);
-      padding: 7rem 6rem;
-      position: relative;
-      overflow: hidden;
+    /* ── SLIDE 3: PROGRESS ── */
+    .slide-progress-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 5rem;
     }
 
-    .progress-band::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 60%;
-      height: 200%;
-      background: radial-gradient(ellipse, rgba(232,184,75,0.12) 0%, transparent 60%);
-      pointer-events: none;
-    }
+    .slide-progress-text { flex: 1; max-width: 44ch; }
 
-    .progress-inner {
-      max-width: 700px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .progress-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-    }
-
-    .progress-band h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
-      font-weight: 300;
-      color: var(--cream);
-      line-height: 1.15;
-      margin-bottom: 1.5rem;
-    }
-
-    .progress-band h2 em { font-style: italic; color: var(--gold); }
-
-    .progress-band p {
-      font-size: 1rem;
-      color: rgba(245,240,232,0.82);
-      margin-bottom: 2.5rem;
-      max-width: 52ch;
-      line-height: 1.75;
-    }
-
-    .progress-link {
+    .progress-cta-link {
       display: inline-block;
-      padding: 1rem 2.5rem;
-      background: var(--gold);
-      color: var(--ink);
+      padding: 0.85rem 2.2rem;
+      background: var(--moss);
+      color: var(--cream);
       font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       text-decoration: none;
-      transition: all 0.2s;
+      margin-top: 1.5rem;
+      transition: background 0.2s, transform 0.2s;
     }
 
-    .progress-link:hover { background: var(--cream); transform: translateY(-2px); }
+    .progress-cta-link:hover { background: var(--ink); transform: translateY(-2px); }
+
+    .slide-chart-preview {
+      flex-shrink: 0;
+      width: 280px;
+      opacity: 0.9;
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -718,12 +726,16 @@
       .hero { grid-template-columns: 1fr; min-height: auto; }
       .hero-left { padding: 7rem 2rem 4rem; }
       .hero-right { display: none; }
-      .overview { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 1.5rem; }
-      .tool-section { padding: 4rem 2rem; }
-      .pathway-grid { grid-template-columns: 1fr; }
-      .feature-grid { grid-template-columns: 1fr; }
       .demo-strip { padding: 4rem 2rem; }
-      .progress-band { padding: 4rem 2rem; }
+      .program-intro { padding: 4rem 2rem 3rem; }
+      .program-topbar { padding: 0 2rem; margin-top: 72px; }
+      .program-dots { display: none; }
+      .program-slide { padding: 1.5rem 2rem 1rem; }
+      .slide-pathway-grid { grid-template-columns: 1fr; }
+      .slide-feature-grid { grid-template-columns: 1fr; }
+      .slide-comp-grid { grid-template-columns: 1fr 1fr; }
+      .slide-progress-wrap { flex-direction: column; gap: 2rem; }
+      .slide-chart-preview { display: none; }
       footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
@@ -737,10 +749,9 @@
       <span class="sub">Phototropic Learning & Design</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#lessons">Fact Lessons</a></li>
-      <li><a href="#fluency">Fluency Drills</a></li>
-      <li><a href="#computation">Computation</a></li>
-      <li><a href="#progress">Progress</a></li>
+      <li><a href="#program">The Program</a></li>
+      <li><a href="demo.html">Demo</a></li>
+      <li><a href="chart.html">Progress</a></li>
     </ul>
   </nav>
 
@@ -765,51 +776,24 @@
     </div>
     <div class="hero-right">
       <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <!-- Number bond: whole at top -->
         <circle cx="200" cy="90" r="44" fill="#3d5c3a" opacity="0.72"/>
         <text x="200" y="100" text-anchor="middle" font-family="serif" font-size="26" fill="#faf7f0" opacity="0.95">12</text>
-        <!-- Connecting lines -->
         <line x1="168" y1="126" x2="130" y2="192" stroke="#d8cfbe" stroke-width="2" opacity="0.8"/>
         <line x1="232" y1="126" x2="270" y2="192" stroke="#d8cfbe" stroke-width="2" opacity="0.8"/>
-        <!-- Parts -->
         <circle cx="110" cy="214" r="36" fill="#7a9e76" opacity="0.68"/>
         <text x="110" y="224" text-anchor="middle" font-family="serif" font-size="22" fill="#faf7f0" opacity="0.95">5</text>
         <circle cx="290" cy="214" r="36" fill="#c17f3b" opacity="0.62"/>
         <text x="290" y="224" text-anchor="middle" font-family="serif" font-size="22" fill="#faf7f0" opacity="0.95">7</text>
-        <!-- Plus sign between parts -->
         <text x="200" y="222" text-anchor="middle" font-family="serif" font-size="22" fill="#7a7163" opacity="0.55">+</text>
-        <!-- Equals lines -->
         <line x1="80" y1="268" x2="320" y2="268" stroke="#e8b84b" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
         <line x1="80" y1="280" x2="320" y2="280" stroke="#e8b84b" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
-        <!-- Fact family text -->
         <text x="200" y="324" text-anchor="middle" font-family="serif" font-size="13.5" fill="#7a7163" opacity="0.65" font-style="italic">5 + 7 = 12  ·  7 + 5 = 12</text>
         <text x="200" y="350" text-anchor="middle" font-family="serif" font-size="13.5" fill="#7a7163" opacity="0.45" font-style="italic">12 − 5 = 7  ·  12 − 7 = 5</text>
-        <!-- Decorative dots -->
         <circle cx="48" cy="148" r="3" fill="#c17f3b" opacity="0.3"/>
         <circle cx="352" cy="118" r="2.5" fill="#e8b84b" opacity="0.35"/>
         <circle cx="58" cy="312" r="2" fill="#7a9e76" opacity="0.3"/>
         <circle cx="360" cy="298" r="3" fill="#c17f3b" opacity="0.25"/>
       </svg>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- OVERVIEW -->
-  <section class="overview">
-    <div class="overview-label reveal">Overview</div>
-    <div class="overview-content reveal">
-      <h2>Fluency isn't just speed.<br>It's <em>freedom.</em></h2>
-      <p>
-        When students have to stop and calculate 6 × 8 mid-problem, they lose the thread
-        of their reasoning. Working memory is finite — every fact that isn't automatic
-        is a tax on it. This system eliminates that tax.
-      </p>
-      <p>
-        The sequence moves from structured fact family instruction to timed fluency
-        drills to applied double-digit computation. Each phase builds on the one before.
-        Together, they develop the automatic recall the Groundwork curriculum depends on.
-      </p>
     </div>
   </section>
 
@@ -834,211 +818,238 @@
 
   <div class="section-divider"></div>
 
-  <!-- FACT FAMILY LESSONS -->
-  <section class="tool-section" id="lessons">
-    <div class="tool-header reveal">
-      <h2>Fact Family Lessons</h2>
-      <span class="section-tag">Start Here</span>
-    </div>
-    <p class="tool-intro reveal">
-      Structured lessons that teach the relationships within fact families before drilling
-      any facts. Students build a genuine understanding of part-whole structure as the
-      foundation for both addition and multiplication fluency.
-    </p>
-    <div class="pathway-grid">
+  <!-- WHAT'S IN THE FULL PROGRAM -->
+  <section class="program-section" id="program">
 
-      <div class="pathway-card reveal">
-        <p class="pathway-op">Addition · Subtraction</p>
-        <h3 class="pathway-title">Additive Fact Families</h3>
-        <p class="pathway-desc">
-          Ten lessons covering additive fact families through structured bar model
-          instruction. Each lesson introduces two related fact families — students
-          learn the part-whole relationships before practicing recall.
-          Five review sets reinforce across families before moving on.
-        </p>
-        <p class="pathway-meta">10 lessons · 5 review sets</p>
-        <div class="lesson-picker">
-          <div class="picker-row">
-            <span class="picker-label">Lessons</span>
-            <div class="picker-chips">
-              <a href="fact-lesson-add-1.html"  class="chip chip-lesson" title="1+2, 2+3">1</a>
-              <a href="fact-lesson-add-2.html"  class="chip chip-lesson" title="3+3, 2+4">2</a>
-              <a href="fact-lesson-add-3.html"  class="chip chip-lesson" title="3+4, 2+5">3</a>
-              <a href="fact-lesson-add-4.html"  class="chip chip-lesson" title="4+4, 3+5">4</a>
-              <a href="fact-lesson-add-5.html"  class="chip chip-lesson" title="4+5, 3+6">5</a>
-              <a href="fact-lesson-add-6.html"  class="chip chip-lesson" title="5+5, 4+6">6</a>
-              <a href="fact-lesson-add-7.html"  class="chip chip-lesson" title="5+6, 4+7">7</a>
-              <a href="fact-lesson-add-8.html"  class="chip chip-lesson" title="5+7, 6+6">8</a>
-              <a href="fact-lesson-add-9.html"  class="chip chip-lesson" title="6+7, 5+8">9</a>
-              <a href="fact-lesson-add-10.html" class="chip chip-lesson" title="7+7, 6+8">10</a>
-            </div>
-          </div>
-          <div class="picker-row">
-            <span class="picker-label">Reviews</span>
-            <div class="picker-chips">
-              <a href="fact-lesson-add-numonly-1.html" class="chip chip-review" title="Review: 1+2, 2+3, 3+3, 2+4">R1</a>
-              <a href="fact-lesson-add-numonly-2.html" class="chip chip-review" title="Review: 3+4, 2+5, 4+4, 3+5">R2</a>
-              <a href="fact-lesson-add-numonly-3.html" class="chip chip-review" title="Review: 4+5, 3+6, 5+5, 4+6">R3</a>
-              <a href="fact-lesson-add-numonly-4.html" class="chip chip-review" title="Review: 5+6, 4+7, 5+7, 6+6">R4</a>
-              <a href="fact-lesson-add-numonly-5.html" class="chip chip-review" title="Review: 6+7, 5+8, 7+7, 6+8">R5</a>
-            </div>
-          </div>
+    <div class="program-intro reveal">
+      <p class="program-eyebrow">What's in the Full Program</p>
+      <h2 class="program-heading">Four components.<br><em>One complete system.</em></h2>
+      <p class="program-sub">Scroll to explore each phase — or jump directly to any lesson, drill, or tool.</p>
+    </div>
+
+    <div class="program-outer" id="programOuter">
+      <div class="program-sticky">
+
+        <!-- top bar -->
+        <div class="program-topbar">
+          <span class="topbar-stage" id="slideStage">Stage 01 / 04</span>
+          <span class="topbar-label" id="slideLabel">Fact Family Lessons</span>
+          <span class="topbar-hint" id="slideHint">scroll to explore ↓</span>
         </div>
-      </div>
 
-      <div class="pathway-card reveal">
-        <p class="pathway-op">Multiplication · Division</p>
-        <h3 class="pathway-title">Multiplicative Fact Families</h3>
-        <p class="pathway-desc">
-          Six lessons covering multiplicative fact families through structured
-          equal-groups instruction. Students learn the part-size, number-of-parts,
-          and whole relationships before any rote practice begins.
-          Three review sets reinforce across families.
-        </p>
-        <p class="pathway-meta">6 lessons · 3 review sets</p>
-        <div class="lesson-picker">
-          <div class="picker-row">
-            <span class="picker-label">Lessons</span>
-            <div class="picker-chips">
-              <a href="fact-lesson-mult-1.html" class="chip chip-lesson" title="2×2, 2×3">1</a>
-              <a href="fact-lesson-mult-2.html" class="chip chip-lesson" title="2×4, 2×5">2</a>
-              <a href="fact-lesson-mult-3.html" class="chip chip-lesson" title="2×6, 3×3">3</a>
-              <a href="fact-lesson-mult-4.html" class="chip chip-lesson" title="3×4, 3×5">4</a>
-              <a href="fact-lesson-mult-5.html" class="chip chip-lesson" title="4×4, 4×5">5</a>
-              <a href="fact-lesson-mult-6.html" class="chip chip-lesson" title="5×5, 5×6">6</a>
-            </div>
-          </div>
-          <div class="picker-row">
-            <span class="picker-label">Reviews</span>
-            <div class="picker-chips">
-              <a href="fact-lesson-mult-numonly-1.html" class="chip chip-review" title="Review: 2×2, 2×3, 2×4, 2×5">R1</a>
-              <a href="fact-lesson-mult-numonly-2.html" class="chip chip-review" title="Review: 2×6, 3×3, 3×4, 3×5">R2</a>
-              <a href="fact-lesson-mult-numonly-3.html" class="chip chip-review" title="Review: 4×4, 4×5, 5×5, 5×6">R3</a>
-            </div>
-          </div>
+        <!-- side dots -->
+        <div class="program-dots">
+          <div class="prog-dot active" data-idx="0"></div>
+          <div class="prog-dot" data-idx="1"></div>
+          <div class="prog-dot" data-idx="2"></div>
+          <div class="prog-dot" data-idx="3"></div>
         </div>
-      </div>
 
-    </div>
-  </section>
+        <div class="program-slides">
 
-  <div class="section-divider"></div>
+          <!-- SLIDE 0: FACT FAMILY LESSONS -->
+          <div class="program-slide active" id="pslide-0">
+            <p class="slide-tag">Start Here</p>
+            <h3 class="slide-title">Fact Family Lessons</h3>
+            <p class="slide-desc">Structured lessons that teach part-whole relationships before any drilling begins. Students build a genuine understanding of fact families as the foundation for automatic recall.</p>
+            <div class="slide-pathway-grid">
 
-  <!-- FLUENCY DRILLS -->
-  <section class="tool-section alt" id="fluency">
-    <div class="tool-header reveal">
-      <h2>Fact Fluency Drills</h2>
-      <span class="section-tag">Practice</span>
-    </div>
-    <p class="tool-intro reveal">
-      Timed fluency drills for additive and multiplicative fact families. After completing
-      the lessons, students use these tools to build automatic recall through repeated
-      timed practice with session tracking.
-    </p>
-    <div class="feature-grid">
+              <div class="slide-pathway-card">
+                <p class="pathway-op">Addition · Subtraction</p>
+                <h4 class="pathway-title">Additive Fact Families</h4>
+                <p class="pathway-meta">10 lessons · 5 review sets</p>
+                <div class="lesson-picker">
+                  <div class="picker-row">
+                    <span class="picker-label">Lessons</span>
+                    <div class="picker-chips">
+                      <a href="fact-lesson-add-1.html"  class="chip chip-lesson" title="1+2, 2+3">1</a>
+                      <a href="fact-lesson-add-2.html"  class="chip chip-lesson" title="3+3, 2+4">2</a>
+                      <a href="fact-lesson-add-3.html"  class="chip chip-lesson" title="3+4, 2+5">3</a>
+                      <a href="fact-lesson-add-4.html"  class="chip chip-lesson" title="4+4, 3+5">4</a>
+                      <a href="fact-lesson-add-5.html"  class="chip chip-lesson" title="4+5, 3+6">5</a>
+                      <a href="fact-lesson-add-6.html"  class="chip chip-lesson" title="5+5, 4+6">6</a>
+                      <a href="fact-lesson-add-7.html"  class="chip chip-lesson" title="5+6, 4+7">7</a>
+                      <a href="fact-lesson-add-8.html"  class="chip chip-lesson" title="5+7, 6+6">8</a>
+                      <a href="fact-lesson-add-9.html"  class="chip chip-lesson" title="6+7, 5+8">9</a>
+                      <a href="fact-lesson-add-10.html" class="chip chip-lesson" title="7+7, 6+8">10</a>
+                    </div>
+                  </div>
+                  <div class="picker-row">
+                    <span class="picker-label">Reviews</span>
+                    <div class="picker-chips">
+                      <a href="fact-lesson-add-numonly-1.html" class="chip chip-review" title="Review: 1+2, 2+3, 3+3, 2+4">R1</a>
+                      <a href="fact-lesson-add-numonly-2.html" class="chip chip-review" title="Review: 3+4, 2+5, 4+4, 3+5">R2</a>
+                      <a href="fact-lesson-add-numonly-3.html" class="chip chip-review" title="Review: 4+5, 3+6, 5+5, 4+6">R3</a>
+                      <a href="fact-lesson-add-numonly-4.html" class="chip chip-review" title="Review: 5+6, 4+7, 5+7, 6+6">R4</a>
+                      <a href="fact-lesson-add-numonly-5.html" class="chip chip-review" title="Review: 6+7, 5+8, 7+7, 6+8">R5</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-      <div class="feature-card reveal">
-        <p class="feature-type">Addition · Subtraction</p>
-        <h3 class="feature-title">Additive Fact Fluency</h3>
-        <p class="feature-desc">
-          Timed practice across all additive fact families. Students work through
-          randomized sets, self-marking each response. Sessions are logged
-          and tracked on the progress chart.
-        </p>
-        <a href="fact-fluency-add.html" class="feature-link">Open Drill</a>
-      </div>
+              <div class="slide-pathway-card">
+                <p class="pathway-op">Multiplication · Division</p>
+                <h4 class="pathway-title">Multiplicative Fact Families</h4>
+                <p class="pathway-meta">6 lessons · 3 review sets</p>
+                <div class="lesson-picker">
+                  <div class="picker-row">
+                    <span class="picker-label">Lessons</span>
+                    <div class="picker-chips">
+                      <a href="fact-lesson-mult-1.html" class="chip chip-lesson" title="2×2, 2×3">1</a>
+                      <a href="fact-lesson-mult-2.html" class="chip chip-lesson" title="2×4, 2×5">2</a>
+                      <a href="fact-lesson-mult-3.html" class="chip chip-lesson" title="2×6, 3×3">3</a>
+                      <a href="fact-lesson-mult-4.html" class="chip chip-lesson" title="3×4, 3×5">4</a>
+                      <a href="fact-lesson-mult-5.html" class="chip chip-lesson" title="4×4, 4×5">5</a>
+                      <a href="fact-lesson-mult-6.html" class="chip chip-lesson" title="5×5, 5×6">6</a>
+                    </div>
+                  </div>
+                  <div class="picker-row">
+                    <span class="picker-label">Reviews</span>
+                    <div class="picker-chips">
+                      <a href="fact-lesson-mult-numonly-1.html" class="chip chip-review" title="Review: 2×2, 2×3, 2×4, 2×5">R1</a>
+                      <a href="fact-lesson-mult-numonly-2.html" class="chip chip-review" title="Review: 2×6, 3×3, 3×4, 3×5">R2</a>
+                      <a href="fact-lesson-mult-numonly-3.html" class="chip chip-review" title="Review: 4×4, 4×5, 5×5, 5×6">R3</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-      <div class="feature-card reveal">
-        <p class="feature-type">Multiplication · Division</p>
-        <h3 class="feature-title">Multiplicative Fact Fluency</h3>
-        <p class="feature-desc">
-          Timed practice across all multiplicative fact families. Same structure
-          as additive fluency — randomized sets, self-marking, and session
-          tracking linked to the progress chart.
-        </p>
-        <a href="fact-fluency-mult.html" class="feature-link">Open Drill</a>
-      </div>
+            </div>
+          </div>
 
-    </div>
-  </section>
+          <!-- SLIDE 1: FLUENCY DRILLS -->
+          <div class="program-slide" id="pslide-1">
+            <p class="slide-tag">Practice</p>
+            <h3 class="slide-title">Fact Fluency Drills</h3>
+            <p class="slide-desc">Timed drills for additive and multiplicative fact families. Students work through randomized sets with self-marking — every session is logged automatically to the progress chart.</p>
+            <div class="slide-feature-grid">
 
-  <div class="section-divider"></div>
+              <div class="slide-feature-card">
+                <p class="feature-type">Addition · Subtraction</p>
+                <h4 class="feature-title">Additive Fact Fluency</h4>
+                <p class="feature-desc">Timed practice across all additive fact families. Randomized sets, self-marking each response, session scores tracked on the progress chart.</p>
+                <a href="fact-fluency-add.html" class="feature-link">Open Drill</a>
+              </div>
 
-  <!-- COMPUTATION FLUENCY -->
-  <section class="tool-section" id="computation">
-    <div class="tool-header reveal">
-      <h2>Computation Fluency</h2>
-      <span class="section-tag">Application</span>
-    </div>
-    <p class="tool-intro reveal">
-      Applied computation practice using double-digit problems. These tools build
-      procedural fluency in addition and subtraction — with and without regrouping —
-      using bar model scaffolding to connect computation back to structure.
-    </p>
-    <div class="comp-grid">
+              <div class="slide-feature-card">
+                <p class="feature-type">Multiplication · Division</p>
+                <h4 class="feature-title">Multiplicative Fact Fluency</h4>
+                <p class="feature-desc">Timed practice across all multiplicative fact families. Same structure — randomized, self-marked, and automatically tracked.</p>
+                <a href="fact-fluency-mult.html" class="feature-link">Open Drill</a>
+              </div>
 
-      <div class="comp-card reveal">
-        <div class="comp-num">01</div>
-        <h3 class="comp-title">Double-Digit Addition</h3>
-        <p class="comp-sub">No Regrouping</p>
-        <a href="computation-1-fluency.html" class="comp-link">Open</a>
-      </div>
+            </div>
+          </div>
 
-      <div class="comp-card reveal">
-        <div class="comp-num">02</div>
-        <h3 class="comp-title">Double-Digit Subtraction</h3>
-        <p class="comp-sub">No Regrouping</p>
-        <a href="computation-2-fluency.html" class="comp-link">Open</a>
-      </div>
+          <!-- SLIDE 2: COMPUTATION FLUENCY -->
+          <div class="program-slide" id="pslide-2">
+            <p class="slide-tag">Application</p>
+            <h3 class="slide-title">Computation Fluency</h3>
+            <p class="slide-desc">Applied computation practice with double-digit problems. Bar model scaffolding connects computation back to the relational structure students already know.</p>
+            <div class="slide-comp-grid">
 
-      <div class="comp-card reveal">
-        <div class="comp-num">03</div>
-        <h3 class="comp-title">Mixed: Add or Subtract?</h3>
-        <p class="comp-sub">Bar Model Scaffolding</p>
-        <a href="computation-3-fluency.html" class="comp-link">Open</a>
-      </div>
+              <div class="slide-comp-card">
+                <div class="comp-num">01</div>
+                <h4 class="comp-title">Double-Digit Addition</h4>
+                <p class="comp-sub">No Regrouping</p>
+                <a href="computation-1-fluency.html" class="comp-link">Open</a>
+              </div>
 
-      <div class="comp-card reveal">
-        <div class="comp-num">04</div>
-        <h3 class="comp-title">Double-Digit Addition</h3>
-        <p class="comp-sub">With Regrouping</p>
-        <a href="computation-4-fluency.html" class="comp-link">Open</a>
-      </div>
+              <div class="slide-comp-card">
+                <div class="comp-num">02</div>
+                <h4 class="comp-title">Double-Digit Subtraction</h4>
+                <p class="comp-sub">No Regrouping</p>
+                <a href="computation-2-fluency.html" class="comp-link">Open</a>
+              </div>
 
-      <div class="comp-card reveal">
-        <div class="comp-num">05</div>
-        <h3 class="comp-title">Double-Digit Subtraction</h3>
-        <p class="comp-sub">With Regrouping</p>
-        <a href="computation-5-fluency.html" class="comp-link">Open</a>
-      </div>
+              <div class="slide-comp-card">
+                <div class="comp-num">03</div>
+                <h4 class="comp-title">Mixed: Add or Subtract?</h4>
+                <p class="comp-sub">Bar Model Scaffolding</p>
+                <a href="computation-3-fluency.html" class="comp-link">Open</a>
+              </div>
 
-      <div class="comp-card reveal">
-        <div class="comp-num">06</div>
-        <h3 class="comp-title">Mixed with Regrouping</h3>
-        <p class="comp-sub">Add or Subtract?</p>
-        <a href="computation-6-fluency.html" class="comp-link">Open</a>
-      </div>
+              <div class="slide-comp-card">
+                <div class="comp-num">04</div>
+                <h4 class="comp-title">Double-Digit Addition</h4>
+                <p class="comp-sub">With Regrouping</p>
+                <a href="computation-4-fluency.html" class="comp-link">Open</a>
+              </div>
 
-    </div>
-  </section>
+              <div class="slide-comp-card">
+                <div class="comp-num">05</div>
+                <h4 class="comp-title">Double-Digit Subtraction</h4>
+                <p class="comp-sub">With Regrouping</p>
+                <a href="computation-5-fluency.html" class="comp-link">Open</a>
+              </div>
 
-  <div class="section-divider"></div>
+              <div class="slide-comp-card">
+                <div class="comp-num">06</div>
+                <h4 class="comp-title">Mixed with Regrouping</h4>
+                <p class="comp-sub">Add or Subtract?</p>
+                <a href="computation-6-fluency.html" class="comp-link">Open</a>
+              </div>
 
-  <!-- PROGRESS -->
-  <section class="progress-band" id="progress">
-    <div class="progress-inner">
-      <p class="progress-eyebrow reveal">Progress</p>
-      <h2 class="reveal">
-        Growth you can<br>
-        <em>actually see.</em>
-      </h2>
-      <p class="reveal">
-        The progress chart tracks every session across fact lessons, fluency drills,
-        and computation practice. Students and teachers can see mastery at a glance —
-        and know exactly where to focus next.
-      </p>
-      <a href="chart.html" class="progress-link reveal">Open Progress Chart</a>
-    </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: PROGRESS CHART -->
+          <div class="program-slide" id="pslide-3">
+            <p class="slide-tag">Track Growth</p>
+            <h3 class="slide-title">Progress Chart</h3>
+            <div class="slide-progress-wrap">
+              <div class="slide-progress-text">
+                <p class="slide-desc" style="margin-bottom:0">
+                  Every session across fact lessons, fluency drills, and computation practice is
+                  logged and plotted automatically — no teacher input required. Scores appear on
+                  a semi-logarithmic scale so growth is visible from the very first session.
+                  Each fact family climbs toward its pass-off target. Students and teachers
+                  see exactly where to focus next.
+                </p>
+                <a href="chart.html" class="progress-cta-link">Open Progress Chart</a>
+              </div>
+              <div class="slide-chart-preview">
+                <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <!-- axes -->
+                  <line x1="40" y1="14" x2="40" y2="162" stroke="#d8cfbe" stroke-width="1.5"/>
+                  <line x1="40" y1="162" x2="268" y2="162" stroke="#d8cfbe" stroke-width="1.5"/>
+                  <!-- grid -->
+                  <line x1="40" y1="58" x2="268" y2="58" stroke="#d8cfbe" stroke-width="0.75" stroke-dasharray="3,3"/>
+                  <line x1="40" y1="100" x2="268" y2="100" stroke="#d8cfbe" stroke-width="0.75" stroke-dasharray="3,3"/>
+                  <line x1="40" y1="132" x2="268" y2="132" stroke="#d8cfbe" stroke-width="0.75" stroke-dasharray="3,3"/>
+                  <!-- pass-off aim line -->
+                  <line x1="40" y1="78" x2="268" y2="78" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.85"/>
+                  <text x="270" y="76" font-family="monospace" font-size="7.5" fill="#e8b84b" opacity="0.9">aim</text>
+                  <!-- data line -->
+                  <polyline points="68,148 116,138 164,120 212,102 260,84" stroke="#3d5c3a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- dots -->
+                  <circle cx="68"  cy="148" r="4.5" fill="#3d5c3a"/>
+                  <circle cx="116" cy="138" r="4.5" fill="#3d5c3a"/>
+                  <circle cx="164" cy="120" r="4.5" fill="#3d5c3a"/>
+                  <circle cx="212" cy="102" r="4.5" fill="#3d5c3a"/>
+                  <circle cx="260" cy="84"  r="4.5" fill="#c17f3b"/>
+                  <!-- y labels -->
+                  <text x="33" y="62"  text-anchor="end" font-family="monospace" font-size="8" fill="#7a7163">80</text>
+                  <text x="33" y="104" text-anchor="end" font-family="monospace" font-size="8" fill="#7a7163">60</text>
+                  <text x="33" y="136" text-anchor="end" font-family="monospace" font-size="8" fill="#7a7163">40</text>
+                  <text x="33" y="166" text-anchor="end" font-family="monospace" font-size="8" fill="#7a7163">20</text>
+                  <!-- y label -->
+                  <text x="10" y="90" text-anchor="middle" font-family="monospace" font-size="7" fill="#7a7163" transform="rotate(-90,10,90)">cpm</text>
+                  <!-- x labels -->
+                  <text x="68"  y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a7163">M</text>
+                  <text x="116" y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a7163">T</text>
+                  <text x="164" y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a7163">W</text>
+                  <text x="212" y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a7163">Th</text>
+                  <text x="260" y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a7163">F</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.program-slides -->
+      </div><!-- /.program-sticky -->
+    </div><!-- /.program-outer -->
+
   </section>
 
   <!-- FOOTER -->
@@ -1048,16 +1059,62 @@
   </footer>
 
   <script>
-    const observer = new IntersectionObserver((entries) => {
+    // Scroll reveal
+    const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add('visible');
-          observer.unobserve(e.target);
+          revealObserver.unobserve(e.target);
         }
       });
     }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // Program slide scroll driver
+    const SLIDE_LABELS = [
+      'Fact Family Lessons',
+      'Fact Fluency Drills',
+      'Computation Fluency',
+      'Progress Chart'
+    ];
+
+    let currentSlide = -1;
+
+    function setSlide(idx) {
+      if (idx === currentSlide) return;
+      if (currentSlide >= 0) {
+        document.getElementById('pslide-' + currentSlide).classList.remove('active');
+      }
+      document.getElementById('pslide-' + idx).classList.add('active');
+      document.querySelectorAll('.prog-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+      document.getElementById('slideStage').textContent = 'Stage 0' + (idx + 1) + ' / 04';
+      document.getElementById('slideLabel').textContent = SLIDE_LABELS[idx];
+      document.getElementById('slideHint').textContent = idx < 3 ? 'scroll to explore ↓' : 'scroll to continue ↓';
+      currentSlide = idx;
+    }
+
+    function onScrollProgram() {
+      const outer = document.getElementById('programOuter');
+      if (!outer) return;
+      const rect = outer.getBoundingClientRect();
+      const scrollable = outer.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) { setSlide(0); return; }
+      const scrolled = Math.max(0, -rect.top);
+      const progress = Math.min(1, scrolled / scrollable);
+      setSlide(Math.min(3, Math.floor(progress * 4)));
+    }
+
+    // Dot clicks scroll to that slide's position in the outer
+    document.querySelectorAll('.prog-dot').forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const outer = document.getElementById('programOuter');
+        const scrollable = outer.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: outer.offsetTop + (i / 4) * scrollable + 1, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('scroll', onScrollProgram, { passive: true });
+    setSlide(0);
   </script>
 </body>
 </html>
