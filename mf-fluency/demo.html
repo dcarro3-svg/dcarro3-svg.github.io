@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluency Demo — P.L.A.D Math Fact Fluency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1c1a16;
+      --parchment: #f5f0e8;
+      --moss:      #3d5c3a;
+      --amber:     #c17f3b;
+      --gold:      #e8b84b;
+      --sage:      #7a9e76;
+      --cream:     #faf7f0;
+      --muted:     #7a7163;
+      --border:    #d8cfbe;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(250, 247, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      text-decoration: none;
+    }
+
+    .nav-brand .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      line-height: 1.1;
+    }
+
+    .nav-brand .sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-back {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--moss); }
+
+    /* ── PAGE ── */
+    .demo-page {
+      padding: 8rem 6rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── INTRO ── */
+    .demo-intro { max-width: 64ch; margin-bottom: 4rem; }
+
+    .demo-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-intro h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+
+    .demo-intro h1 em { font-style: italic; color: var(--moss); }
+
+    .demo-intro p {
+      font-size: 1rem;
+      color: #3a3630;
+      line-height: 1.85;
+      max-width: 58ch;
+    }
+
+    /* ── ARENA ── */
+    .demo-arena {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── DRILL PANEL ── */
+    .drill-panel {
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 2rem 2rem;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drill-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      position: absolute;
+      top: 1.25rem;
+      left: 1.5rem;
+    }
+
+    .drill-session-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+    }
+
+    .fact-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .fact-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1;
+      text-align: center;
+      transition: opacity 0.25s;
+    }
+
+    .fact-answer {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 600;
+      color: var(--moss);
+      line-height: 1;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .fact-answer.visible { opacity: 1; }
+
+    .fact-check {
+      font-size: 1.4rem;
+      color: var(--sage);
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-top: 0.2rem;
+    }
+
+    .fact-check.visible { opacity: 1; }
+
+    .drill-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    .drill-status strong { color: var(--moss); }
+
+    .drill-waiting {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Session complete overlay */
+    .session-complete {
+      position: absolute;
+      inset: 0;
+      background: rgba(250, 247, 240, 0.97);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .session-complete.visible { opacity: 1; }
+
+    .sc-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .sc-score {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      font-weight: 600;
+      color: var(--moss);
+      line-height: 1;
+    }
+
+    .sc-unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .sc-sub {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .sc-passoff {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 0.35rem 1.1rem;
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .sc-passoff.visible { display: block; }
+
+    /* ── CHART PANEL ── */
+    .chart-panel {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+    }
+
+    .chart-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.25rem;
+    }
+
+    .chart-panel-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .chart-panel-aim {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .chart-wrap { width: 100%; overflow-x: auto; }
+    .chart-wrap svg { display: block; max-width: 100%; height: auto; }
+
+    .chart-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--border);
+      margin-top: 0.75rem;
+    }
+
+    /* Dot pop animation */
+    @keyframes dotPop {
+      0%   { opacity: 0; transform: scale(0); }
+      70%  { opacity: 1; transform: scale(1.6); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .dot-new {
+      animation: dotPop 0.55s ease both;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    /* ── CTA ── */
+    .demo-cta {
+      margin-top: 3.5rem;
+      padding: 4rem 3.5rem;
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .demo-cta.visible { opacity: 1; }
+
+    .demo-cta-text { flex: 1; }
+
+    .demo-cta-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-cta h2 em { font-style: italic; color: var(--moss); }
+
+    .demo-cta p {
+      font-size: 0.95rem;
+      color: #3a3630;
+      max-width: 48ch;
+      line-height: 1.8;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--ink); transform: translateY(-2px); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .demo-page { padding: 6rem 2rem 4rem; }
+      .demo-arena { grid-template-columns: 1fr; }
+      .demo-cta { flex-direction: column; gap: 2rem; padding: 3rem 2rem; }
+      footer { padding: 2rem 2rem !important; flex-direction: column !important; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">
+      <span class="wordmark">P.L.A.D</span>
+      <span class="sub">Phototropic Learning & Design</span>
+    </a>
+    <a href="index.html" class="nav-back">← Fluency Hub</a>
+  </nav>
+
+  <div class="demo-page">
+
+    <!-- INTRO -->
+    <div class="demo-intro">
+      <p class="demo-eyebrow">Live Demo · Additive Fact Fluency</p>
+      <h1>Watch fluency<br><em>build in real time.</em></h1>
+      <p>
+        Each fluency session is two minutes of timed practice. A student sees a fact,
+        marks it correct or incorrect, and moves to the next. When the timer ends, the
+        session score is recorded to the progress chart automatically — no teacher input
+        required. Watch two weeks of daily practice unfold below, and see what the chart
+        looks like when a student passes off a fact family.
+      </p>
+    </div>
+
+    <!-- ARENA -->
+    <div class="demo-arena">
+
+      <!-- DRILL PANEL -->
+      <div class="drill-panel" id="drillPanel">
+        <span class="drill-eyebrow">Fact Practice</span>
+        <span class="drill-session-badge" id="sessionBadge">Session 1 of 3</span>
+
+        <div class="fact-wrap" id="factWrap">
+          <div class="drill-waiting">Starting demo&hellip;</div>
+        </div>
+
+        <div class="drill-status" id="drillStatus"></div>
+
+        <!-- Session complete overlay -->
+        <div class="session-complete" id="sessionComplete">
+          <span class="sc-label">Session complete</span>
+          <span class="sc-score" id="scScore">55</span>
+          <span class="sc-unit">correct / min</span>
+          <span class="sc-sub" id="scSub">Recorded to chart →</span>
+          <span class="sc-passoff" id="scPassoff">★ &nbsp;Passed off!</span>
+        </div>
+      </div>
+
+      <!-- CHART PANEL -->
+      <div class="chart-panel">
+        <div class="chart-panel-header">
+          <span class="chart-panel-label">Progress Chart · Additive Facts</span>
+          <span class="chart-panel-aim">Pass-off aim: 60 / min</span>
+        </div>
+        <div class="chart-wrap" id="chartWrap"></div>
+        <p class="chart-note">Semi-log scale &nbsp;·&nbsp; dots = correct/min &nbsp;·&nbsp; dashed amber = pass-off aim</p>
+      </div>
+
+    </div>
+
+    <!-- CTA (shown after demo completes) -->
+    <div class="demo-cta" id="demoCta">
+      <div class="demo-cta-text">
+        <p class="demo-cta-eyebrow">Ready to try it yourself?</p>
+        <h2>Every session<br><em>moves the line.</em></h2>
+        <p>
+          Start with the fact family lessons, then move to timed fluency drills.
+          The chart tracks every session automatically — for every student,
+          every lesson, across the full sequence. Growth you can actually see.
+        </p>
+      </div>
+      <a href="index.html" class="btn-primary">Go to Fluency Hub →</a>
+    </div>
+
+  </div>
+
+  <footer style="margin-top:4rem;padding:2.5rem 6rem;background:var(--ink);display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:0.1em;color:var(--parchment);text-transform:uppercase;">Phototropic Learning & Design</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:rgba(245,240,232,0.4);text-transform:uppercase;">© 2026 PLAD · Math Fact Fluency</span>
+  </footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const FACTS = [
+  { q: '1 + 2 = ?', a: '3' },
+  { q: '2 + 1 = ?', a: '3' },
+  { q: '3 − 1 = ?', a: '2' },
+  { q: '3 − 2 = ?', a: '1' },
+  { q: '2 + 3 = ?', a: '5' },
+  { q: '3 + 2 = ?', a: '5' },
+  { q: '5 − 3 = ?', a: '2' },
+  { q: '5 − 2 = ?', a: '3' },
+];
+
+const PASSOFF_AIM = 60;
+const now = new Date();
+
+function daysAgo(n, hour) {
+  const d = new Date(now);
+  d.setDate(d.getDate() - n);
+  d.setHours(hour || 10, 0, 0, 0);
+  return d;
+}
+
+// Pre-seeded sessions: 10 sessions over the past 13 days
+let chartSessions = [
+  { date: daysAgo(13), cpm: 12 },
+  { date: daysAgo(12), cpm: 15 },
+  { date: daysAgo(11), cpm: 19 },
+  { date: daysAgo(9),  cpm: 23 },
+  { date: daysAgo(8),  cpm: 27 },
+  { date: daysAgo(6),  cpm: 32 },
+  { date: daysAgo(5),  cpm: 36 },
+  { date: daysAgo(3),  cpm: 42 },
+  { date: daysAgo(2),  cpm: 47 },
+  { date: daysAgo(1),  cpm: 52 },
+];
+
+// Live sessions added during demo (today)
+const LIVE_SCORES = [55, 58, 63];
+
+// ── CHART ─────────────────────────────────────────────────────────────────────
+const LOG_MIN = Math.log10(0.5);
+const LOG_MAX = Math.log10(100);
+
+function toY(val, H, PT, PB) {
+  const v = Math.max(val, 0.5);
+  const pct = (Math.log10(v) - LOG_MIN) / (LOG_MAX - LOG_MIN);
+  return PT + (1 - pct) * (H - PT - PB);
+}
+
+function renderChart(highlightLast) {
+  const W = 560, H = 320;
+  const PT = 24, PB = 48, PL = 50, PR = 24;
+  const CW = W - PL - PR;
+
+  const startDate = daysAgo(13);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(now);
+  endDate.setHours(0, 0, 0, 0);
+  const totalDays = Math.round((endDate - startDate) / 86400000) + 1;
+
+  function xAt(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const idx = Math.round((d - startDate) / 86400000);
+    return PL + (idx / Math.max(totalDays - 1, 1)) * CW;
+  }
+
+  // Grid
+  const Y_TICKS = [1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 100];
+  const LABELED  = new Set([1, 5, 10, 20, 30, 60, 100]);
+  let grid = '';
+
+  Y_TICKS.forEach(v => {
+    const y = toY(v, H, PT, PB);
+    if (y < PT - 2 || y > H - PB + 2) return;
+    const isMajor = [1, 10, 100].includes(v);
+    grid += `<line x1="${PL}" x2="${W - PR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"
+      stroke="${isMajor ? '#d8cfbe' : '#ede8de'}" stroke-width="${isMajor ? 1.2 : 0.6}"/>`;
+    if (LABELED.has(v)) {
+      grid += `<text x="${(PL - 5).toFixed(1)}" y="${(y + 3.5).toFixed(1)}"
+        text-anchor="end" font-size="10" fill="#7a7163" font-family="sans-serif">${v}</text>`;
+    }
+  });
+
+  // Pass-off aim line
+  const aimY = toY(PASSOFF_AIM, H, PT, PB).toFixed(1);
+  grid += `<line x1="${PL}" x2="${W - PR}" y1="${aimY}" y2="${aimY}"
+    stroke="#c17f3b" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.75"/>`;
+  grid += `<text x="${(W - PR + 5).toFixed(1)}" y="${(parseFloat(aimY) + 4).toFixed(1)}"
+    font-size="9" fill="#c17f3b" font-family="sans-serif" opacity="0.85">60</text>`;
+
+  // X axis date labels
+  let xLabels = '';
+  for (let di = 0; di < totalDays; di += 2) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + di);
+    const x = PL + (di / Math.max(totalDays - 1, 1)) * CW;
+    xLabels += `<text x="${x.toFixed(1)}" y="${(H - PB + 15).toFixed(1)}"
+      text-anchor="middle" font-size="9" fill="#7a7163" font-family="sans-serif">${d.getMonth() + 1}/${d.getDate()}</text>`;
+  }
+
+  // Data line and dots
+  let pathD = '';
+  let dots  = '';
+
+  chartSessions.forEach((s, i) => {
+    const x = xAt(s.date);
+    const y = toY(s.cpm, H, PT, PB);
+    pathD += i === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : ` L${x.toFixed(1)},${y.toFixed(1)}`;
+
+    const isNew = highlightLast && i === chartSessions.length - 1;
+    dots += `<circle ${isNew ? 'class="dot-new"' : ''} cx="${x.toFixed(1)}" cy="${y.toFixed(1)}"
+      r="${isNew ? 6 : 4.5}" fill="#3d5c3a" stroke="white" stroke-width="1.5"/>`;
+
+    // Label every dot with its score
+    const labelY = (y - 9).toFixed(1);
+    dots += `<text x="${x.toFixed(1)}" y="${labelY}"
+      text-anchor="middle" font-size="${isNew ? 10 : 9}" fill="#3d5c3a"
+      font-family="sans-serif" ${isNew ? 'font-weight="600"' : ''}>${s.cpm}</text>`;
+  });
+
+  const path = pathD
+    ? `<path d="${pathD}" fill="none" stroke="#3d5c3a" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>`
+    : '';
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto">
+    <rect width="${W}" height="${H}" fill="white"/>
+    ${grid}
+    <line x1="${PL}" y1="${PT}" x2="${PL}" y2="${H - PB}" stroke="#9b9591" stroke-width="1.2"/>
+    <line x1="${PL}" y1="${H - PB}" x2="${W - PR}" y2="${H - PB}" stroke="#9b9591" stroke-width="1.2"/>
+    ${xLabels}
+    ${path}
+    ${dots}
+    <text x="12" y="${(H / 2).toFixed(1)}" text-anchor="middle" font-size="10"
+      fill="#7a7163" font-family="sans-serif"
+      transform="rotate(-90,12,${(H / 2).toFixed(1)})">correct / min</text>
+  </svg>`;
+
+  document.getElementById('chartWrap').innerHTML = svg;
+}
+
+// ── DRILL ANIMATION ───────────────────────────────────────────────────────────
+const FACTS_PER_SESSION = 5;
+const QUESTION_MS       = 720;
+const ANSWER_MS         = 560;
+const BETWEEN_MS        = 150;
+const SC_DISPLAY_MS     = 1800;
+const CHART_LAG_MS      = 900;
+const NEXT_SESSION_MS   = 1600;
+const INIT_DELAY_MS     = 1500;
+
+function showWaiting(msg) {
+  document.getElementById('factWrap').innerHTML =
+    `<div class="drill-waiting">${msg}</div>`;
+  document.getElementById('drillStatus').textContent = '';
+}
+
+function showFact(factObj, correctSoFar, totalDone) {
+  document.getElementById('factWrap').innerHTML = `
+    <div class="fact-question">${factObj.q}</div>
+    <div class="fact-answer" id="fa"></div>
+    <div class="fact-check"  id="fc">✓</div>
+  `;
+  document.getElementById('drillStatus').innerHTML =
+    `<strong>${correctSoFar}</strong> correct &nbsp;·&nbsp; ${FACTS_PER_SESSION - totalDone} remaining`;
+}
+
+function revealAnswer(factObj) {
+  const fa = document.getElementById('fa');
+  const fc = document.getElementById('fc');
+  if (fa) { fa.textContent = factObj.a; fa.classList.add('visible'); }
+  if (fc) fc.classList.add('visible');
+}
+
+function runFact(sessionIdx, fIdx, correct) {
+  if (fIdx >= FACTS_PER_SESSION) {
+    showSessionComplete(sessionIdx, correct);
+    return;
+  }
+  const fact = FACTS[fIdx % FACTS.length];
+  showFact(fact, correct, fIdx);
+  setTimeout(() => {
+    revealAnswer(fact);
+    setTimeout(() => {
+      runFact(sessionIdx, fIdx + 1, correct + 1);
+    }, ANSWER_MS + BETWEEN_MS);
+  }, QUESTION_MS);
+}
+
+function showSessionComplete(sessionIdx, correct) {
+  const score   = LIVE_SCORES[sessionIdx];
+  const passoff = score >= PASSOFF_AIM;
+
+  document.getElementById('scScore').textContent = score;
+  document.getElementById('scSub').textContent   = passoff
+    ? 'Personal best — pass-off reached!'
+    : 'Recorded to chart →';
+  document.getElementById('scPassoff').classList.toggle('visible', passoff);
+  document.getElementById('sessionComplete').classList.add('visible');
+
+  setTimeout(() => {
+    chartSessions.push({ date: new Date(), cpm: score });
+    renderChart(true);
+  }, CHART_LAG_MS);
+
+  setTimeout(() => {
+    document.getElementById('sessionComplete').classList.remove('visible');
+    if (sessionIdx + 1 < LIVE_SCORES.length) {
+      startSession(sessionIdx + 1);
+    } else {
+      endDemo();
+    }
+  }, SC_DISPLAY_MS + NEXT_SESSION_MS);
+}
+
+function startSession(sessionIdx) {
+  document.getElementById('sessionBadge').textContent =
+    `Session ${sessionIdx + 1} of ${LIVE_SCORES.length}`;
+  showWaiting(`Session ${sessionIdx + 1} beginning…`);
+  setTimeout(() => runFact(sessionIdx, 0, 0), 900);
+}
+
+function endDemo() {
+  showWaiting('Demo complete.');
+  document.getElementById('drillStatus').textContent = '';
+  const cta = document.getElementById('demoCta');
+  cta.classList.add('visible');
+  setTimeout(() => cta.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderChart(false);
+setTimeout(() => startSession(0), INIT_DELAY_MS);
+</script>
+</body>
+</html>
