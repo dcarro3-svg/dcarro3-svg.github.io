@@ -257,212 +257,367 @@
       max-width: 56ch;
     }
 
-    /* ── LESSON DEMO SECTION ── */
-    .lesson-section {
-      padding: 7rem 6rem;
+    /* ── SCROLL STAGE 1 ── */
+    .scroll-outer {
+      height: 500vh;
       background: var(--parchment);
     }
 
-    .lesson-arena {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 3rem;
-      align-items: start;
+    .scroll-sticky {
+      position: sticky;
+      top: 5rem;
+      height: calc(100vh - 5rem);
+      padding: 3rem 6rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      background: var(--parchment);
+      overflow: hidden;
     }
 
-    /* The app frame — mimics the groundwork app look */
-    .lesson-frame {
+    .stage-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+    }
+
+    .stage-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .stage-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+
+    .stage-dots {
+      margin-left: auto;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .stage-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.35s ease, transform 0.35s ease;
+    }
+
+    .stage-dot.active { background: var(--gw-accent); transform: scale(1.4); }
+
+    .scroll-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      min-height: 0;
+    }
+
+    .rel-panel {
+      position: relative;
+      height: 100%;
+    }
+
+    .rel-slide {
+      position: absolute;
+      top: 50%;
+      left: 0; right: 0;
+      transform: translateY(calc(-50% + 20px));
+      opacity: 0;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      pointer-events: none;
+    }
+
+    .rel-slide.active {
+      opacity: 1;
+      transform: translateY(-50%);
+      pointer-events: auto;
+    }
+
+    .rel-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+
+    .rel-name em { font-style: italic; color: var(--gw-accent); }
+
+    .rel-placeholder {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-style: italic;
+      border-left: 2px solid var(--border);
+      padding-left: 0.85rem;
+      margin-bottom: 1.4rem;
+      line-height: 1.7;
+    }
+
+    .rel-sentence {
+      font-size: 0.97rem;
+      color: #3a3630;
+      line-height: 1.82;
+      max-width: 44ch;
+      margin-bottom: 1.4rem;
+    }
+
+    .rel-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: white;
+      background: var(--gw-accent);
+      padding: 0.28rem 0.85rem;
+    }
+
+    .model-panel {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .model-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      pointer-events: none;
+    }
+
+    .model-slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .model-frame {
+      background: var(--gw-surface);
+      border: 1px solid var(--gw-border);
+      border-radius: 14px;
+      padding: 2.25rem 2rem;
+      width: 100%;
+    }
+
+    .model-frame svg { width: 100%; height: auto; display: block; }
+
+    .scroll-hint {
+      flex-shrink: 0;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--border);
+      padding-top: 0.75rem;
+    }
+
+    /* ── STAGE 2: lesson app frame ── */
+    .lp-frame {
       background: var(--gw-bg);
       border: 1px solid var(--gw-border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
-      min-height: 420px;
-      position: relative;
+      width: 100%;
     }
 
-    .lf-topbar {
+    .lp-topbar {
       background: var(--gw-surface);
       border-bottom: 1px solid var(--gw-border);
-      padding: 0.9rem 1.5rem;
+      padding: 0.72rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .lf-title-text {
+    .lp-topbar-label {
       font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
+      font-size: 0.6rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--gw-accent);
     }
 
-    .lf-step-badge {
+    .lp-topbar-step {
       font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #9589b8;
     }
 
-    .lf-progress-track {
-      height: 3px;
-      background: var(--gw-border);
-    }
+    .lp-progress-track { height: 3px; background: var(--gw-border); }
 
-    .lf-progress-fill {
+    .lp-progress-fill {
       height: 100%;
       background: var(--gw-accent);
-      transition: width 0.6s ease;
-      width: 0%;
+      transition: width 0.55s ease;
     }
 
-    .lf-body {
-      padding: 1.75rem 1.75rem 2rem;
+    .lp-body {
+      padding: 1.4rem 1.5rem 1.6rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
-    /* Instruction text bubble */
-    .lf-instruct {
+    .lp-problem {
       background: #eee6ff;
       border: 1px solid var(--gw-border);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      font-size: 0.97rem;
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.92rem;
       color: #1e1530;
       line-height: 1.65;
-      min-height: 3.5rem;
-      transition: opacity 0.3s;
     }
 
-    /* Bar model canvas */
-    .lf-canvas {
+    .lp-model-wrap {
       background: var(--gw-surface);
       border: 1px solid var(--gw-border);
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      padding: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 110px;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
 
-    .lf-canvas.visible { opacity: 1; }
+    .lp-model-wrap.visible { opacity: 1; }
+    .lp-model-wrap svg { width: 100%; height: auto; }
 
-    .lf-canvas svg { max-width: 100%; }
-
-    /* Word bank */
-    .lf-bank {
+    .lp-bank {
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.38rem;
       opacity: 0;
       transition: opacity 0.4s ease;
     }
 
-    .lf-bank.visible { opacity: 1; }
+    .lp-bank.visible { opacity: 1; }
 
-    .wb-btn {
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
+    .lp-btn {
+      padding: 0.55rem 0.9rem;
+      border-radius: 7px;
       border: 1px solid var(--gw-border);
       background: var(--gw-surface);
-      font-size: 0.9rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
       color: #1e1530;
       text-align: left;
       cursor: default;
-      transition: all 0.2s;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
+      transition: all 0.25s;
     }
 
-    .wb-btn.correct {
-      border-color: var(--gw-accent);
-      background: var(--gw-accent);
-      color: white;
-    }
+    .lp-btn.correct { border-color: var(--gw-accent); background: var(--gw-accent); color: white; }
+    .lp-btn.dim { opacity: 0.3; }
 
-    .wb-btn.dim { opacity: 0.35; }
-
-    /* Relation label */
-    .lf-label {
+    .lp-confirmed {
       font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gw-warm);
       text-align: center;
-      min-height: 1.4em;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.35s;
     }
 
-    .lf-label.visible { opacity: 1; }
+    .lp-confirmed.visible { opacity: 1; }
 
-    /* Lesson sequence sidebar */
-    .lesson-sequence {
-      padding: 1.5rem 0;
-    }
-
-    .seq-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1.25rem;
-    }
-
-    .seq-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border: 1px solid var(--border);
-    }
-
-    .seq-list li {
-      padding: 0.85rem 1.25rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
+    /* ── STAGE 3: section-level stage badge ── */
+    .stage-section-meta {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .seq-list li:last-child { border-bottom: none; }
+    /* ── STAGE 4: curriculum map ── */
+    .curr-map {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 100%;
+    }
 
-    .seq-list li.active {
-      background: var(--parchment);
+    .curr-unit {
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      background: white;
+      opacity: 0;
+      transform: translateX(18px);
+      transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.35s;
+    }
+
+    .curr-unit.revealed { opacity: 1; transform: translateX(0); }
+    .curr-unit.highlighted { border-color: var(--gw-accent); }
+
+    .curr-unit-top {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .curr-unit-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .curr-unit-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
       color: var(--ink);
     }
 
-    .seq-list li::before {
-      content: '';
-      width: 6px;
-      height: 6px;
+    .curr-unit-lessons {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .curr-lesson-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--border);
-      flex-shrink: 0;
+      transition: background 0.4s ease;
     }
 
-    .seq-list li.active::before { background: var(--moss); }
-
-    .seq-note {
-      margin-top: 1.5rem;
-      font-size: 0.88rem;
-      font-style: italic;
-      color: var(--muted);
-      line-height: 1.65;
-    }
+    .curr-unit.highlighted .curr-lesson-dot { background: var(--gw-accent); }
 
     /* ── FLUENCY + CHART SECTION ── */
     .fluency-section {
@@ -785,8 +940,11 @@
       .hero { grid-template-columns: 1fr; min-height: auto; }
       .hero-left { padding: 7rem 2rem 4rem; }
       .hero-right { display: none; }
-      .lesson-section, .fluency-section, .philosophy { padding: 4rem 2rem; }
-      .lesson-arena { grid-template-columns: 1fr; }
+      .scroll-sticky { padding: 2rem 1.5rem 1rem; }
+      .scroll-content { grid-template-columns: 1fr; gap: 2rem; }
+      .rel-panel { min-height: 260px; }
+      .model-panel { min-height: 240px; }
+      .fluency-section, .philosophy { padding: 4rem 2rem; }
       .demo-arena { grid-template-columns: 1fr; }
       footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
     }
@@ -854,53 +1012,247 @@
 
   <div class="section-divider"></div>
 
-  <!-- LESSON DEMO -->
-  <section class="lesson-section">
-    <div class="demo-header reveal">
-      <p class="eyebrow">Lesson Demo · Unit One</p>
-      <h2>Teaching students to <em>see the structure</em></h2>
-      <p>
-        Before students can solve a word problem, they need to comprehend it. Each Groundwork lesson
-        teaches a specific relation type — guiding students to identify the mathematical structure
-        of a situation before they ever write an equation.
-      </p>
+  <!-- STAGE 1: RELATION NAMING -->
+  <section id="scrollStage1">
+    <div class="scroll-outer" id="scrollOuter1">
+      <div class="scroll-sticky">
+
+        <div class="stage-meta">
+          <span class="stage-badge">Stage 1</span>
+          <span class="stage-title">Relation Naming</span>
+          <div class="stage-dots">
+            <div class="stage-dot" id="dot0"></div>
+            <div class="stage-dot" id="dot1"></div>
+            <div class="stage-dot" id="dot2"></div>
+            <div class="stage-dot" id="dot3"></div>
+            <div class="stage-dot" id="dot4"></div>
+          </div>
+        </div>
+
+        <div class="scroll-content">
+
+          <!-- Text slides -->
+          <div class="rel-panel">
+
+            <div class="rel-slide" id="rel0">
+              <h3 class="rel-name"><em>Equal</em> Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Both bars are the same size. When two quantities match exactly, we call it an equal relation — the simplest and most fundamental relationship in mathematics.</p>
+              <span class="rel-tag">1 of 5</span>
+            </div>
+
+            <div class="rel-slide" id="rel1">
+              <h3 class="rel-name"><em>Part-Whole</em> Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">The top bar is the whole. The two bars below are the parts. Together, the parts equal the whole — they could be any size, as long as they add up.</p>
+              <span class="rel-tag">2 of 5</span>
+            </div>
+
+            <div class="rel-slide" id="rel2">
+              <h3 class="rel-name"><em>Comparison</em> Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">One bar is more, one is less. The gap between them is the difference. Comparisons always involve three quantities: the larger, the smaller, and the difference.</p>
+              <span class="rel-tag">3 of 5</span>
+            </div>
+
+            <div class="rel-slide" id="rel3">
+              <h3 class="rel-name"><em>Fractional</em> Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">The top bar is one whole. The equal boxes below show it split into parts. The filled box is one of those equal parts — one half, one third, one fourth.</p>
+              <span class="rel-tag">4 of 5</span>
+            </div>
+
+            <div class="rel-slide" id="rel4">
+              <h3 class="rel-name"><em>Multiplicative</em> Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">The whole holds 3 equal parts. So the whole is 3 times the size of one part — and one part is one third of the whole. The same picture tells both stories.</p>
+              <span class="rel-tag">5 of 5</span>
+            </div>
+
+          </div>
+
+          <!-- Bar model slides -->
+          <div class="model-panel">
+
+            <div class="model-slide" id="mod0">
+              <div class="model-frame">
+                <svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <rect x="20" y="16" width="248" height="38" rx="7" fill="#6845a8" opacity="0.82"/>
+                  <text x="144" y="40" text-anchor="middle" font-family="serif" font-size="15" fill="white">A</text>
+                  <rect x="20" y="68" width="248" height="38" rx="7" fill="#9b7ed4" opacity="0.72"/>
+                  <text x="144" y="92" text-anchor="middle" font-family="serif" font-size="15" fill="white">B</text>
+                  <line x1="276" y1="26" x2="276" y2="106" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+                  <text x="300" y="71" text-anchor="middle" font-family="serif" font-size="12" fill="#d4600a" font-style="italic">A = B</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="model-slide" id="mod1">
+              <div class="model-frame">
+                <svg viewBox="0 0 320 126" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <rect x="20" y="10" width="280" height="38" rx="7" fill="#6845a8" opacity="0.82"/>
+                  <text x="160" y="34" text-anchor="middle" font-family="serif" font-size="14" fill="white">whole</text>
+                  <line x1="160" y1="48" x2="160" y2="60" stroke="#c4adee" stroke-width="1.5" stroke-dasharray="3,2"/>
+                  <rect x="20" y="60" width="164" height="38" rx="7" fill="#9b7ed4" opacity="0.72"/>
+                  <text x="102" y="84" text-anchor="middle" font-family="serif" font-size="14" fill="white">part</text>
+                  <rect x="192" y="60" width="108" height="38" rx="7" fill="#d4600a" opacity="0.65"/>
+                  <text x="246" y="84" text-anchor="middle" font-family="serif" font-size="14" fill="white">part</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="model-slide" id="mod2">
+              <div class="model-frame">
+                <svg viewBox="0 0 320 134" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <rect x="20" y="14" width="252" height="38" rx="7" fill="#6845a8" opacity="0.82"/>
+                  <text x="146" y="38" text-anchor="middle" font-family="serif" font-size="13" fill="white">more · 18</text>
+                  <rect x="20" y="68" width="152" height="38" rx="7" fill="#9b7ed4" opacity="0.72"/>
+                  <text x="96" y="92" text-anchor="middle" font-family="serif" font-size="13" fill="white">less · 11</text>
+                  <line x1="174" y1="87" x2="272" y2="87" stroke="#e8b84b" stroke-width="2"/>
+                  <line x1="174" y1="81" x2="174" y2="93" stroke="#e8b84b" stroke-width="2"/>
+                  <line x1="272" y1="81" x2="272" y2="93" stroke="#e8b84b" stroke-width="2"/>
+                  <text x="223" y="114" text-anchor="middle" font-family="serif" font-size="12" fill="#e8b84b" font-style="italic">difference = 7</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="model-slide" id="mod3">
+              <div class="model-frame">
+                <svg viewBox="0 0 320 122" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <rect x="20" y="10" width="280" height="38" rx="7" fill="#6845a8" opacity="0.82"/>
+                  <text x="160" y="34" text-anchor="middle" font-family="serif" font-size="14" fill="white">1 whole</text>
+                  <line x1="160" y1="48" x2="160" y2="60" stroke="#c4adee" stroke-width="1.5" stroke-dasharray="3,2"/>
+                  <rect x="20" y="60" width="134" height="38" rx="7" fill="#9b7ed4" opacity="0.82"/>
+                  <text x="87" y="84" text-anchor="middle" font-family="serif" font-size="17" fill="white">½</text>
+                  <rect x="166" y="60" width="134" height="38" rx="5" fill="none" stroke="#9b7ed4" stroke-width="1.5" stroke-dasharray="5,3"/>
+                  <text x="233" y="84" text-anchor="middle" font-family="serif" font-size="17" fill="#9b7ed4">½</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="model-slide" id="mod4">
+              <div class="model-frame">
+                <svg viewBox="0 0 320 136" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <rect x="20" y="10" width="280" height="38" rx="7" fill="#6845a8" opacity="0.82"/>
+                  <text x="160" y="34" text-anchor="middle" font-family="serif" font-size="14" fill="white">whole</text>
+                  <line x1="160" y1="48" x2="160" y2="60" stroke="#c4adee" stroke-width="1.5" stroke-dasharray="3,2"/>
+                  <rect x="20" y="60" width="84" height="38" rx="7" fill="#9b7ed4" opacity="0.75"/>
+                  <text x="62" y="84" text-anchor="middle" font-family="serif" font-size="13" fill="white">part</text>
+                  <rect x="118" y="60" width="84" height="38" rx="7" fill="#9b7ed4" opacity="0.75"/>
+                  <text x="160" y="84" text-anchor="middle" font-family="serif" font-size="13" fill="white">part</text>
+                  <rect x="216" y="60" width="84" height="38" rx="7" fill="#9b7ed4" opacity="0.75"/>
+                  <text x="258" y="84" text-anchor="middle" font-family="serif" font-size="13" fill="white">part</text>
+                  <text x="160" y="120" text-anchor="middle" font-family="serif" font-size="13" fill="#d4600a" font-style="italic">whole = 3 × part</text>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <p class="scroll-hint">↓ &nbsp; scroll to explore all five relations</p>
+
+      </div>
     </div>
+  </section>
 
-    <div class="lesson-arena reveal">
+  <div class="section-divider"></div>
 
-      <!-- Lesson app frame -->
-      <div class="lesson-frame">
-        <div class="lf-topbar">
-          <span class="lf-title-text">Lesson 1 — Simple Relations</span>
-          <span class="lf-step-badge" id="lfStepBadge">Step 1 of 3</span>
+  <!-- STAGE 2: LESSON PRACTICE -->
+  <section id="scrollStage2">
+    <div class="scroll-outer" id="scrollOuter2">
+      <div class="scroll-sticky">
+
+        <div class="stage-meta">
+          <span class="stage-badge">Stage 2</span>
+          <span class="stage-title">Lesson Practice</span>
+          <div class="stage-dots">
+            <div class="stage-dot" id="s2dot0"></div>
+            <div class="stage-dot" id="s2dot1"></div>
+            <div class="stage-dot" id="s2dot2"></div>
+            <div class="stage-dot" id="s2dot3"></div>
+          </div>
         </div>
-        <div class="lf-progress-track">
-          <div class="lf-progress-fill" id="lfProgressFill"></div>
+
+        <div class="scroll-content">
+
+          <!-- Text slides -->
+          <div class="rel-panel">
+
+            <div class="rel-slide" id="s2rel0">
+              <h3 class="rel-name">A student reads<br><em>a word problem.</em></h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Before writing any numbers, the student asks: what type of relationship is described here? The problem gets read for structure, not just for numbers.</p>
+              <span class="rel-tag">Step 1 of 4</span>
+            </div>
+
+            <div class="rel-slide" id="s2rel1">
+              <h3 class="rel-name">The structure<br><em>becomes visible.</em></h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">A bar model maps the situation. Two bars of different lengths — one quantity is clearly more than the other, with a gap between them.</p>
+              <span class="rel-tag">Step 2 of 4</span>
+            </div>
+
+            <div class="rel-slide" id="s2rel2">
+              <h3 class="rel-name">The student<br><em>names the relation.</em></h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Four options appear. The student looks at the bar model and selects the type that matches the structure they see.</p>
+              <span class="rel-tag">Step 3 of 4</span>
+            </div>
+
+            <div class="rel-slide" id="s2rel3">
+              <h3 class="rel-name">Comprehension<br><em>confirmed.</em></h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">The correct relation is identified. Now the student knows what to compute — and why. The structure precedes the equation.</p>
+              <span class="rel-tag">Step 4 of 4</span>
+            </div>
+
+          </div>
+
+          <!-- Lesson app frame (right panel) -->
+          <div class="model-panel">
+            <div class="model-slide active" id="s2mod">
+              <div class="lp-frame">
+                <div class="lp-topbar">
+                  <span class="lp-topbar-label">Lesson 1.3 — Comparisons</span>
+                  <span class="lp-topbar-step" id="lpStep">Step 1 of 4</span>
+                </div>
+                <div class="lp-progress-track">
+                  <div class="lp-progress-fill" id="lpFill" style="width:0%"></div>
+                </div>
+                <div class="lp-body">
+                  <div class="lp-problem">
+                    Anna ran <strong>18</strong> laps around the track. Ben ran <strong>11</strong> laps.
+                  </div>
+                  <div class="lp-model-wrap" id="lpModel">
+                    <svg viewBox="0 0 300 118" xmlns="http://www.w3.org/2000/svg" fill="none">
+                      <rect x="14" y="14" width="236" height="36" rx="7" fill="#6845a8" opacity="0.82"/>
+                      <text x="132" y="37" text-anchor="middle" font-family="serif" font-size="13" fill="white">Anna · 18</text>
+                      <rect x="14" y="64" width="143" height="36" rx="7" fill="#9b7ed4" opacity="0.72"/>
+                      <text x="85" y="87" text-anchor="middle" font-family="serif" font-size="13" fill="white">Ben · 11</text>
+                      <line x1="159" y1="82" x2="250" y2="82" stroke="#e8b84b" stroke-width="2"/>
+                      <line x1="159" y1="76" x2="159" y2="88" stroke="#e8b84b" stroke-width="2"/>
+                      <line x1="250" y1="76" x2="250" y2="88" stroke="#e8b84b" stroke-width="2"/>
+                      <text x="205" y="106" text-anchor="middle" font-family="serif" font-size="11" fill="#e8b84b" font-style="italic">difference = 7</text>
+                    </svg>
+                  </div>
+                  <div class="lp-bank" id="lpBank">
+                    <button class="lp-btn" id="lpBtn0">Comparison relation</button>
+                    <button class="lp-btn" id="lpBtn1">Part-whole relation</button>
+                    <button class="lp-btn" id="lpBtn2">Equal relation</button>
+                    <button class="lp-btn" id="lpBtn3">Fractional relation</button>
+                  </div>
+                  <div class="lp-confirmed" id="lpConfirmed">✓ &nbsp;Comparison relation identified</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="lf-body">
-          <div class="lf-instruct" id="lfInstruct">Starting demo&hellip;</div>
-          <div class="lf-canvas" id="lfCanvas"></div>
-          <div class="lf-bank" id="lfBank"></div>
-          <div class="lf-label" id="lfLabel"></div>
-        </div>
+
+        <p class="scroll-hint">↓ &nbsp; scroll through the lesson</p>
+
       </div>
-
-      <!-- Lesson sequence list -->
-      <div class="lesson-sequence">
-        <p class="seq-eyebrow">Lesson Sequence</p>
-        <ul class="seq-list" id="seqList">
-          <li class="active">1.1 — Equal Relations</li>
-          <li>1.2 — Part-Whole Relations</li>
-          <li>1.3 — Comparisons &amp; Differences</li>
-          <li>1.4 — Fractional Relations</li>
-          <li>1.5 — Multiplicative Relations</li>
-        </ul>
-        <p class="seq-note">
-          Each lesson builds on the last, teaching students to name the mathematical structure
-          of a situation before selecting a computation strategy.
-        </p>
-      </div>
-
     </div>
   </section>
 
@@ -908,8 +1260,12 @@
 
   <!-- FLUENCY + CHART -->
   <section class="fluency-section">
+    <div class="stage-section-meta reveal">
+      <span class="stage-badge">Stage 3</span>
+      <span class="stage-title">Fluency Practice</span>
+    </div>
     <div class="demo-header reveal">
-      <p class="eyebrow">Fluency Demo · Additive Facts</p>
+      <p class="eyebrow">Live Demo · Additive Facts</p>
       <h2>Every session <em>moves the line.</em></h2>
       <p>
         After the lessons, students move to timed fluency drills. Each two-minute session
@@ -952,6 +1308,140 @@
 
   <div class="section-divider"></div>
 
+  <!-- STAGE 4: CURRICULUM SCOPE -->
+  <section id="scrollStage4">
+    <div class="scroll-outer" id="scrollOuter4">
+      <div class="scroll-sticky">
+
+        <div class="stage-meta">
+          <span class="stage-badge">Stage 4</span>
+          <span class="stage-title">Curriculum Scope</span>
+          <div class="stage-dots">
+            <div class="stage-dot" id="s4dot0"></div>
+            <div class="stage-dot" id="s4dot1"></div>
+            <div class="stage-dot" id="s4dot2"></div>
+            <div class="stage-dot" id="s4dot3"></div>
+            <div class="stage-dot" id="s4dot4"></div>
+          </div>
+        </div>
+
+        <div class="scroll-content">
+
+          <!-- Text slides -->
+          <div class="rel-panel">
+
+            <div class="rel-slide" id="s4rel0">
+              <h3 class="rel-name"><em>Unit 1</em> — Simple Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Five lessons covering equal, part-whole, comparison, fractional, and multiplicative relations. The vocabulary of mathematical structure — built from the ground up.</p>
+              <span class="rel-tag">1 of 5 units</span>
+            </div>
+
+            <div class="rel-slide" id="s4rel1">
+              <h3 class="rel-name"><em>Unit 2</em> — Compound Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Multi-step relations where two or more simple relations combine. Students learn to read nested structure and track multiple quantities at once.</p>
+              <span class="rel-tag">2 of 5 units</span>
+            </div>
+
+            <div class="rel-slide" id="s4rel2">
+              <h3 class="rel-name"><em>Unit 3</em> — Complex Relations</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Two-step chained relations. Students map connected quantities and identify the full relational structure before selecting a computation pathway.</p>
+              <span class="rel-tag">3 of 5 units</span>
+            </div>
+
+            <div class="rel-slide" id="s4rel3">
+              <h3 class="rel-name"><em>Unit 4</em> — Word Problems</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Applied practice with authentic problems. Students use relation naming as a reading comprehension strategy — identifying structure before computing.</p>
+              <span class="rel-tag">4 of 5 units</span>
+            </div>
+
+            <div class="rel-slide" id="s4rel4">
+              <h3 class="rel-name"><em>Unit 5</em> — Math Fluency</h3>
+              <p class="rel-placeholder">[Explanation text placeholder]</p>
+              <p class="rel-sentence">Additive and multiplicative fact families, computation fluency, and a progress chart that tracks every session — for every student, across the full sequence.</p>
+              <span class="rel-tag">5 of 5 units</span>
+            </div>
+
+          </div>
+
+          <!-- Curriculum map (right panel) -->
+          <div class="model-panel">
+            <div class="model-slide active">
+              <div class="curr-map" id="currMap">
+
+                <div class="curr-unit" id="cu0">
+                  <div class="curr-unit-top">
+                    <span class="curr-unit-num">Unit 01</span>
+                    <span class="curr-unit-name">Simple Relations</span>
+                  </div>
+                  <div class="curr-unit-lessons">
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div>
+                  </div>
+                </div>
+
+                <div class="curr-unit" id="cu1">
+                  <div class="curr-unit-top">
+                    <span class="curr-unit-num">Unit 02</span>
+                    <span class="curr-unit-name">Compound Relations</span>
+                  </div>
+                  <div class="curr-unit-lessons">
+                    <div class="curr-lesson-dot"></div>
+                  </div>
+                </div>
+
+                <div class="curr-unit" id="cu2">
+                  <div class="curr-unit-top">
+                    <span class="curr-unit-num">Unit 03</span>
+                    <span class="curr-unit-name">Complex Relations</span>
+                  </div>
+                  <div class="curr-unit-lessons">
+                    <div class="curr-lesson-dot"></div>
+                  </div>
+                </div>
+
+                <div class="curr-unit" id="cu3">
+                  <div class="curr-unit-top">
+                    <span class="curr-unit-num">Unit 04</span>
+                    <span class="curr-unit-name">Word Problems</span>
+                  </div>
+                  <div class="curr-unit-lessons">
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div>
+                  </div>
+                </div>
+
+                <div class="curr-unit" id="cu4">
+                  <div class="curr-unit-top">
+                    <span class="curr-unit-num">Unit 05</span>
+                    <span class="curr-unit-name">Math Fluency</span>
+                  </div>
+                  <div class="curr-unit-lessons">
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                    <div class="curr-lesson-dot"></div><div class="curr-lesson-dot"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="scroll-hint">↓ &nbsp; scroll through the full curriculum</p>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
   <!-- PHILOSOPHY / CTA -->
   <section class="philosophy">
     <div class="philosophy-inner">
@@ -981,170 +1471,152 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// LESSON DEMO
+// STAGE 1: RELATION NAMING — scroll driver
 // ═══════════════════════════════════════════════════════
 
-const LESSON_STEPS = [
-  {
-    sentence: "The jar holds 20 marbles. 12 are red and 8 are blue.",
-    barSVG: `<svg viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg" fill="none">
-      <rect x="20" y="10" width="300" height="38" rx="6" fill="#6845a8" opacity="0.75"/>
-      <text x="170" y="34" text-anchor="middle" font-family="serif" font-size="16" fill="white" opacity="0.95">20</text>
-      <rect x="20" y="60" width="172" height="38" rx="6" fill="#9b7ed4" opacity="0.65"/>
-      <text x="106" y="84" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">12</text>
-      <rect x="200" y="60" width="120" height="38" rx="6" fill="#d4600a" opacity="0.6"/>
-      <text x="260" y="84" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">8</text>
-      <line x1="170" y1="48" x2="170" y2="60" stroke="#c4adee" stroke-width="1.5" stroke-dasharray="3,2"/>
-    </svg>`,
-    bank: ["Part-whole relation", "Comparison relation", "Equal relation", "Multiplicative relation"],
-    correct: 0,
-    label: "✓  Part-whole relation identified",
-    seqIdx: 1
-  },
-  {
-    sentence: "Anna scored 18 points. Ben scored 11 points.",
-    barSVG: `<svg viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg" fill="none">
-      <rect x="20" y="14" width="210" height="38" rx="6" fill="#6845a8" opacity="0.75"/>
-      <text x="125" y="38" text-anchor="middle" font-family="serif" font-size="16" fill="white" opacity="0.95">18</text>
-      <rect x="20" y="64" width="126" height="38" rx="6" fill="#9b7ed4" opacity="0.65"/>
-      <text x="83" y="88" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">11</text>
-      <line x1="148" y1="75" x2="230" y2="75" stroke="#e8b84b" stroke-width="1.8"/>
-      <line x1="148" y1="70" x2="148" y2="80" stroke="#e8b84b" stroke-width="1.8"/>
-      <line x1="230" y1="70" x2="230" y2="80" stroke="#e8b84b" stroke-width="1.8"/>
-      <text x="189" y="68" text-anchor="middle" font-family="serif" font-size="11" fill="#e8b84b" font-style="italic">diff</text>
-    </svg>`,
-    bank: ["Comparison relation", "Part-whole relation", "Equal relation", "Fractional relation"],
-    correct: 0,
-    label: "✓  Comparison relation identified",
-    seqIdx: 2
-  },
-  {
-    sentence: "Each group has 4 tiles. There are 6 equal groups.",
-    barSVG: `<svg viewBox="0 0 340 80" xmlns="http://www.w3.org/2000/svg" fill="none">
-      ${[0,1,2,3,4,5].map(i =>
-        `<rect x="${20 + i*52}" y="20" width="44" height="44" rx="5" fill="#6845a8" opacity="0.65"/>
-         <text x="${42 + i*52}" y="47" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">4</text>`
-      ).join('')}
-    </svg>`,
-    bank: ["Multiplicative relation", "Comparison relation", "Part-whole relation", "Equal relation"],
-    correct: 0,
-    label: "✓  Multiplicative relation identified",
-    seqIdx: 4
+let s1ActiveIdx = -1;
+
+function setS1Relation(idx) {
+  if (idx === s1ActiveIdx) return;
+  s1ActiveIdx = idx;
+  for (let i = 0; i < 5; i++) {
+    const on = (i === idx);
+    const dot = document.getElementById('dot' + i);
+    const rel = document.getElementById('rel' + i);
+    const mod = document.getElementById('mod' + i);
+    if (dot) dot.classList.toggle('active', on);
+    if (rel) rel.classList.toggle('active', on);
+    if (mod) mod.classList.toggle('active', on);
   }
+}
+
+function onScrollS1() {
+  const outer = document.getElementById('scrollOuter1');
+  if (!outer) return;
+  const rect = outer.getBoundingClientRect();
+  const scrollable = outer.offsetHeight - window.innerHeight;
+  if (scrollable <= 0) { setS1Relation(0); return; }
+  const scrolled = Math.max(0, -rect.top);
+  const progress = Math.min(1, scrolled / scrollable);
+  setS1Relation(Math.min(4, Math.floor(progress * 5)));
+}
+
+window.addEventListener('scroll', onScrollS1, { passive: true });
+onScrollS1();
+
+// ═══════════════════════════════════════════════════════
+// STAGE 2: LESSON PRACTICE — scroll driver
+// ═══════════════════════════════════════════════════════
+
+const LP_STEPS = [
+  { fill: '0%',   step: 'Step 1 of 4', model: false, bank: false, answer: false },
+  { fill: '33%',  step: 'Step 2 of 4', model: true,  bank: false, answer: false },
+  { fill: '66%',  step: 'Step 3 of 4', model: true,  bank: true,  answer: false },
+  { fill: '100%', step: 'Step 4 of 4', model: true,  bank: true,  answer: true  },
 ];
 
-const CHAR_DELAY    = 32;
-const BAR_DELAY     = 1800;
-const BANK_DELAY    = 2300;
-const ANSWER_DELAY  = 3400;
-const LABEL_DELAY   = 4000;
-const NEXT_DELAY    = 5800;
-const LOOP_PAUSE    = 1200;
+let s2ActiveIdx = -1;
 
-let lessonTimer = null;
+function setS2Step(idx) {
+  if (idx === s2ActiveIdx) return;
+  s2ActiveIdx = idx;
 
-function clearLessonTimers() {
-  if (lessonTimer) { clearTimeout(lessonTimer); lessonTimer = null; }
+  const s = LP_STEPS[idx];
+
+  for (let i = 0; i < 4; i++) {
+    const on = (i === idx);
+    const dot = document.getElementById('s2dot' + i);
+    const rel = document.getElementById('s2rel' + i);
+    if (dot) dot.classList.toggle('active', on);
+    if (rel) rel.classList.toggle('active', on);
+  }
+
+  const fill = document.getElementById('lpFill');
+  const stepEl = document.getElementById('lpStep');
+  const model = document.getElementById('lpModel');
+  const bank = document.getElementById('lpBank');
+  const confirmed = document.getElementById('lpConfirmed');
+
+  if (fill)     fill.style.width = s.fill;
+  if (stepEl)   stepEl.textContent = s.step;
+  if (model)    model.classList.toggle('visible', s.model);
+  if (bank)     bank.classList.toggle('visible', s.bank);
+
+  const btns = document.querySelectorAll('#lpBank .lp-btn');
+  btns.forEach((btn, i) => {
+    btn.classList.toggle('correct', s.answer && i === 0);
+    btn.classList.toggle('dim',     s.answer && i !== 0);
+  });
+
+  if (confirmed) confirmed.classList.toggle('visible', s.answer);
 }
 
-function lfSet(id, html) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = html;
+function onScrollS2() {
+  const outer = document.getElementById('scrollOuter2');
+  if (!outer) return;
+  const rect = outer.getBoundingClientRect();
+  const scrollable = outer.offsetHeight - window.innerHeight;
+  if (scrollable <= 0) { setS2Step(0); return; }
+  const progress = Math.min(1, Math.max(0, -rect.top) / scrollable);
+  setS2Step(Math.min(3, Math.floor(progress * 4)));
 }
 
-function lfVisible(id, show) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (show) el.classList.add('visible');
-  else el.classList.remove('visible');
-}
+window.addEventListener('scroll', onScrollS2, { passive: true });
+onScrollS2();
 
-function typeText(targetId, text, onDone) {
-  const el = document.getElementById(targetId);
-  if (!el) return;
-  el.textContent = '';
-  let i = 0;
-  function tick() {
-    if (i < text.length) {
-      el.textContent += text[i++];
-      lessonTimer = setTimeout(tick, CHAR_DELAY);
-    } else if (onDone) {
-      lessonTimer = setTimeout(onDone, 200);
+// ═══════════════════════════════════════════════════════
+// STAGE 3: trigger fluency animation on viewport entry
+// ═══════════════════════════════════════════════════════
+
+let fluencyStarted = false;
+
+const fluencyObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !fluencyStarted) {
+    fluencyStarted = true;
+    renderChart(false);
+    setTimeout(() => startSession(0), 800);
+  }
+}, { threshold: 0.25 });
+
+const fluencySection = document.querySelector('.fluency-section');
+if (fluencySection) fluencyObserver.observe(fluencySection);
+
+// ═══════════════════════════════════════════════════════
+// STAGE 4: CURRICULUM SCOPE — scroll driver
+// ═══════════════════════════════════════════════════════
+
+let s4ActiveIdx = -1;
+
+function setS4Unit(idx) {
+  if (idx === s4ActiveIdx) return;
+  s4ActiveIdx = idx;
+
+  for (let i = 0; i < 5; i++) {
+    const on = (i === idx);
+    const dot = document.getElementById('s4dot' + i);
+    const rel = document.getElementById('s4rel' + i);
+    const cu  = document.getElementById('cu' + i);
+    if (dot) dot.classList.toggle('active', on);
+    if (rel) rel.classList.toggle('active', on);
+    if (cu) {
+      cu.classList.add('revealed');
+      cu.classList.toggle('highlighted', on);
     }
   }
-  tick();
 }
 
-function runLessonStep(idx) {
-  const step = LESSON_STEPS[idx % LESSON_STEPS.length];
-  const stepNum = (idx % LESSON_STEPS.length) + 1;
-
-  // Update step badge and progress
-  const badge = document.getElementById('lfStepBadge');
-  if (badge) badge.textContent = `Step ${stepNum} of ${LESSON_STEPS.length}`;
-  const fill = document.getElementById('lfProgressFill');
-  if (fill) fill.style.width = `${((stepNum - 1) / LESSON_STEPS.length) * 100}%`;
-
-  // Update sequence list highlight
-  const seqItems = document.querySelectorAll('#seqList li');
-  seqItems.forEach((li, i) => li.classList.toggle('active', i === step.seqIdx - 1));
-
-  // Reset panels
-  lfVisible('lfCanvas', false);
-  lfVisible('lfBank', false);
-  lfVisible('lfLabel', false);
-  lfSet('lfCanvas', '');
-  lfSet('lfBank', '');
-  lfSet('lfLabel', '');
-
-  // 1. Type sentence
-  typeText('lfInstruct', step.sentence, () => {
-
-    // 2. Fade in bar model
-    lessonTimer = setTimeout(() => {
-      lfSet('lfCanvas', step.barSVG);
-      lfVisible('lfCanvas', true);
-
-      // 3. Show word bank
-      lessonTimer = setTimeout(() => {
-        const bankEl = document.getElementById('lfBank');
-        if (bankEl) {
-          bankEl.innerHTML = step.bank.map((opt, i) =>
-            `<button class="wb-btn" data-idx="${i}">${opt}</button>`
-          ).join('');
-        }
-        lfVisible('lfBank', true);
-
-        // 4. Highlight correct answer
-        lessonTimer = setTimeout(() => {
-          const btns = document.querySelectorAll('#lfBank .wb-btn');
-          btns.forEach((btn, i) => {
-            if (i === step.correct) btn.classList.add('correct');
-            else btn.classList.add('dim');
-          });
-
-          // 5. Show label
-          lessonTimer = setTimeout(() => {
-            lfSet('lfLabel', step.label);
-            lfVisible('lfLabel', true);
-
-            // Update progress fill to complete this step
-            if (fill) fill.style.width = `${(stepNum / LESSON_STEPS.length) * 100}%`;
-
-            // 6. Next step
-            lessonTimer = setTimeout(() => {
-              runLessonStep(idx + 1);
-            }, NEXT_DELAY - LABEL_DELAY);
-
-          }, LABEL_DELAY - ANSWER_DELAY);
-        }, ANSWER_DELAY - BANK_DELAY);
-      }, BANK_DELAY - BAR_DELAY);
-    }, BAR_DELAY - 1800);
-  });
+function onScrollS4() {
+  const outer = document.getElementById('scrollOuter4');
+  if (!outer) return;
+  const rect = outer.getBoundingClientRect();
+  const scrollable = outer.offsetHeight - window.innerHeight;
+  if (scrollable <= 0) { setS4Unit(0); return; }
+  const progress = Math.min(1, Math.max(0, -rect.top) / scrollable);
+  setS4Unit(Math.min(4, Math.floor(progress * 5)));
 }
 
-// Start lesson demo after a short delay
-setTimeout(() => runLessonStep(0), 1200);
+window.addEventListener('scroll', onScrollS4, { passive: true });
+onScrollS4();
 
 // ═══════════════════════════════════════════════════════
 // FLUENCY DEMO (adapted from mf-fluency/demo.html)
@@ -1325,8 +1797,7 @@ function startSession(sessionIdx) {
   setTimeout(() => runFact(sessionIdx, 0, 0), 900);
 }
 
-renderChart(false);
-setTimeout(() => startSession(0), FLUENCY_INIT_MS);
+// fluency animation started by IntersectionObserver above
 
 // ═══════════════════════════════════════════════════════
 // SCROLL REVEAL
