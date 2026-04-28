@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Groundwork — Phototropic Learning & Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1c1a16;
+      --parchment: #f5f0e8;
+      --moss:      #3d5c3a;
+      --amber:     #c17f3b;
+      --gold:      #e8b84b;
+      --sage:      #7a9e76;
+      --cream:     #faf7f0;
+      --muted:     #7a7163;
+      --border:    #d8cfbe;
+      --gw-bg:     #ddd0f5;
+      --gw-surface:#ede5ff;
+      --gw-border: #c4adee;
+      --gw-accent: #6845a8;
+      --gw-warm:   #d4600a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(250, 247, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+    }
+
+    .nav-brand .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      line-height: 1.1;
+    }
+
+    .nav-brand .sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--moss); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 80vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 5rem;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 6rem 6rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title em { font-style: italic; color: var(--moss); }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 42ch;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--ink); transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: transparent;
+      color: var(--moss);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--moss);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { background: var(--moss); color: var(--cream); transform: translateY(-2px); }
+
+    .hero-right {
+      background: var(--parchment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.6s;
+    }
+
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(122,158,118,0.15) 0%, transparent 60%);
+    }
+
+    .hero-right svg {
+      width: 70%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* ── SHARED SECTION HEADER ── */
+    .demo-header {
+      max-width: 620px;
+      margin-bottom: 3.5rem;
+    }
+
+    .demo-header .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+
+    .demo-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .demo-header h2 em { font-style: italic; color: var(--moss); }
+
+    .demo-header p {
+      font-size: 0.97rem;
+      color: #3a3630;
+      line-height: 1.8;
+      max-width: 56ch;
+    }
+
+    /* ── LESSON DEMO SECTION ── */
+    .lesson-section {
+      padding: 7rem 6rem;
+      background: var(--parchment);
+    }
+
+    .lesson-arena {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* The app frame — mimics the groundwork app look */
+    .lesson-frame {
+      background: var(--gw-bg);
+      border: 1px solid var(--gw-border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 420px;
+      position: relative;
+    }
+
+    .lf-topbar {
+      background: var(--gw-surface);
+      border-bottom: 1px solid var(--gw-border);
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .lf-title-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gw-accent);
+    }
+
+    .lf-step-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9589b8;
+    }
+
+    .lf-progress-track {
+      height: 3px;
+      background: var(--gw-border);
+    }
+
+    .lf-progress-fill {
+      height: 100%;
+      background: var(--gw-accent);
+      transition: width 0.6s ease;
+      width: 0%;
+    }
+
+    .lf-body {
+      padding: 1.75rem 1.75rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Instruction text bubble */
+    .lf-instruct {
+      background: #eee6ff;
+      border: 1px solid var(--gw-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-size: 0.97rem;
+      color: #1e1530;
+      line-height: 1.65;
+      min-height: 3.5rem;
+      transition: opacity 0.3s;
+    }
+
+    /* Bar model canvas */
+    .lf-canvas {
+      background: var(--gw-surface);
+      border: 1px solid var(--gw-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 110px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .lf-canvas.visible { opacity: 1; }
+
+    .lf-canvas svg { max-width: 100%; }
+
+    /* Word bank */
+    .lf-bank {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .lf-bank.visible { opacity: 1; }
+
+    .wb-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--gw-border);
+      background: var(--gw-surface);
+      font-size: 0.9rem;
+      color: #1e1530;
+      text-align: left;
+      cursor: default;
+      transition: all 0.2s;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    .wb-btn.correct {
+      border-color: var(--gw-accent);
+      background: var(--gw-accent);
+      color: white;
+    }
+
+    .wb-btn.dim { opacity: 0.35; }
+
+    /* Relation label */
+    .lf-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gw-warm);
+      text-align: center;
+      min-height: 1.4em;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .lf-label.visible { opacity: 1; }
+
+    /* Lesson sequence sidebar */
+    .lesson-sequence {
+      padding: 1.5rem 0;
+    }
+
+    .seq-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .seq-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+
+    .seq-list li {
+      padding: 0.85rem 1.25rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .seq-list li:last-child { border-bottom: none; }
+
+    .seq-list li.active {
+      background: var(--parchment);
+      color: var(--ink);
+    }
+
+    .seq-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .seq-list li.active::before { background: var(--moss); }
+
+    .seq-note {
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── FLUENCY + CHART SECTION ── */
+    .fluency-section {
+      padding: 7rem 6rem;
+      background: var(--cream);
+    }
+
+    .demo-arena {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .drill-panel {
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 2rem 2rem;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drill-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      position: absolute;
+      top: 1.25rem;
+      left: 1.5rem;
+    }
+
+    .drill-session-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+    }
+
+    .fact-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .fact-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1;
+      text-align: center;
+    }
+
+    .fact-answer {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 600;
+      color: var(--moss);
+      line-height: 1;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .fact-answer.visible { opacity: 1; }
+
+    .fact-check {
+      font-size: 1.4rem;
+      color: var(--sage);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .fact-check.visible { opacity: 1; }
+
+    .drill-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    .drill-status strong { color: var(--moss); }
+
+    .drill-waiting {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .session-complete {
+      position: absolute;
+      inset: 0;
+      background: rgba(250, 247, 240, 0.97);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .session-complete.visible { opacity: 1; }
+
+    .sc-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); }
+    .sc-score { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 600; color: var(--moss); line-height: 1; }
+    .sc-unit  { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .sc-sub   { font-size: 0.9rem; font-style: italic; color: var(--muted); margin-top: 0.2rem; }
+
+    .sc-passoff {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 0.35rem 1.1rem;
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .sc-passoff.visible { display: block; }
+
+    .chart-panel {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+    }
+
+    .chart-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.25rem;
+    }
+
+    .chart-panel-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .chart-panel-aim {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .chart-wrap { width: 100%; overflow-x: auto; }
+    .chart-wrap svg { display: block; max-width: 100%; height: auto; }
+
+    .chart-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--border);
+      margin-top: 0.75rem;
+    }
+
+    @keyframes dotPop {
+      0%   { opacity: 0; transform: scale(0); }
+      70%  { opacity: 1; transform: scale(1.6); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .dot-new {
+      animation: dotPop 0.55s ease both;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    /* ── PHILOSOPHY / CTA ── */
+    .philosophy {
+      background: var(--moss);
+      padding: 7rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .philosophy::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 60%;
+      height: 200%;
+      background: radial-gradient(ellipse, rgba(232,184,75,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .philosophy-inner {
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .philosophy-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .philosophy h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .philosophy h2 em { font-style: italic; color: var(--gold); }
+
+    .philosophy p {
+      font-size: 1rem;
+      color: rgba(245,240,232,0.82);
+      margin-bottom: 1.4rem;
+      max-width: 56ch;
+      line-height: 1.75;
+    }
+
+    .philosophy-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      margin-top: 1rem;
+      transition: gap 0.2s;
+    }
+
+    .philosophy-link:hover { gap: 0.9rem; }
+    .philosophy-link::after { content: '→'; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 6rem;
+      background: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--parchment);
+      text-transform: uppercase;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 7rem 2rem 4rem; }
+      .hero-right { display: none; }
+      .lesson-section, .fluency-section, .philosophy { padding: 4rem 2rem; }
+      .lesson-arena { grid-template-columns: 1fr; }
+      .demo-arena { grid-template-columns: 1fr; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">
+      <span class="wordmark">PLAD</span>
+      <span class="sub">Phototropic Learning & Design</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#pitch">Work With Me</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">P.L.A.D · Math Curriculum</p>
+      <h1 class="hero-title">Ground<em>work</em></h1>
+      <p class="hero-sub">
+        A web-based curriculum for teaching relational understanding in mathematics —
+        the comprehension layer that makes computation meaningful.
+      </p>
+      <div class="hero-cta">
+        <a href="https://dcarro3-svg.github.io/relation-naming/" target="_blank" class="btn-primary">Open the Curriculum</a>
+        <a href="index.html#projects" class="btn-secondary">Back to Projects</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <svg viewBox="0 0 420 460" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Unit 1: part-whole bar model -->
+        <rect x="60" y="60" width="300" height="52" rx="4" fill="#3d5c3a" opacity="0.75"/>
+        <text x="210" y="91" text-anchor="middle" font-family="serif" font-size="18" fill="#faf7f0" opacity="0.95">20</text>
+        <rect x="60" y="128" width="172" height="52" rx="4" fill="#7a9e76" opacity="0.65"/>
+        <text x="146" y="159" text-anchor="middle" font-family="serif" font-size="16" fill="#faf7f0" opacity="0.95">12</text>
+        <rect x="240" y="128" width="120" height="52" rx="4" fill="#c17f3b" opacity="0.6"/>
+        <text x="300" y="159" text-anchor="middle" font-family="serif" font-size="16" fill="#faf7f0" opacity="0.9">8</text>
+        <line x1="210" y1="112" x2="210" y2="128" stroke="#d8cfbe" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="60" y="215" font-family="serif" font-size="12" fill="#c17f3b" opacity="0.8" font-style="italic">Part-whole relation</text>
+
+        <!-- Unit 2: comparison bar model -->
+        <rect x="60" y="248" width="210" height="44" rx="4" fill="#3d5c3a" opacity="0.6"/>
+        <text x="165" y="275" text-anchor="middle" font-family="serif" font-size="15" fill="#faf7f0" opacity="0.9">18</text>
+        <rect x="60" y="302" width="126" height="44" rx="4" fill="#7a9e76" opacity="0.55"/>
+        <text x="123" y="329" text-anchor="middle" font-family="serif" font-size="15" fill="#faf7f0" opacity="0.9">11</text>
+        <line x1="188" y1="314" x2="270" y2="314" stroke="#e8b84b" stroke-width="1.5"/>
+        <line x1="188" y1="309" x2="188" y2="319" stroke="#e8b84b" stroke-width="1.5"/>
+        <line x1="270" y1="309" x2="270" y2="319" stroke="#e8b84b" stroke-width="1.5"/>
+        <text x="229" y="307" text-anchor="middle" font-family="serif" font-size="11" fill="#e8b84b" opacity="0.9" font-style="italic">diff</text>
+        <text x="60" y="375" font-family="serif" font-size="12" fill="#c17f3b" opacity="0.8" font-style="italic">Comparison relation</text>
+
+        <!-- decorative dots -->
+        <circle cx="380" cy="90" r="3" fill="#e8b84b" opacity="0.3"/>
+        <circle cx="40" cy="200" r="2.5" fill="#c17f3b" opacity="0.25"/>
+        <circle cx="370" cy="310" r="2" fill="#7a9e76" opacity="0.3"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- LESSON DEMO -->
+  <section class="lesson-section">
+    <div class="demo-header reveal">
+      <p class="eyebrow">Lesson Demo · Unit One</p>
+      <h2>Teaching students to <em>see the structure</em></h2>
+      <p>
+        Before students can solve a word problem, they need to comprehend it. Each Groundwork lesson
+        teaches a specific relation type — guiding students to identify the mathematical structure
+        of a situation before they ever write an equation.
+      </p>
+    </div>
+
+    <div class="lesson-arena reveal">
+
+      <!-- Lesson app frame -->
+      <div class="lesson-frame">
+        <div class="lf-topbar">
+          <span class="lf-title-text">Lesson 1 — Simple Relations</span>
+          <span class="lf-step-badge" id="lfStepBadge">Step 1 of 3</span>
+        </div>
+        <div class="lf-progress-track">
+          <div class="lf-progress-fill" id="lfProgressFill"></div>
+        </div>
+        <div class="lf-body">
+          <div class="lf-instruct" id="lfInstruct">Starting demo&hellip;</div>
+          <div class="lf-canvas" id="lfCanvas"></div>
+          <div class="lf-bank" id="lfBank"></div>
+          <div class="lf-label" id="lfLabel"></div>
+        </div>
+      </div>
+
+      <!-- Lesson sequence list -->
+      <div class="lesson-sequence">
+        <p class="seq-eyebrow">Lesson Sequence</p>
+        <ul class="seq-list" id="seqList">
+          <li class="active">1.1 — Equal Relations</li>
+          <li>1.2 — Part-Whole Relations</li>
+          <li>1.3 — Comparisons &amp; Differences</li>
+          <li>1.4 — Fractional Relations</li>
+          <li>1.5 — Multiplicative Relations</li>
+        </ul>
+        <p class="seq-note">
+          Each lesson builds on the last, teaching students to name the mathematical structure
+          of a situation before selecting a computation strategy.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- FLUENCY + CHART -->
+  <section class="fluency-section">
+    <div class="demo-header reveal">
+      <p class="eyebrow">Fluency Demo · Additive Facts</p>
+      <h2>Every session <em>moves the line.</em></h2>
+      <p>
+        After the lessons, students move to timed fluency drills. Each two-minute session
+        records a score to the progress chart automatically — no teacher input required.
+        Watch ten days of daily practice build toward pass-off.
+      </p>
+    </div>
+
+    <div class="demo-arena reveal">
+
+      <!-- DRILL PANEL -->
+      <div class="drill-panel" id="drillPanel">
+        <span class="drill-eyebrow">Fact Practice</span>
+        <span class="drill-session-badge" id="sessionBadge">Session 1 of 3</span>
+        <div class="fact-wrap" id="factWrap">
+          <div class="drill-waiting">Starting demo&hellip;</div>
+        </div>
+        <div class="drill-status" id="drillStatus"></div>
+        <div class="session-complete" id="sessionComplete">
+          <span class="sc-label">Session complete</span>
+          <span class="sc-score" id="scScore">55</span>
+          <span class="sc-unit">correct / min</span>
+          <span class="sc-sub" id="scSub">Recorded to chart →</span>
+          <span class="sc-passoff" id="scPassoff">★ &nbsp;Passed off!</span>
+        </div>
+      </div>
+
+      <!-- CHART PANEL -->
+      <div class="chart-panel">
+        <div class="chart-panel-header">
+          <span class="chart-panel-label">Progress Chart · Additive Facts</span>
+          <span class="chart-panel-aim">Pass-off aim: 60 / min</span>
+        </div>
+        <div class="chart-wrap" id="chartWrap"></div>
+        <p class="chart-note">Semi-log scale &nbsp;·&nbsp; dots = correct/min &nbsp;·&nbsp; dashed amber = pass-off aim</p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PHILOSOPHY / CTA -->
+  <section class="philosophy">
+    <div class="philosophy-inner">
+      <p class="philosophy-eyebrow reveal">The Premise</p>
+      <h2 class="reveal">
+        Students don't fail math<br>
+        because it's <em>too hard.</em>
+      </h2>
+      <p class="reveal">
+        They fail because no one taught them to read it. A word problem describes a situation
+        with a relational structure. Before a student can solve it, they need to comprehend it.
+        Relation naming is that comprehension step.
+      </p>
+      <p class="reveal">
+        Groundwork builds that foundation — lessons, fluency drills, and a progress chart
+        that makes growth visible, for every student, every session.
+      </p>
+      <a href="https://dcarro3-svg.github.io/relation-naming/" target="_blank" class="philosophy-link reveal">Open the Full Curriculum</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Phototropic Learning & Design</span>
+    <span class="footer-copy">© 2026 PLAD · Groundwork</span>
+  </footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// LESSON DEMO
+// ═══════════════════════════════════════════════════════
+
+const LESSON_STEPS = [
+  {
+    sentence: "The jar holds 20 marbles. 12 are red and 8 are blue.",
+    barSVG: `<svg viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <rect x="20" y="10" width="300" height="38" rx="6" fill="#6845a8" opacity="0.75"/>
+      <text x="170" y="34" text-anchor="middle" font-family="serif" font-size="16" fill="white" opacity="0.95">20</text>
+      <rect x="20" y="60" width="172" height="38" rx="6" fill="#9b7ed4" opacity="0.65"/>
+      <text x="106" y="84" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">12</text>
+      <rect x="200" y="60" width="120" height="38" rx="6" fill="#d4600a" opacity="0.6"/>
+      <text x="260" y="84" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">8</text>
+      <line x1="170" y1="48" x2="170" y2="60" stroke="#c4adee" stroke-width="1.5" stroke-dasharray="3,2"/>
+    </svg>`,
+    bank: ["Part-whole relation", "Comparison relation", "Equal relation", "Multiplicative relation"],
+    correct: 0,
+    label: "✓  Part-whole relation identified",
+    seqIdx: 1
+  },
+  {
+    sentence: "Anna scored 18 points. Ben scored 11 points.",
+    barSVG: `<svg viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <rect x="20" y="14" width="210" height="38" rx="6" fill="#6845a8" opacity="0.75"/>
+      <text x="125" y="38" text-anchor="middle" font-family="serif" font-size="16" fill="white" opacity="0.95">18</text>
+      <rect x="20" y="64" width="126" height="38" rx="6" fill="#9b7ed4" opacity="0.65"/>
+      <text x="83" y="88" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">11</text>
+      <line x1="148" y1="75" x2="230" y2="75" stroke="#e8b84b" stroke-width="1.8"/>
+      <line x1="148" y1="70" x2="148" y2="80" stroke="#e8b84b" stroke-width="1.8"/>
+      <line x1="230" y1="70" x2="230" y2="80" stroke="#e8b84b" stroke-width="1.8"/>
+      <text x="189" y="68" text-anchor="middle" font-family="serif" font-size="11" fill="#e8b84b" font-style="italic">diff</text>
+    </svg>`,
+    bank: ["Comparison relation", "Part-whole relation", "Equal relation", "Fractional relation"],
+    correct: 0,
+    label: "✓  Comparison relation identified",
+    seqIdx: 2
+  },
+  {
+    sentence: "Each group has 4 tiles. There are 6 equal groups.",
+    barSVG: `<svg viewBox="0 0 340 80" xmlns="http://www.w3.org/2000/svg" fill="none">
+      ${[0,1,2,3,4,5].map(i =>
+        `<rect x="${20 + i*52}" y="20" width="44" height="44" rx="5" fill="#6845a8" opacity="0.65"/>
+         <text x="${42 + i*52}" y="47" text-anchor="middle" font-family="serif" font-size="15" fill="white" opacity="0.9">4</text>`
+      ).join('')}
+    </svg>`,
+    bank: ["Multiplicative relation", "Comparison relation", "Part-whole relation", "Equal relation"],
+    correct: 0,
+    label: "✓  Multiplicative relation identified",
+    seqIdx: 4
+  }
+];
+
+const CHAR_DELAY    = 32;
+const BAR_DELAY     = 1800;
+const BANK_DELAY    = 2300;
+const ANSWER_DELAY  = 3400;
+const LABEL_DELAY   = 4000;
+const NEXT_DELAY    = 5800;
+const LOOP_PAUSE    = 1200;
+
+let lessonTimer = null;
+
+function clearLessonTimers() {
+  if (lessonTimer) { clearTimeout(lessonTimer); lessonTimer = null; }
+}
+
+function lfSet(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+function lfVisible(id, show) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (show) el.classList.add('visible');
+  else el.classList.remove('visible');
+}
+
+function typeText(targetId, text, onDone) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  el.textContent = '';
+  let i = 0;
+  function tick() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      lessonTimer = setTimeout(tick, CHAR_DELAY);
+    } else if (onDone) {
+      lessonTimer = setTimeout(onDone, 200);
+    }
+  }
+  tick();
+}
+
+function runLessonStep(idx) {
+  const step = LESSON_STEPS[idx % LESSON_STEPS.length];
+  const stepNum = (idx % LESSON_STEPS.length) + 1;
+
+  // Update step badge and progress
+  const badge = document.getElementById('lfStepBadge');
+  if (badge) badge.textContent = `Step ${stepNum} of ${LESSON_STEPS.length}`;
+  const fill = document.getElementById('lfProgressFill');
+  if (fill) fill.style.width = `${((stepNum - 1) / LESSON_STEPS.length) * 100}%`;
+
+  // Update sequence list highlight
+  const seqItems = document.querySelectorAll('#seqList li');
+  seqItems.forEach((li, i) => li.classList.toggle('active', i === step.seqIdx - 1));
+
+  // Reset panels
+  lfVisible('lfCanvas', false);
+  lfVisible('lfBank', false);
+  lfVisible('lfLabel', false);
+  lfSet('lfCanvas', '');
+  lfSet('lfBank', '');
+  lfSet('lfLabel', '');
+
+  // 1. Type sentence
+  typeText('lfInstruct', step.sentence, () => {
+
+    // 2. Fade in bar model
+    lessonTimer = setTimeout(() => {
+      lfSet('lfCanvas', step.barSVG);
+      lfVisible('lfCanvas', true);
+
+      // 3. Show word bank
+      lessonTimer = setTimeout(() => {
+        const bankEl = document.getElementById('lfBank');
+        if (bankEl) {
+          bankEl.innerHTML = step.bank.map((opt, i) =>
+            `<button class="wb-btn" data-idx="${i}">${opt}</button>`
+          ).join('');
+        }
+        lfVisible('lfBank', true);
+
+        // 4. Highlight correct answer
+        lessonTimer = setTimeout(() => {
+          const btns = document.querySelectorAll('#lfBank .wb-btn');
+          btns.forEach((btn, i) => {
+            if (i === step.correct) btn.classList.add('correct');
+            else btn.classList.add('dim');
+          });
+
+          // 5. Show label
+          lessonTimer = setTimeout(() => {
+            lfSet('lfLabel', step.label);
+            lfVisible('lfLabel', true);
+
+            // Update progress fill to complete this step
+            if (fill) fill.style.width = `${(stepNum / LESSON_STEPS.length) * 100}%`;
+
+            // 6. Next step
+            lessonTimer = setTimeout(() => {
+              runLessonStep(idx + 1);
+            }, NEXT_DELAY - LABEL_DELAY);
+
+          }, LABEL_DELAY - ANSWER_DELAY);
+        }, ANSWER_DELAY - BANK_DELAY);
+      }, BANK_DELAY - BAR_DELAY);
+    }, BAR_DELAY - 1800);
+  });
+}
+
+// Start lesson demo after a short delay
+setTimeout(() => runLessonStep(0), 1200);
+
+// ═══════════════════════════════════════════════════════
+// FLUENCY DEMO (adapted from mf-fluency/demo.html)
+// ═══════════════════════════════════════════════════════
+
+const FACTS = [
+  { q: '1 + 2 = ?', a: '3' },
+  { q: '2 + 1 = ?', a: '3' },
+  { q: '3 − 1 = ?', a: '2' },
+  { q: '3 − 2 = ?', a: '1' },
+  { q: '2 + 3 = ?', a: '5' },
+  { q: '3 + 2 = ?', a: '5' },
+  { q: '5 − 3 = ?', a: '2' },
+  { q: '5 − 2 = ?', a: '3' },
+];
+
+const PASSOFF_AIM    = 60;
+const LIVE_SCORES    = [55, 58, 63];
+const FACTS_PER_SESSION = 5;
+const Q_MS   = 720;
+const ANS_MS = 560;
+const BTW_MS = 150;
+const SC_MS  = 1800;
+const CHART_LAG_MS  = 900;
+const NEXT_SES_MS   = 1600;
+const FLUENCY_INIT_MS = 2200;
+
+const now = new Date();
+
+function daysAgo(n) {
+  const d = new Date(now);
+  d.setDate(d.getDate() - n);
+  d.setHours(10, 0, 0, 0);
+  return d;
+}
+
+let chartSessions = [
+  { date: daysAgo(13), cpm: 12 },
+  { date: daysAgo(12), cpm: 15 },
+  { date: daysAgo(11), cpm: 19 },
+  { date: daysAgo(9),  cpm: 23 },
+  { date: daysAgo(8),  cpm: 27 },
+  { date: daysAgo(6),  cpm: 32 },
+  { date: daysAgo(5),  cpm: 36 },
+  { date: daysAgo(3),  cpm: 42 },
+  { date: daysAgo(2),  cpm: 47 },
+  { date: daysAgo(1),  cpm: 52 },
+];
+
+const LOG_MIN = Math.log10(0.5);
+const LOG_MAX = Math.log10(100);
+
+function toY(val, H, PT, PB) {
+  const v = Math.max(val, 0.5);
+  const pct = (Math.log10(v) - LOG_MIN) / (LOG_MAX - LOG_MIN);
+  return PT + (1 - pct) * (H - PT - PB);
+}
+
+function renderChart(highlightLast) {
+  const W = 560, H = 320;
+  const PT = 24, PB = 48, PL = 50, PR = 24;
+  const CW = W - PL - PR;
+
+  const startDate = daysAgo(13);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(now);
+  endDate.setHours(0, 0, 0, 0);
+  const totalDays = Math.round((endDate - startDate) / 86400000) + 1;
+
+  function xAt(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const idx = Math.round((d - startDate) / 86400000);
+    return PL + (idx / Math.max(totalDays - 1, 1)) * CW;
+  }
+
+  const Y_TICKS  = [1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 100];
+  const LABELED  = new Set([1, 5, 10, 20, 30, 60, 100]);
+  let grid = '';
+
+  Y_TICKS.forEach(v => {
+    const y = toY(v, H, PT, PB);
+    if (y < PT - 2 || y > H - PB + 2) return;
+    const isMajor = [1, 10, 100].includes(v);
+    grid += `<line x1="${PL}" x2="${W-PR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"
+      stroke="${isMajor ? '#d8cfbe' : '#ede8de'}" stroke-width="${isMajor ? 1.2 : 0.6}"/>`;
+    if (LABELED.has(v)) {
+      grid += `<text x="${(PL-5).toFixed(1)}" y="${(y+3.5).toFixed(1)}"
+        text-anchor="end" font-size="10" fill="#7a7163" font-family="sans-serif">${v}</text>`;
+    }
+  });
+
+  const aimY = toY(PASSOFF_AIM, H, PT, PB).toFixed(1);
+  grid += `<line x1="${PL}" x2="${W-PR}" y1="${aimY}" y2="${aimY}"
+    stroke="#c17f3b" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.75"/>`;
+  grid += `<text x="${(W-PR+5).toFixed(1)}" y="${(parseFloat(aimY)+4).toFixed(1)}"
+    font-size="9" fill="#c17f3b" font-family="sans-serif" opacity="0.85">60</text>`;
+
+  let xLabels = '';
+  for (let di = 0; di < totalDays; di += 2) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + di);
+    const x = PL + (di / Math.max(totalDays - 1, 1)) * CW;
+    xLabels += `<text x="${x.toFixed(1)}" y="${(H-PB+15).toFixed(1)}"
+      text-anchor="middle" font-size="9" fill="#7a7163" font-family="sans-serif">${d.getMonth()+1}/${d.getDate()}</text>`;
+  }
+
+  let pathD = '', dots = '';
+  chartSessions.forEach((s, i) => {
+    const x = xAt(s.date);
+    const y = toY(s.cpm, H, PT, PB);
+    pathD += i === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : ` L${x.toFixed(1)},${y.toFixed(1)}`;
+    const isNew = highlightLast && i === chartSessions.length - 1;
+    dots += `<circle ${isNew ? 'class="dot-new"' : ''} cx="${x.toFixed(1)}" cy="${y.toFixed(1)}"
+      r="${isNew ? 6 : 4.5}" fill="#3d5c3a" stroke="white" stroke-width="1.5"/>`;
+    dots += `<text x="${x.toFixed(1)}" y="${(y-9).toFixed(1)}"
+      text-anchor="middle" font-size="${isNew ? 10 : 9}" fill="#3d5c3a"
+      font-family="sans-serif" ${isNew ? 'font-weight="600"' : ''}>${s.cpm}</text>`;
+  });
+
+  const path = pathD ? `<path d="${pathD}" fill="none" stroke="#3d5c3a" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>` : '';
+
+  document.getElementById('chartWrap').innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto">
+    <rect width="${W}" height="${H}" fill="white"/>
+    ${grid}
+    <line x1="${PL}" y1="${PT}" x2="${PL}" y2="${H-PB}" stroke="#9b9591" stroke-width="1.2"/>
+    <line x1="${PL}" y1="${H-PB}" x2="${W-PR}" y2="${H-PB}" stroke="#9b9591" stroke-width="1.2"/>
+    ${xLabels}${path}${dots}
+    <text x="12" y="${(H/2).toFixed(1)}" text-anchor="middle" font-size="10"
+      fill="#7a7163" font-family="sans-serif"
+      transform="rotate(-90,12,${(H/2).toFixed(1)})">correct / min</text>
+  </svg>`;
+}
+
+function showWaiting(msg) {
+  document.getElementById('factWrap').innerHTML = `<div class="drill-waiting">${msg}</div>`;
+  document.getElementById('drillStatus').textContent = '';
+}
+
+function showFact(factObj, correctSoFar, totalDone) {
+  document.getElementById('factWrap').innerHTML = `
+    <div class="fact-question">${factObj.q}</div>
+    <div class="fact-answer" id="fa"></div>
+    <div class="fact-check"  id="fc">✓</div>`;
+  document.getElementById('drillStatus').innerHTML =
+    `<strong>${correctSoFar}</strong> correct &nbsp;·&nbsp; ${FACTS_PER_SESSION - totalDone} remaining`;
+}
+
+function revealAnswer(factObj) {
+  const fa = document.getElementById('fa');
+  const fc = document.getElementById('fc');
+  if (fa) { fa.textContent = factObj.a; fa.classList.add('visible'); }
+  if (fc) fc.classList.add('visible');
+}
+
+function runFact(sessionIdx, fIdx, correct) {
+  if (fIdx >= FACTS_PER_SESSION) { showSessionComplete(sessionIdx, correct); return; }
+  const fact = FACTS[fIdx % FACTS.length];
+  showFact(fact, correct, fIdx);
+  setTimeout(() => {
+    revealAnswer(fact);
+    setTimeout(() => runFact(sessionIdx, fIdx + 1, correct + 1), ANS_MS + BTW_MS);
+  }, Q_MS);
+}
+
+function showSessionComplete(sessionIdx, correct) {
+  const score   = LIVE_SCORES[sessionIdx];
+  const passoff = score >= PASSOFF_AIM;
+  document.getElementById('scScore').textContent  = score;
+  document.getElementById('scSub').textContent    = passoff ? 'Personal best — pass-off reached!' : 'Recorded to chart →';
+  document.getElementById('scPassoff').classList.toggle('visible', passoff);
+  document.getElementById('sessionComplete').classList.add('visible');
+  setTimeout(() => { chartSessions.push({ date: new Date(), cpm: score }); renderChart(true); }, CHART_LAG_MS);
+  setTimeout(() => {
+    document.getElementById('sessionComplete').classList.remove('visible');
+    if (sessionIdx + 1 < LIVE_SCORES.length) startSession(sessionIdx + 1);
+    else showWaiting('Demo complete.');
+  }, SC_MS + NEXT_SES_MS);
+}
+
+function startSession(sessionIdx) {
+  document.getElementById('sessionBadge').textContent = `Session ${sessionIdx + 1} of ${LIVE_SCORES.length}`;
+  showWaiting(`Session ${sessionIdx + 1} beginning…`);
+  setTimeout(() => runFact(sessionIdx, 0, 0), 900);
+}
+
+renderChart(false);
+setTimeout(() => startSession(0), FLUENCY_INIT_MS);
+
+// ═══════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════════════════════
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
