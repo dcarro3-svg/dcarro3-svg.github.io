@@ -521,81 +521,44 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 
 | ID | Label | Source | Text |
 |----|-------|--------|------|
-| PRG-001 | Page title | progress-chart.html:6 | Progress Chart — Groundwork |
-| PRG-002 | Nav wordmark | progress-chart.html:499 | PLAD |
-| PRG-003 | Nav sub | progress-chart.html:500 | Phototropic Learning & Design |
-| PRG-004 | Nav link 1 | progress-chart.html:503 | About |
-| PRG-005 | Nav link 2 | progress-chart.html:504 | Projects |
-| PRG-006 | Nav link 3 | progress-chart.html:505 | Work With Me |
+| PRG-001 | Page title | progress-chart.html:4 | Progress Chart — Groundwork · P.L.A.D |
+| PRG-002 | Nav wordmark | progress-chart.html:161 | PLAD |
+| PRG-003 | Nav sub | progress-chart.html:162 | Phototropic Learning & Design |
+| PRG-004 | Nav link 1 | progress-chart.html:165 | About |
+| PRG-005 | Nav link 2 | progress-chart.html:166 | Projects |
+| PRG-006 | Nav link 3 | progress-chart.html:167 | Work With Me |
 
-### Hero
-
-| ID | Label | Source | Text |
-|----|-------|--------|------|
-| PRG-007 | Hero eyebrow | progress-chart.html:512 | Groundwork · Progress Tracking |
-| PRG-008 | Hero h1 line 1 | progress-chart.html:513 | Progress |
-| PRG-009 | Hero h1 em | progress-chart.html:515 | Chart |
-| PRG-010 | Hero sub | progress-chart.html:517 | Growth made visible — for students and teachers alike. |
-| PRG-011 | Hero CTA primary | progress-chart.html:519 | Open the Tool |
-| PRG-012 | Hero CTA secondary | progress-chart.html:520 | Back to Projects |
-
-### Overview
+### Demo Header
 
 | ID | Label | Source | Text |
 |----|-------|--------|------|
-| PRG-013 | Section label | progress-chart.html:577 | Overview |
-| PRG-014 | Overview h2 | progress-chart.html:579 | Know exactly |
-| PRG-015 | Overview h2 em | progress-chart.html:579 | where you are. |
-| PRG-016 | Overview p 1 | progress-chart.html:581 | Curriculum only works when students and teachers can see where the learning is and where it isn't. The Progress Chart gives a clean, at-a-glance view of advancement through the Groundwork curriculum — by unit, by skill, by student. |
-| PRG-017 | Overview p 2 | progress-chart.html:585 | Rather than a gradebook, this is a mastery map. It shows which units are complete, which are in progress, and which haven't been started — giving both students and teachers a clear picture of where to focus next. |
-| PRG-018 | Overview p 3 | progress-chart.html:589 | The chart updates automatically as students complete lessons and practice sessions, with no manual entry required from the teacher. |
+| PRG-007 | Demo eyebrow | progress-chart.html:175 | Progress Chart · Live Demo |
+| PRG-008 | Demo h1 line 1 | progress-chart.html:176 | Every session. |
+| PRG-009 | Demo h1 em | progress-chart.html:177 | On the record. |
+| PRG-010 | Demo sub | progress-chart.html:179 | Watch a 60-second fluency drill complete and log its score to the day-to-day chart — automatically, no teacher input required. |
 
-### What the Chart Tracks
+### Chart Labels
 
 | ID | Label | Source | Text |
 |----|-------|--------|------|
-| PRG-019 | Section h2 | progress-chart.html:601 | What the Chart Tracks |
-| PRG-020 | Track card 1 label | progress-chart.html:613 | Units |
-| PRG-021 | Track card 1 title | progress-chart.html:614 | Unit Completion |
-| PRG-022 | Track card 1 desc | progress-chart.html:615 | Which of the four Groundwork units a student has worked through, and the percentage of lessons completed in each. |
-| PRG-023 | Track card 2 label | progress-chart.html:629 | Mastery |
-| PRG-024 | Track card 2 title | progress-chart.html:630 | Skill Mastery % |
-| PRG-025 | Track card 2 desc | progress-chart.html:631 | For each skill area — relation naming, bar modeling, fluency — the percentage of practice items answered correctly across all attempts. |
-| PRG-026 | Track card 3 label | progress-chart.html:643 | Fluency |
-| PRG-027 | Track card 3 title | progress-chart.html:644 | Fluency Session History |
-| PRG-028 | Track card 3 desc | progress-chart.html:645 | A record of each fluency practice session — fact set practiced, number of misses, and time taken — plotted over time. |
-| PRG-029 | Track card 4 label | progress-chart.html:659 | Summary |
-| PRG-030 | Track card 4 title | progress-chart.html:660 | At-a-Glance Dashboard |
-| PRG-031 | Track card 4 desc | progress-chart.html:661 | A single-screen summary for teachers showing every student's position in the curriculum — useful for grouping, conferencing, and intervention planning. |
+| PRG-011 | Left panel label | progress-chart.html:190 | Within session |
+| PRG-012 | Left panel meta | progress-chart.html:191 | Additive Facts · Lesson 1 |
+| PRG-013 | Right panel label | progress-chart.html:197 | Day to day |
+| PRG-014 | Right panel meta | progress-chart.html:198 | Pass-off aim: 60 / min |
+| PRG-015 | Chart caption | progress-chart.html:203 | Left: cumulative correct vs. time · Right: semi-log correct/min · dashed amber = pass-off aim |
 
-### Audience
+### CTA
 
 | ID | Label | Source | Text |
 |----|-------|--------|------|
-| PRG-032 | Section h2 | progress-chart.html:672 | Designed for Both Sides of the Classroom |
-| PRG-033 | Audience 1 role | progress-chart.html:678 | For Students |
-| PRG-034 | Audience 1 heading | progress-chart.html:679 | See your own momentum. |
-| PRG-035 | Audience 1 desc | progress-chart.html:680 | Students have a personal view of their progress chart — seeing exactly which units they've completed and what's left. Visible progress is motivating. It turns an abstract curriculum into a concrete path with a clear endpoint. |
-| PRG-036 | Audience 2 role | progress-chart.html:687 | For Teachers |
-| PRG-037 | Audience 2 heading | progress-chart.html:688 | Know where everyone is, at once. |
-| PRG-038 | Audience 2 desc | progress-chart.html:689 | Teachers see a class-level dashboard — who is on track, who is stuck, and where the gaps are. No digging through gradebooks. The chart makes differentiation decisions obvious rather than guessed. |
-
-### CTA Band
-
-| ID | Label | Source | Text |
-|----|-------|--------|------|
-| PRG-039 | CTA eyebrow | progress-chart.html:704 | View It |
-| PRG-040 | CTA h2 line 1 | progress-chart.html:705 | Growth you can |
-| PRG-041 | CTA h2 em | progress-chart.html:707 | actually see. |
-| PRG-042 | CTA p | progress-chart.html:709 | The Progress Chart is embedded in the Groundwork curriculum and updates automatically as students work. Open the tool to see it in action. |
-| PRG-043 | CTA link | progress-chart.html:713 | Open the Tool |
+| PRG-016 | CTA button | progress-chart.html:209 | I want to use this in my classroom |
 
 ### Footer
 
 | ID | Label | Source | Text |
 |----|-------|--------|------|
-| PRG-044 | Footer brand | progress-chart.html:718 | Phototropic Learning & Design |
-| PRG-045 | Footer copy | progress-chart.html:719 | © 2026 PLAD · All rights reserved |
+| PRG-017 | Footer brand | progress-chart.html:220 | Phototropic Learning & Design |
+| PRG-018 | Footer copy | progress-chart.html:221 | © 2026 PLAD · All rights reserved |
 
 ---
 
