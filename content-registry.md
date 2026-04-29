@@ -621,7 +621,6 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 | MFH-009 | Hero h1 em | mf-fluency/index.html:764 | Fluency |
 | MFH-010 | Hero sub | mf-fluency/index.html:766 | A complete system for building automatic recall. |
 | MFH-011 | Hero body p | mf-fluency/index.html:767 | From fact family instruction to timed fluency drills to computation practice — everything a student needs to build the automatic recall that frees working memory for real problem-solving. |
-| MFH-012 | Hero CTA primary | mf-fluency/index.html:773 | Begin with Addition |
 | MFH-013 | Hero CTA secondary | mf-fluency/index.html:774 | Try the Demo |
 
 ### Demo Strip
