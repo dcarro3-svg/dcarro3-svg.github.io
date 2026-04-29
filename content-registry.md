@@ -64,10 +64,6 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 | IDX-032 | Card 1 title | index.html:694 | Groundwork |
 | IDX-033 | Card 1 desc | index.html:695 | An ongoing web-based curriculum for teaching relational understanding in mathematics. Currently in active development — units covering relations, word problems, math fact fluency, and computation are being built out with structured lessons, practice tools, and a bar model drawing tool. A living project built on the premise that comprehension is a teachable skill. |
 | IDX-034 | Card 1 link | index.html:702 | View Landing Page |
-| IDX-035 | Card 2 type | index.html:713 | Math Curriculum · Structured Lessons |
-| IDX-036 | Card 2 title | index.html:714 | Relation Naming Lessons |
-| IDX-037 | Card 2 desc | index.html:715 | Structured lessons for teaching students to identify and name the mathematical relations embedded in word problems. Covers simple, compound, and complex relations — building the comprehension skills that make computation meaningful. |
-| IDX-038 | Card 2 link | index.html:721 | View Landing Page |
 | IDX-039 | Card 3 type | index.html:733 | Math Curriculum · Interactive Tool |
 | IDX-040 | Card 3 title | index.html:734 | Bar Model Drawing Tool |
 | IDX-041 | Card 3 desc | index.html:735 | An interactive digital canvas for constructing bar models. Students drag and resize bars, label values, and build visual representations of word problem structures — turning abstract relations into concrete diagrams. |
