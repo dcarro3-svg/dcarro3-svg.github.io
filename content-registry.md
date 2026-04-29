@@ -127,7 +127,7 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 | GWL-008 | Hero h1 | groundwork-landing.html:972 | Ground |
 | GWL-009 | Hero h1 em | groundwork-landing.html:972 | work |
 | GWL-010 | Hero sub | groundwork-landing.html:973 | A web-based curriculum for teaching relational understanding in mathematics — the comprehension layer that makes computation meaningful. |
-| GWL-011 | Hero CTA primary | groundwork-landing.html:978 | Open the Curriculum |
+| GWL-011 | Hero CTA primary | groundwork-landing.html:978 | I want to use this in my classroom |
 | GWL-012 | Hero CTA secondary | groundwork-landing.html:979 | Back to Projects |
 
 ### Stage 1 — Relation Naming
