@@ -140,166 +140,17 @@
 
     /* ── DRILL PANEL ── */
     .drill-panel {
-      background: var(--parchment);
       border: 1px solid var(--border);
-      min-height: 420px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem 2rem 2rem;
-      gap: 1.5rem;
-      position: relative;
       overflow: hidden;
+      position: relative;
     }
 
-    .drill-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      position: absolute;
-      top: 1.25rem;
-      left: 1.5rem;
-    }
-
-    .drill-session-badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--amber);
-      position: absolute;
-      top: 1.25rem;
-      right: 1.5rem;
-    }
-
-    .fact-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      flex: 1;
+    .drill-panel iframe {
+      display: block;
       width: 100%;
+      height: 540px;
+      border: none;
     }
-
-    .fact-question {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 6vw, 4.5rem);
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1;
-      text-align: center;
-      transition: opacity 0.25s;
-    }
-
-    .fact-answer {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 6vw, 4.5rem);
-      font-weight: 600;
-      color: var(--moss);
-      line-height: 1;
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .fact-answer.visible { opacity: 1; }
-
-    .fact-check {
-      font-size: 1.4rem;
-      color: var(--sage);
-      opacity: 0;
-      transition: opacity 0.2s;
-      margin-top: 0.2rem;
-    }
-
-    .fact-check.visible { opacity: 1; }
-
-    .drill-status {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-align: center;
-      min-height: 1.2em;
-    }
-
-    .drill-status strong { color: var(--moss); }
-
-    .drill-waiting {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    /* Session complete overlay */
-    .session-complete {
-      position: absolute;
-      inset: 0;
-      background: rgba(250, 247, 240, 0.97);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      opacity: 0;
-      transition: opacity 0.4s;
-      pointer-events: none;
-    }
-
-    .session-complete.visible { opacity: 1; }
-
-    .sc-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--amber);
-    }
-
-    .sc-score {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 4rem;
-      font-weight: 600;
-      color: var(--moss);
-      line-height: 1;
-    }
-
-    .sc-unit {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .sc-sub {
-      font-size: 0.9rem;
-      font-style: italic;
-      color: var(--muted);
-      margin-top: 0.2rem;
-    }
-
-    .sc-passoff {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      background: var(--gold);
-      color: var(--ink);
-      padding: 0.35rem 1.1rem;
-      margin-top: 0.35rem;
-      display: none;
-    }
-
-    .sc-passoff.visible { display: block; }
 
     /* ── CHART PANEL ── */
     .chart-panel {
@@ -421,6 +272,7 @@
       nav { padding: 1rem 1.5rem; }
       .demo-page { padding: 6rem 2rem 4rem; }
       .demo-arena { grid-template-columns: 1fr; }
+      .drill-panel iframe { height: 480px; }
       .demo-cta { flex-direction: column; gap: 2rem; padding: 3rem 2rem; }
       footer { padding: 2rem 2rem !important; flex-direction: column !important; gap: 1rem; text-align: center; }
     }
@@ -441,38 +293,25 @@
     <!-- INTRO -->
     <div class="demo-intro">
       <p class="demo-eyebrow">Live Demo · Additive Fact Fluency</p>
-      <h1>Watch fluency<br><em>build in real time.</em></h1>
+      <h1>The real thing,<br><em>right here.</em></h1>
       <p>
-        Each fluency session is two minutes of timed practice. A student sees a fact,
-        marks it correct or incorrect, and moves to the next. When the timer ends, the
-        session score is recorded to the progress chart automatically — no teacher input
-        required. Watch two weeks of daily practice unfold below, and see what the chart
-        looks like when a student passes off a fact family.
+        This is the actual fluency drill — the same bar model interface students see.
+        Work through a 60-second session, and when you finish your score is plotted
+        automatically on the chart to the right. The two earlier dots show what
+        two days of prior practice looks like.
       </p>
     </div>
 
     <!-- ARENA -->
     <div class="demo-arena">
 
-      <!-- DRILL PANEL -->
-      <div class="drill-panel" id="drillPanel">
-        <span class="drill-eyebrow">Fact Practice</span>
-        <span class="drill-session-badge" id="sessionBadge">Session 1 of 3</span>
-
-        <div class="fact-wrap" id="factWrap">
-          <div class="drill-waiting">Starting demo&hellip;</div>
-        </div>
-
-        <div class="drill-status" id="drillStatus"></div>
-
-        <!-- Session complete overlay -->
-        <div class="session-complete" id="sessionComplete">
-          <span class="sc-label">Session complete</span>
-          <span class="sc-score" id="scScore">55</span>
-          <span class="sc-unit">correct / min</span>
-          <span class="sc-sub" id="scSub">Recorded to chart →</span>
-          <span class="sc-passoff" id="scPassoff">★ &nbsp;Passed off!</span>
-        </div>
+      <!-- DRILL: real fluency page in iframe -->
+      <div class="drill-panel">
+        <iframe
+          src="fact-fluency-add.html"
+          title="Additive Facts Fluency Drill"
+          scrolling="no"
+        ></iframe>
       </div>
 
       <!-- CHART PANEL -->
@@ -487,7 +326,7 @@
 
     </div>
 
-    <!-- CTA (shown after demo completes) -->
+    <!-- CTA (shown after session completes) -->
     <div class="demo-cta" id="demoCta">
       <div class="demo-cta-text">
         <p class="demo-cta-eyebrow">Ready to try it yourself?</p>
@@ -510,36 +349,21 @@
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
-const FACTS = [
-  { q: '1 + 2 = ?', a: '3' },
-  { q: '2 + 1 = ?', a: '3' },
-  { q: '3 − 1 = ?', a: '2' },
-  { q: '3 − 2 = ?', a: '1' },
-  { q: '2 + 3 = ?', a: '5' },
-  { q: '3 + 2 = ?', a: '5' },
-  { q: '5 − 3 = ?', a: '2' },
-  { q: '5 − 2 = ?', a: '3' },
-];
-
 const PASSOFF_AIM = 60;
 const now = new Date();
 
-function daysAgo(n, hour) {
+function daysAgo(n) {
   const d = new Date(now);
   d.setDate(d.getDate() - n);
-  d.setHours(hour || 10, 0, 0, 0);
+  d.setHours(10, 0, 0, 0);
   return d;
 }
 
-// Pre-seeded sessions: 10 sessions over the past 13 days
+// Two pre-seeded dots: the two days leading up to today
 let chartSessions = [
-  { date: daysAgo(3), cpm: 42 },
-  { date: daysAgo(2), cpm: 47 },
-  { date: daysAgo(1), cpm: 52 },
+  { date: daysAgo(2), cpm: 42 },
+  { date: daysAgo(1), cpm: 47 },
 ];
-
-// Live sessions added during demo (today)
-const LIVE_SCORES = [55, 58, 63];
 
 // ── CHART ─────────────────────────────────────────────────────────────────────
 const LOG_MIN = Math.log10(0.5);
@@ -556,7 +380,7 @@ function renderChart(highlightLast) {
   const PT = 24, PB = 48, PL = 50, PR = 24;
   const CW = W - PL - PR;
 
-  const startDate = daysAgo(3);
+  const startDate = daysAgo(2);
   startDate.setHours(0, 0, 0, 0);
   const endDate = new Date(now);
   endDate.setHours(0, 0, 0, 0);
@@ -570,7 +394,7 @@ function renderChart(highlightLast) {
   }
 
   // Grid
-  const Y_TICKS = [1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 100];
+  const Y_TICKS  = [1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 100];
   const LABELED  = new Set([1, 5, 10, 20, 30, 60, 100]);
   let grid = '';
 
@@ -593,9 +417,9 @@ function renderChart(highlightLast) {
   grid += `<text x="${(W - PR + 5).toFixed(1)}" y="${(parseFloat(aimY) + 4).toFixed(1)}"
     font-size="9" fill="#c17f3b" font-family="sans-serif" opacity="0.85">60</text>`;
 
-  // X axis date labels
+  // X axis date labels — one per calendar day, each at its own x
   let xLabels = '';
-  for (let di = 0; di < totalDays; di += 1) {
+  for (let di = 0; di < totalDays; di++) {
     const d = new Date(startDate);
     d.setDate(d.getDate() + di);
     const x = PL + (di / Math.max(totalDays - 1, 1)) * CW;
@@ -603,7 +427,7 @@ function renderChart(highlightLast) {
       text-anchor="middle" font-size="9" fill="#7a7163" font-family="sans-serif">${d.getMonth() + 1}/${d.getDate()}</text>`;
   }
 
-  // Data line and dots
+  // Data line and dots — each session at its own calendar-day x position
   let pathD = '';
   let dots  = '';
 
@@ -616,7 +440,6 @@ function renderChart(highlightLast) {
     dots += `<circle ${isNew ? 'class="dot-new"' : ''} cx="${x.toFixed(1)}" cy="${y.toFixed(1)}"
       r="${isNew ? 6 : 4.5}" fill="#3d5c3a" stroke="white" stroke-width="1.5"/>`;
 
-    // Label every dot with its score
     const labelY = (y - 9).toFixed(1);
     dots += `<text x="${x.toFixed(1)}" y="${labelY}"
       text-anchor="middle" font-size="${isNew ? 10 : 9}" fill="#3d5c3a"
@@ -644,98 +467,19 @@ function renderChart(highlightLast) {
   document.getElementById('chartWrap').innerHTML = svg;
 }
 
-// ── DRILL ANIMATION ───────────────────────────────────────────────────────────
-const FACTS_PER_SESSION = 5;
-const QUESTION_MS       = 720;
-const ANSWER_MS         = 560;
-const BETWEEN_MS        = 150;
-const SC_DISPLAY_MS     = 1800;
-const CHART_LAG_MS      = 900;
-const NEXT_SESSION_MS   = 1600;
-const INIT_DELAY_MS     = 1500;
-
-function showWaiting(msg) {
-  document.getElementById('factWrap').innerHTML =
-    `<div class="drill-waiting">${msg}</div>`;
-  document.getElementById('drillStatus').textContent = '';
-}
-
-function showFact(factObj, correctSoFar, totalDone) {
-  document.getElementById('factWrap').innerHTML = `
-    <div class="fact-question">${factObj.q}</div>
-    <div class="fact-answer" id="fa"></div>
-    <div class="fact-check"  id="fc">✓</div>
-  `;
-  document.getElementById('drillStatus').innerHTML =
-    `<strong>${correctSoFar}</strong> correct &nbsp;·&nbsp; ${FACTS_PER_SESSION - totalDone} remaining`;
-}
-
-function revealAnswer(factObj) {
-  const fa = document.getElementById('fa');
-  const fc = document.getElementById('fc');
-  if (fa) { fa.textContent = factObj.a; fa.classList.add('visible'); }
-  if (fc) fc.classList.add('visible');
-}
-
-function runFact(sessionIdx, fIdx, correct) {
-  if (fIdx >= FACTS_PER_SESSION) {
-    showSessionComplete(sessionIdx, correct);
-    return;
-  }
-  const fact = FACTS[fIdx % FACTS.length];
-  showFact(fact, correct, fIdx);
-  setTimeout(() => {
-    revealAnswer(fact);
-    setTimeout(() => {
-      runFact(sessionIdx, fIdx + 1, correct + 1);
-    }, ANSWER_MS + BETWEEN_MS);
-  }, QUESTION_MS);
-}
-
-function showSessionComplete(sessionIdx, correct) {
-  const score   = LIVE_SCORES[sessionIdx];
-  const passoff = score >= PASSOFF_AIM;
-
-  document.getElementById('scScore').textContent = score;
-  document.getElementById('scSub').textContent   = passoff
-    ? 'Personal best — pass-off reached!'
-    : 'Recorded to chart →';
-  document.getElementById('scPassoff').classList.toggle('visible', passoff);
-  document.getElementById('sessionComplete').classList.add('visible');
-
-  setTimeout(() => {
-    chartSessions.push({ date: new Date(), cpm: score });
-    renderChart(true);
-  }, CHART_LAG_MS);
-
-  setTimeout(() => {
-    document.getElementById('sessionComplete').classList.remove('visible');
-    if (sessionIdx + 1 < LIVE_SCORES.length) {
-      startSession(sessionIdx + 1);
-    } else {
-      endDemo();
-    }
-  }, SC_DISPLAY_MS + NEXT_SESSION_MS);
-}
-
-function startSession(sessionIdx) {
-  document.getElementById('sessionBadge').textContent =
-    `Session ${sessionIdx + 1} of ${LIVE_SCORES.length}`;
-  showWaiting(`Session ${sessionIdx + 1} beginning…`);
-  setTimeout(() => runFact(sessionIdx, 0, 0), 900);
-}
-
-function endDemo() {
-  showWaiting('Demo complete.');
-  document.getElementById('drillStatus').textContent = '';
+// ── SESSION COMPLETE (from iframe postMessage) ────────────────────────────────
+window.addEventListener('message', e => {
+  if (!e.data || e.data.type !== 'fluency_session_complete') return;
+  const cpm = e.data.cpm ?? 0;
+  chartSessions.push({ date: new Date(), cpm });
+  renderChart(true);
   const cta = document.getElementById('demoCta');
   cta.classList.add('visible');
-  setTimeout(() => cta.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
-}
+  setTimeout(() => cta.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
+});
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 renderChart(false);
-setTimeout(() => startSession(0), INIT_DELAY_MS);
 </script>
 </body>
 </html>

@@ -299,6 +299,10 @@ function endDrill(){
 // ── Transition to chart ───────────────────────────────────────────────────────
 function showPigeonTransition(delayMs){
   setTimeout(()=>{
+    if(window.self!==window.top){
+      window.parent.postMessage({type:'fluency_session_complete',cpm:S.cor,errors:S.err},'*');
+      return;
+    }
     try{localStorage.setItem('chart_new_lesson',String(CFG.id));}catch(e){}
     window.location.href=CFG.chartHref;
   },delayMs||0);
