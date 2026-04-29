@@ -169,7 +169,23 @@ function renderFactMult(item){
 function renderItem(item){return CFG.factType==='add'?renderFactAdd(item):renderFactMult(item);}
 
 // ── Item generation ────────────────────────────────────────────────────────────
+// Optional: ?families=1,2,3|2,3,5 restricts add drill to specific fact families
+// Each family is [a,b,whole] comma-separated; families are pipe-separated.
+const QUERY_FAMILIES=(()=>{
+  const raw=new URLSearchParams(window.location.search).get('families');
+  if(!raw)return null;
+  return raw.split('|').map(f=>f.split(',').map(Number));
+})();
+
 function genAddItem(){
+  if(QUERY_FAMILIES){
+    const fam=QUERY_FAMILIES[Math.floor(Math.random()*QUERY_FAMILIES.length)];
+    const[a,b,whole]=fam;
+    const roles=['whole','p1','p2'];
+    const unknownRole=roles[Math.floor(Math.random()*3)];
+    const answer=unknownRole==='whole'?whole:unknownRole==='p1'?a:b;
+    return{a,b,whole,unknownRole,answer};
+  }
   const a=Math.floor(Math.random()*10); // 0–9
   const b=Math.floor(Math.random()*10); // 0–9
   if(a+b===0) return genAddItem();      // skip 0+0
