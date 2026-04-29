@@ -734,7 +734,7 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 | MFD-020 | CTA h2 line 1 | mf-fluency/demo.html:494 | Every session |
 | MFD-021 | CTA h2 em | mf-fluency/demo.html:494 | moves the line. |
 | MFD-022 | CTA p | mf-fluency/demo.html:495 | Start with the fact family lessons, then move to timed fluency drills. The chart tracks every session automatically — for every student, every lesson, across the full sequence. Growth you can actually see. |
-| MFD-023 | CTA button | mf-fluency/demo.html:501 | Go to Fluency Hub → |
+| MFD-023 | CTA button | mf-fluency/demo.html:340 | I want to use this in my classroom |
 
 ### Footer
 
