@@ -58,7 +58,7 @@ Codes: IDX = index.html · GWL = groundwork-landing.html · BMT = bar-model-tool
 | ID | Label | Source | Text |
 |----|-------|--------|------|
 | IDX-028 | Projects h2 | index.html:675 | Projects |
-| IDX-029 | Projects count | index.html:677 | 01 — 05 |
+| IDX-029 | Projects count | index.html:677 | 01 — 04 |
 | IDX-030 | Projects intro | index.html:679 | These are some of my previous and ongoing projects. They can be adapted to fit your specific classroom needs, or I can build you something from scratch. Whether it's a full lesson with materials, a data tracking tool, a scoring system, or a specific worksheet generator, I've got you! |
 | IDX-031 | Card 1 type | index.html:693 | Math Curriculum · Interactive Tool |
 | IDX-032 | Card 1 title | index.html:694 | Groundwork |
